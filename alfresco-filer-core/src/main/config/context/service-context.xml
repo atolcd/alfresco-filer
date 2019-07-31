@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <bean id="filerService"
+      class="com.atolcd.alfresco.filer.core.service.impl.FilerServiceImpl">
+    <property name="filerRegistry" ref="filerRegistry"/>
+    <property name="filerOperationService" ref="filerOperationService"/>
+    <property name="propertyInheritanceService" ref="filer.propertyInheritanceService"/>
+    <property name="nodeService" ref="NodeService"/>
+    <property name="permissionService" ref="PermissionService"/>
+    <property name="lockService" ref="lockService"/>
+  </bean>
+
+  <bean id="filerRegistry"
+      class="com.atolcd.alfresco.filer.core.service.impl.FilerRegistryImpl"/>
+
+  <bean id="filerModelService"
+      class="com.atolcd.alfresco.filer.core.service.impl.FilerModelServiceImpl">
+    <property name="behaviourFilter" ref="policyBehaviourFilter"/>
+    <property name="fileableAspectQName" value="${filer.aspect.fileable}"/>
+    <property name="segmentAspectQName" value="${filer.aspect.segment}"/>
+    <property name="subscriberAspectQName" value="${filer.aspect.subscriber}"/>
+    <property name="propertyInheritanceAspectQName" value="${filer.aspect.propertyInheritance}"/>
+  </bean>
+
+  <bean id="filerOperationService"
+      class="com.atolcd.alfresco.filer.core.service.impl.FilerOperationServiceImpl">
+    <property name="filerModelService" ref="filerModelService"/>
+    <property name="filerFolderService" ref="filerFolderService"/>
+    <property name="filerUpdateService" ref="filerUpdateService"/>
+    <property name="nodeService" ref="NodeService"/>
+    <property name="permissionService" ref="PermissionService"/>
+  </bean>
+
+  <bean id="filerFolderService"
+      class="com.atolcd.alfresco.filer.core.service.impl.FilerFolderServiceImpl">
+    <property name="filerModelService" ref="filerModelService"/>
+    <property name="nodeService" ref="NodeService"/>
+    <property name="nodeDAO" ref="nodeDAO"/>
+  </bean>
+
+  <bean id="filerUpdateService" parent="abstractBaseCopyService"
+      class="com.atolcd.alfresco.filer.core.service.impl.FilerUpdateServiceImpl">
+    <property name="filerModelService" ref="filerModelService"/>
+    <property name="propertyInheritanceService" ref="filer.propertyInheritanceService"/>
+    <property name="nodeService" ref="NodeService"/>
+  </bean>
+
+  <bean id="filer.propertyInheritanceService" depends-on="filer.modelBootstrap"
+      class="com.atolcd.alfresco.filer.core.service.impl.PropertyInheritanceServiceImpl">
+    <property name="filerModelService" ref="filerModelService"/>
+    <property name="nodeService" ref="NodeService"/>
+    <property name="dictionaryService" ref="dictionaryService"/>
+  </bean>
+
+  <bean id="filer.action.base" abstract="true">
+    <property name="filerRegistry" ref="filerRegistry"/>
+    <property name="filerService" ref="filerService"/>
+  </bean>
+
+</beans>

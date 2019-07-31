@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="filer:model" xmlns="http://www.alfresco.org/model/dictionary/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.alfresco.org/model/dictionary/1.0 https://svn.alfresco.com/repos/alfresco-open-mirror/alfresco/HEAD/root/projects/repository/config/alfresco/model/modelSchema.xsd">
+
+  <description>Filer behaviour indicators</description>
+  <author>Atol CD</author>
+  <version>1.0</version>
+
+  <namespaces>
+    <namespace uri="http://www.atolcd.com/model/filer/1.0" prefix="filer"/>
+  </namespaces>
+
+  <aspects>
+
+    <aspect name="filer:fileable">
+      <title>Automatically filed</title>
+    </aspect>
+
+    <aspect name="filer:subscriber">
+      <title>Automatically fill incoming elements</title>
+    </aspect>
+
+    <aspect name="filer:segment">
+      <title>Segment Folder</title>
+      <parent>filer:subscriber</parent>
+      <!-- Explicitly turn off archiving for all nodes with this aspect -->
+      <archive>false</archive>
+    </aspect>
+
+    <aspect name="filer:propertyInheritance">
+      <title>Inherits properties</title>
+    </aspect>
+
+  </aspects>
+
+</model>

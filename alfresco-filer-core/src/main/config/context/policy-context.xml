@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <bean id="filer.policy.fileableAspect" class="com.atolcd.alfresco.filer.core.policy.FileableAspect">
+    <property name="filerService" ref="filerService"/>
+    <property name="filerModelService" ref="filerModelService"/>
+    <property name="policyComponent" ref="policyComponent"/>
+  </bean>
+
+  <bean id="filer.policy.subscriberAspect" class="com.atolcd.alfresco.filer.core.policy.FilerSubscriberAspect">
+    <property name="filerService" ref="filerService"/>
+    <property name="filerModelService" ref="filerModelService"/>
+    <property name="policyComponent" ref="policyComponent"/>
+  </bean>
+
+  <bean id="filer.policy.segmentAspect" class="com.atolcd.alfresco.filer.core.policy.FilerSegmentAspect">
+    <property name="filerModelService" ref="filerModelService"/>
+    <property name="policyComponent" ref="policyComponent"/>
+    <property name="ownableService" ref="ownableService"/>
+    <property name="username" value="${filer.owner.username}"/>
+  </bean>
+
+</beans>
