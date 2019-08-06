@@ -19,7 +19,7 @@ public class UpdateFilerEvent extends AbstractFilerEvent {
 
   @Override
   public String toString() {
-    return MessageFormat.format("Update{action={0}, name={1}, node={2}, store={3}}",
+    return MessageFormat.format("Update'{'action={0}, name={1}, node={2}, store={3}'}'",
         getAction().orElse(null),
         getNode().getName().orElse(null),
         getNode().getNodeRef().getId(),

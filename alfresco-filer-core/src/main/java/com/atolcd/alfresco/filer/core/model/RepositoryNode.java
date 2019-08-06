@@ -130,7 +130,7 @@ public class RepositoryNode implements Serializable {
 
   @Override
   public String toString() {
-    return MessageFormat.format("{0}{type={1}, properties={2}, aspects={3}, parent={4}, nodeRef={5}}",
+    return MessageFormat.format("{0}'{'type={1}, properties={2}, aspects={3}, parent={4}, nodeRef={5}'}'",
         getName().orElse(null), type, properties, aspects, parent, nodeRef);
   }
 }

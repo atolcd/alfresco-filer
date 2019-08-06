@@ -28,7 +28,7 @@ public class PropertyInheritance {
 
   @Override
   public String toString() {
-    return MessageFormat.format("{mandatory={0}, optional={1}}", mandatoryAspects, optionalAspects);
+    return MessageFormat.format("'{'mandatory={0}, optional={1}'}'", mandatoryAspects, optionalAspects);
   }
 
   public Set<QName> getMandatoryAspects() {

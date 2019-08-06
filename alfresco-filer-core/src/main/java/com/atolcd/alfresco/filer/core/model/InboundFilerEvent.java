@@ -16,7 +16,7 @@ public class InboundFilerEvent extends AbstractFilerEvent {
 
   @Override
   public String toString() {
-    return MessageFormat.format("Inbound{action={0}, name={1}, node={2}, store={3}}",
+    return MessageFormat.format("Inbound'{'action={0}, name={1}, node={2}, store={3}'}'",
         getAction().orElse(null),
         getNode().getName().orElse(null),
         getNode().getNodeRef().getId(),

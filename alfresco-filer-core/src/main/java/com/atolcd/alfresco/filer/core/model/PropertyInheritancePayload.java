@@ -20,7 +20,7 @@ public class PropertyInheritancePayload {
 
   @Override
   public String toString() {
-    return MessageFormat.format("{added={0}, removed={1}}", added, removed);
+    return MessageFormat.format("'{'added={0}, removed={1}'}'", added, removed);
   }
 
   public boolean isEmpty() {
