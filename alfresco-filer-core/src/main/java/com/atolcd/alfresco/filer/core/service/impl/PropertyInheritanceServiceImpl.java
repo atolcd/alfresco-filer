@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -13,6 +12,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.repo.dictionary.DictionaryListener;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -31,11 +32,12 @@ import com.atolcd.alfresco.filer.core.model.RepositoryNodeDifference;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.PropertyInheritanceService;
 
-public class PropertyInheritanceServiceImpl implements PropertyInheritanceService, InitializingBean {
+public class PropertyInheritanceServiceImpl implements PropertyInheritanceService, InitializingBean, DictionaryListener {
 
   private FilerModelService filerModelService;
   private NodeService nodeService;
   private DictionaryService dictionaryService;
+  private DictionaryDAO dictionaryDAO;
 
   private Collection<QName> inheritedAspects;
   private Map<QName, QName> inheritedProperties;
@@ -45,6 +47,12 @@ public class PropertyInheritanceServiceImpl implements PropertyInheritanceServic
     Objects.requireNonNull(filerModelService);
     Objects.requireNonNull(nodeService);
     Objects.requireNonNull(dictionaryService);
+    Objects.requireNonNull(dictionaryDAO);
+    dictionaryDAO.registerListener(this);
+  }
+
+  @Override
+  public void afterDictionaryInit() {
     inheritedAspects = dictionaryService.getSubAspects(filerModelService.getPropertyInheritanceAspect(), true);
     inheritedProperties = getProperties(inheritedAspects);
   }
@@ -67,11 +75,11 @@ public class PropertyInheritanceServiceImpl implements PropertyInheritanceServic
     Set<QName> inheritanceAspects = retainAspects(aspects, inheritedAspects);
     Map<QName, Serializable> inheritanceProperties = retainProperties(properties, inheritedProperties.keySet());
     // Get unset properties from inheritance aspects for removal on the resulting node
-    List<QName> unknownProperties = inheritanceProperties.keySet().stream()
+    Set<QName> unknownProperties = inheritanceProperties.keySet().stream()
         .map(property -> inheritedProperties.get(property)).distinct()
         .flatMap(aspect -> dictionaryService.getAspect(aspect).getProperties().keySet().stream())
         .filter(property -> !inheritanceProperties.containsKey(property))
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
     // Update resulting node aspects and properties
     result.getAspects().addAll(inheritanceAspects);
     result.getProperties().putAll(inheritanceProperties);
@@ -163,7 +171,7 @@ public class PropertyInheritanceServiceImpl implements PropertyInheritanceServic
   }
 
   private void setInheritanceImpl(final NodeRef parent, final PropertyInheritancePayload payload) {
-    List<ChildAssociationRef> children = nodeService.getChildAssocs(parent, ContentModel.ASSOC_CONTAINS,
+    Collection<ChildAssociationRef> children = nodeService.getChildAssocs(parent, ContentModel.ASSOC_CONTAINS,
         RegexQNamePattern.MATCH_ALL);
     for (ChildAssociationRef child : children) {
       NodeRef nodeRef = child.getChildRef();
@@ -200,6 +208,16 @@ public class PropertyInheritanceServiceImpl implements PropertyInheritanceServic
     }
   }
 
+  @Override
+  public void onDictionaryInit() { // NOPMD - default empty method, nothing to do on dictionary initialization
+    // no op
+  }
+
+  @Override
+  public void afterDictionaryDestroy() { // NOPMD - default empty method, nothing to do after dictionary deletion
+    // no op
+  }
+
   public void setFilerModelService(final FilerModelService filerModelService) {
     this.filerModelService = filerModelService;
   }
@@ -210,5 +228,9 @@ public class PropertyInheritanceServiceImpl implements PropertyInheritanceServic
 
   public void setDictionaryService(final DictionaryService dictionaryService) {
     this.dictionaryService = dictionaryService;
+  }
+
+  public void setDictionaryDAO(final DictionaryDAO dictionaryDAO) {
+    this.dictionaryDAO = dictionaryDAO;
   }
 }

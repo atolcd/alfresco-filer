@@ -48,11 +48,12 @@
     <property name="nodeService" ref="NodeService"/>
   </bean>
 
-  <bean id="filer.propertyInheritanceService" depends-on="filer.modelBootstrap"
+  <bean id="filer.propertyInheritanceService"
       class="com.atolcd.alfresco.filer.core.service.impl.PropertyInheritanceServiceImpl">
     <property name="filerModelService" ref="filerModelService"/>
     <property name="nodeService" ref="NodeService"/>
     <property name="dictionaryService" ref="dictionaryService"/>
+    <property name="dictionaryDAO" ref="dictionaryDAO"/>
   </bean>
 
   <bean id="filer.action.base" abstract="true">
