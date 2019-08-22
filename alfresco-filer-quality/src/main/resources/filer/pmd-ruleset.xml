@@ -47,7 +47,7 @@
   <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod">
     <properties>
       <property name="violationSuppressXPath"
-                value="ancestor::ClassOrInterfaceBodyDeclaration/Annotation/MarkerAnnotation/Name[@Image='PostConstruct']"/>
+                value="ancestor::ClassOrInterfaceBodyDeclaration/Annotation[@AnnotationName='PostConstruct']"/>
     </properties>
   </rule>
   <!-- Add suffixes Constants|Aspect|Type -->
@@ -68,6 +68,13 @@
     <properties>
       <property name="violationSuppressXPath"
                 value="ancestor::ClassOrInterfaceDeclaration[ends-with(@Image, 'Builder')]"/>
+    </properties>
+  </rule>
+  <!-- Adding @RepeatedTest annotated method as test case -->
+  <rule ref="category/java/errorprone.xml/TestClassWithoutTestCases">
+    <properties>
+      <property name="violationSuppressXPath"
+                value="ClassOrInterfaceBody/ClassOrInterfaceBodyDeclaration/Annotation[@AnnotationName='RepeatedTest']"/>
     </properties>
   </rule>
 </ruleset>
