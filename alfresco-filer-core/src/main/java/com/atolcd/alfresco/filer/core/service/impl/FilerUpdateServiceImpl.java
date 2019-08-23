@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.atolcd.alfresco.filer.core.model.PropertyInheritancePayload;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.model.RepositoryNodeDifference;
+import com.atolcd.alfresco.filer.core.service.FilerFolderService;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.FilerUpdateService;
 import com.atolcd.alfresco.filer.core.service.PropertyInheritanceService;
@@ -25,6 +26,7 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
   private static final Logger LOGGER = LoggerFactory.getLogger(FilerUpdateServiceImpl.class);
 
   private FilerModelService filerModelService;
+  private FilerFolderService filerFolderService;
   private PropertyInheritanceService propertyInheritanceService;
   private NodeService nodeService;
 
@@ -50,6 +52,8 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
     if (!originalDifference.isEmpty()) {
       LOGGER.debug("Node updated: " + originalDifference);
     }
+    // Lock target segment to prevent its deletion by another transaction
+    filerFolderService.lockFolder(resultingNode.getParent());
     // Move and rename node
     moveAndRenameFileable(originalNode, resultingNode);
     // Update property inheritance on children
@@ -106,6 +110,10 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
 
   public void setFilerModelService(final FilerModelService filerModelService) {
     this.filerModelService = filerModelService;
+  }
+
+  public void setFilerFolderService(final FilerFolderService filerFolderService) {
+    this.filerFolderService = filerFolderService;
   }
 
   public void setPropertyInheritanceService(final PropertyInheritanceService propertyInheritanceService) {

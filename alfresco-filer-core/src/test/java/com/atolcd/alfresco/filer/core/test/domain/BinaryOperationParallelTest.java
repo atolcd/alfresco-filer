@@ -41,11 +41,6 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BinaryOperationParallelTest.class);
 
-  private static final int MAIN_TASK = 1;
-  private static final int CREATE_TASK = 1;
-  private static final int UPDATE_TASK = 1;
-  private static final int DELETE_TASK = 1;
-
   @Autowired
   private NodeService nodeService;
 
@@ -62,83 +57,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
    */
   @RepeatedTest(10)
   public void createAndDeleteNodes() throws InterruptedException, BrokenBarrierException {
-    String departmentName = randomUUID().toString();
-    LocalDateTime date = LocalDateTime.of(2004, 8, 12, 0, 0, 0);
-
-    CyclicBarrier startingBarrier = new CyclicBarrier(CREATE_TASK + DELETE_TASK);
-    CyclicBarrier preparationAssertBarrier = new CyclicBarrier(MAIN_TASK + DELETE_TASK);
-    CountDownLatch endingLatch = new CountDownLatch(CREATE_TASK + DELETE_TASK);
-    AtomicReference<RepositoryNode> createdNode = new AtomicReference<>();
-    AtomicReference<RepositoryNode> nodeToDelete = new AtomicReference<>();
-
-    execute(() -> {
-      LOGGER.debug("Create task: task started");
-      RepositoryNode node = buildNode(departmentName, date).build();
-
-      try {
-        // Wait for every task to be ready for launching parallel task execution
-        startingBarrier.await(10, TimeUnit.SECONDS);
-
-        LOGGER.debug("Create task: node creation start");
-        createNode(node);
-        LOGGER.debug("Create task: node creation end");
-        createdNode.set(node);
-      } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-        LOGGER.error("Create task: could not create node", e);
-      }
-    }, endingLatch);
-
-    execute(() -> {
-      LOGGER.debug("Delete task: task started");
-      RepositoryNode node = buildNode(departmentName, date)
-          // Do not archive node, this could generate contention on creating user trashcan
-          .aspect(ContentModel.ASPECT_TEMPORARY)
-          .build();
-
-      try {
-        LOGGER.debug("Delete task: creating node that will be deleted");
-        createNode(node);
-        nodeToDelete.set(node);
-
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
-        // Wait for assertion on created nodes taking place in main task
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
-
-        // Wait for every task to be ready for launching parallel task execution
-        startingBarrier.await(10, TimeUnit.SECONDS);
-
-        LOGGER.debug("Delete task: node deletion start");
-        deleteNode(node);
-        LOGGER.debug("Delete task: node deletion end");
-      } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-        LOGGER.error("Delete task: could not delete node", e);
-      }
-    }, endingLatch);
-
-    // Wait for node creation to finish and then assert node is indeed created
-    preparationAssertBarrier.await();
-    assertThat(getPath(nodeToDelete.get())).isEqualTo(buildNodePath(departmentName, date));
-    preparationAssertBarrier.await();
-
-    // Wait for every task to finish job before asserting results
-    endingLatch.await();
-
-    LOGGER.debug("All tasks are done, starting assertions");
-
-    // Assert all tasks were ready for parallel task execution
-    assertThat(startingBarrier.isBroken()).isFalse();
-
-    assertThat(getPath(createdNode.get())).isEqualTo(buildNodePath(departmentName, date));
-
-    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef())).isFalse();
-    NodeRef nodeToDeleteParent = nodeToDelete.get().getParent();
-    if (nodeToDeleteParent.equals(createdNode.get().getParent())) {
-      assertThat(nodeService.exists(nodeToDeleteParent)).isTrue();
-      NodeRef nodeToDeleteGrandParent = nodeService.getPrimaryParent(nodeToDeleteParent).getParentRef();
-      assertThat(nodeService.exists(nodeToDeleteGrandParent)).isTrue();
-    } else {
-      assertThat(nodeService.exists(nodeToDeleteParent)).isFalse();
-    }
+    createAndDeleteNodesImpl();
   }
 
   /**

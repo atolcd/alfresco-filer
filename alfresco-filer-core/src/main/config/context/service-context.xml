@@ -74,6 +74,7 @@
   <bean id="filerUpdateServiceImpl" parent="abstractBaseCopyService"
       class="com.atolcd.alfresco.filer.core.service.impl.FilerUpdateServiceImpl">
     <property name="filerModelService" ref="filerModelService"/>
+    <property name="filerFolderService" ref="filerFolderService"/>
     <property name="propertyInheritanceService" ref="filer.propertyInheritanceService"/>
     <property name="nodeService" ref="NodeService"/>
   </bean>
