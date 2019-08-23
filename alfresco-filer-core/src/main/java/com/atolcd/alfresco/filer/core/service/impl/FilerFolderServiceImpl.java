@@ -65,6 +65,17 @@ public class FilerFolderServiceImpl implements FilerFolderService {
   }
 
   @Override
+  public void deleteFolder(final NodeRef nodeRef) {
+    // Node could be part of a hierarchy deletion, in this case it will be deleted that way
+    if (!nodeService.hasAspect(nodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+      // In case filerSegment is a fileable too
+      filerModelService.runWithoutFileableBehaviour(nodeRef, () -> {
+        nodeService.deleteNode(nodeRef);
+      });
+    }
+  }
+
+  @Override
   public void lockFolder(final NodeRef nodeRef) {
     Long nodeId = nodeDAO.getNodePair(nodeRef).getFirst();
     filerModelService.runWithoutBehaviours(nodeRef, () -> {

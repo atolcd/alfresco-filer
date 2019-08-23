@@ -14,5 +14,7 @@ public interface FilerFolderService {
 
   void updateFolder(RepositoryNode node, Consumer<NodeRef> onGet, Consumer<NodeRef> onCreate);
 
+  void deleteFolder(NodeRef nodeRef);
+
   void lockFolder(NodeRef nodeRef);
 }

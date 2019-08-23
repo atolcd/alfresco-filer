@@ -125,32 +125,26 @@ public class FilerOperationServiceImpl implements FilerOperationService {
       // Lock it, to prevent any concurrent removal that may fail to find that it became empty
       // Indeed, another thread can be deleting the last child but may have not committed yet
       filerFolderService.lockFolder(nodeRef);
-      // Check that it has no child anymore
-      if (nodeService.getChildAssocs(nodeRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL).isEmpty()) {
-        // Node could be part of a hierarchy deletion, in this case it will be deleted that way
-        doDeleteSegment(nodeRef);
-      }
+      deleteEmptySegment(nodeRef);
     }
   }
 
-  private void doDeleteSegment(final NodeRef nodeRef) {
-    // Get parent nodeRef before deleting child... so the association still exists
-    NodeRef parent = nodeService.getPrimaryParent(nodeRef).getParentRef();
-    if (!nodeService.hasAspect(nodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+  private void deleteEmptySegment(final NodeRef nodeRef) {
+    // Check that it has no child anymore
+    if (nodeService.getChildAssocs(nodeRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL).isEmpty()) {
+      // Get parent nodeRef before deleting child... so the association still exists
+      NodeRef parent = nodeService.getPrimaryParent(nodeRef).getParentRef();
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Deleting empty filer segment: {}{node={}, path=\"{}\"}",
             nodeService.getProperty(nodeRef, ContentModel.PROP_NAME),
             nodeRef.getId(),
             nodeService.getPath(nodeRef).toDisplayPath(nodeService, permissionService));
       }
-      // In case filerSegment is a fileable too
-      filerModelService.runWithoutFileableBehaviour(nodeRef, () -> {
-        nodeService.deleteNode(nodeRef);
-      });
-    }
-    // Check if parent is now also an empty filer (policies are not applied recursively)
-    if (parent != null) {
-      deleteSegmentRecursively(parent);
+      filerFolderService.deleteFolder(nodeRef);
+      // Check if parent is now also an empty filer (policies are not applied recursively)
+      if (parent != null) {
+        deleteSegmentRecursively(parent);
+      }
     }
   }
 
