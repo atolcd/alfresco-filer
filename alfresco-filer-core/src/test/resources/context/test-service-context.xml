@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <bean id="filerOperationService" class="org.mockito.Mockito" factory-method="spy" primary="true">
+    <constructor-arg ref="filerOperationServiceImpl"/>
+  </bean>
+
+  <bean id="filerFolderService" class="org.mockito.Mockito" factory-method="spy" primary="true">
+    <constructor-arg ref="filerFolderServiceImpl"/>
+  </bean>
+
+  <bean id="filerUpdateService" class="org.mockito.Mockito" factory-method="spy" primary="true">
+    <constructor-arg ref="filerUpdateServiceImpl"/>
+  </bean>
+
+  <bean id="filer.propertyInheritanceService" class="org.mockito.Mockito" factory-method="spy" primary="true">
+    <constructor-arg ref="filer.propertyInheritanceServiceImpl"/>
+  </bean>
+</beans>

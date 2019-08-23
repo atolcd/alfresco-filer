@@ -8,6 +8,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration({
   "classpath:alfresco/application-context.xml",
+  "classpath:context/test-service-context.xml",
   "classpath:context/test-model-context.xml",
   "classpath:context/test-action-context.xml"
 })
