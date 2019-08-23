@@ -11,6 +11,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
+import org.springframework.dao.ConcurrencyFailureException;
 
 import com.atolcd.alfresco.filer.core.model.FilerException;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
@@ -77,7 +79,13 @@ public class FilerFolderServiceImpl implements FilerFolderService {
 
   @Override
   public void lockFolder(final NodeRef nodeRef) {
-    Long nodeId = nodeDAO.getNodePair(nodeRef).getFirst();
+    Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+    // Node could have been deleted in another concurrent transaction
+    if (nodePair == null) {
+      throw new ConcurrencyFailureException("Could not lock node. Node does not exist: " + nodeRef);
+    }
+
+    Long nodeId = nodePair.getFirst();
     filerModelService.runWithoutBehaviours(nodeRef, () -> {
       // This will effectively lock the node preventing other transactions to go further
       // They will be blocked here and when they become free, they will throw a ConcurrencyFailureException
