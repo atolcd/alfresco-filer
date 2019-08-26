@@ -6,12 +6,14 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.AbstractBaseCopyService;
+import org.alfresco.service.cmr.repository.DuplicateChildNodeNameException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.ConcurrencyFailureException;
 
 import com.atolcd.alfresco.filer.core.model.PropertyInheritancePayload;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
@@ -79,7 +81,19 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
       AssociationCopyInfo targetInfo = getAssociationCopyInfo(nodeService, nodeRef, originalNode.getParent(), name, nameChanged);
       QName typeQName = targetInfo.getSourceParentAssoc().getTypeQName();
       nodeService.moveNode(nodeRef, resultingNode.getParent(), typeQName, targetInfo.getTargetAssocQName());
-      nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, name);
+      // During concurrent node update, name generation can produce multiple identical node names.
+      // If the problem occurs, we catch the specific exception related to duplicate node name
+      // and throw a ConcurrencyFailureException which will cause a retry of the whole transaction
+      // in RetryingTransactionHelper, that will run a name generation.
+      try {
+        nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, name);
+      } catch (DuplicateChildNodeNameException e) {
+        // We only pass the cause of the DuplicateChildNodeNameException to the ConcurrencyFailureException
+        // because DuplicateChildNodeNameException implements DoNotRetryException which would not trigger
+        // the retrying transaction mechanism.
+        throw new ConcurrencyFailureException("Could not rename node to: " + name, e.getCause()); // NOPMD - Preserve stack trace:
+                                                                                                  // above comment
+      }
     }
   }
 

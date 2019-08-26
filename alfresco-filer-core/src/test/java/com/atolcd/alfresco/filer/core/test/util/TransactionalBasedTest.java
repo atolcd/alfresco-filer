@@ -31,15 +31,19 @@ public class TransactionalBasedTest implements ApplicationContextAwareTest {
 
   protected final void createNode(final RepositoryNode node) {
     doInTransaction(() -> {
-      QName assocQName = QName.createQNameWithValidLocalName(NamespaceService.CONTENT_MODEL_1_0_URI, node.getName().get());
-      NodeRef nodeRef = nodeService
-          .createNode(node.getParent(), ContentModel.ASSOC_CONTAINS, assocQName, node.getType(), node.getProperties())
-          .getChildRef();
-      node.getAspects().forEach(aspect -> nodeService.addAspect(nodeRef, aspect, null));
-
-      node.setNodeRef(nodeRef);
-      bindTransactionListener(node);
+      createNodeImpl(node);
     });
+  }
+
+  protected void createNodeImpl(final RepositoryNode node) {
+    QName assocQName = QName.createQNameWithValidLocalName(NamespaceService.CONTENT_MODEL_1_0_URI, node.getName().get());
+    NodeRef nodeRef = nodeService
+        .createNode(node.getParent(), ContentModel.ASSOC_CONTAINS, assocQName, node.getType(), node.getProperties())
+        .getChildRef();
+    node.getAspects().forEach(aspect -> nodeService.addAspect(nodeRef, aspect, null));
+
+    node.setNodeRef(nodeRef);
+    bindTransactionListener(node);
   }
 
   protected final void fetchNode(final RepositoryNode node) {
