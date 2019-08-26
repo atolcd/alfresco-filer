@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <bean id="filer.test.service.filerTestActionService"
+      class="com.atolcd.alfresco.filer.core.test.domain.service.impl.FilerTestActionServiceImpl"/>
+
+  <!-- Actions -->
+
+  <bean id="filer.test.action.base" abstract="true" parent="filer.action.base">
+    <property name="actionService" ref="filer.test.service.filerTestActionService"/>
+  </bean>
+
+  <!-- Department -->
+
+  <bean id="filer.action.department.folder" parent="filer.test.action.base"
+      class="com.atolcd.alfresco.filer.core.test.domain.action.DepartmentFolderFilerAction"/>
+
+  <bean id="filer.action.department.content" parent="filer.test.action.base"
+      class="com.atolcd.alfresco.filer.core.test.domain.action.DepartmentContentFilerAction"/>
+
+  <!-- Denied -->
+
+  <bean id="filer.action.denied" parent="filer.test.action.base"
+      class="com.atolcd.alfresco.filer.core.test.domain.action.DeniedFilerAction"/>
+
+</beans>

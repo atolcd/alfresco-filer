@@ -7,6 +7,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(PostgreSQLExtension.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration({
-  "classpath:alfresco/application-context.xml"
+  "classpath:alfresco/application-context.xml",
+  "classpath:context/test-model-context.xml",
+  "classpath:context/test-action-context.xml"
 })
 public interface ApplicationContextAwareTest {}
