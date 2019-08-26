@@ -12,23 +12,15 @@ import org.alfresco.service.cmr.repository.StoreRef;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.atolcd.alfresco.filer.core.test.util.PostgreSQLExtension;
+import com.atolcd.alfresco.filer.core.test.util.ApplicationContextAwareTest;
 
-@ExtendWith(PostgreSQLExtension.class)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration({
-  "classpath:alfresco/application-context.xml"
-})
 @Transactional
-public class ContextStartupTest {
+public class ContextStartupTest implements ApplicationContextAwareTest {
 
   @Autowired
   @Qualifier("NodeService")
