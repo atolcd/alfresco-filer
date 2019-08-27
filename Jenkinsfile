@@ -13,8 +13,8 @@ pipeline {
     pollSCM ''
   }
   options {
-    // LogRotator will keep the 10 most recents jobs and retain the artifacts only for the 2 latest
-    buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '2'))
+    // LogRotator will keep the 20 most recents jobs and retain the artifacts only for the 2 latest
+    buildDiscarder(logRotator(numToKeepStr: '20', artifactNumToKeepStr: '2'))
   }
   parameters {
     string(name: 'MAVEN_OPTIONS', defaultValue: '', description: 'Optional parameters to be added to the mvn command line')
