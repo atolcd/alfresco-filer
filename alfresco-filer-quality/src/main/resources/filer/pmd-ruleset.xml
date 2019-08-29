@@ -77,4 +77,21 @@
                 value="ClassOrInterfaceBody/ClassOrInterfaceBodyDeclaration/Annotation[@AnnotationName='RepeatedTest']"/>
     </properties>
   </rule>
+  <!-- Do not limit import number for tests -->
+  <rule ref="category/java/design.xml/ExcessiveImports">
+    <properties>
+      <property name="violationSuppressXPath"
+                value="TypeDeclaration/ClassOrInterfaceDeclaration[matches(@Image, '^.*Test$')]"/>
+    </properties>
+  </rule>
+  <!-- Do not limit Mockito static import  -->
+  <rule ref="category/java/codestyle.xml/TooManyStaticImports">
+    <properties>
+      <property name="xpath">
+        <value><![CDATA[
+          .[count(ImportDeclaration[@Static = 'true' and not(matches(@PackageName, '^org.mockito.*$'))]) > $maximumStaticImports]
+        ]]></value>
+      </property>
+    </properties>
+  </rule>
 </ruleset>
