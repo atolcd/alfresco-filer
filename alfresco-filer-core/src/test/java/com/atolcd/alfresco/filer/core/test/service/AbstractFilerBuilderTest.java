@@ -1,6 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.service;
 
-import static com.atolcd.alfresco.filer.core.test.util.NodeRefUtils.randomNodeRef;
+import static com.atolcd.alfresco.filer.core.test.framework.util.NodeRefUtils.randomNodeRef;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 

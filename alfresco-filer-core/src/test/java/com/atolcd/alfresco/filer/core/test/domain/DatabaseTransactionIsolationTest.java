@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.service.FilerOperationService;
-import com.atolcd.alfresco.filer.core.test.util.AutowiredMockAwareMockitoExtension;
+import com.atolcd.alfresco.filer.core.test.framework.AutowiredMockAwareMockitoExtension;
 
 /**
  * Verify database's transaction isolation

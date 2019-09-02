@@ -1,4 +1,4 @@
-package com.atolcd.alfresco.filer.core.test.util;
+package com.atolcd.alfresco.filer.core.test.framework;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -17,7 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 
-public class TransactionalBasedTest implements ApplicationContextAwareTest {
+@ApplicationContextAwareTest
+public class TransactionalBasedTest {
 
   @Autowired
   private TransactionService transactionService;

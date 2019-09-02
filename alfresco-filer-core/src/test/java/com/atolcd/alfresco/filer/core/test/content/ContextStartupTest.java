@@ -17,10 +17,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.atolcd.alfresco.filer.core.test.util.ApplicationContextAwareTest;
+import com.atolcd.alfresco.filer.core.test.framework.ApplicationContextAwareTest;
 
+@ApplicationContextAwareTest
 @Transactional
-public class ContextStartupTest implements ApplicationContextAwareTest {
+public class ContextStartupTest {
 
   @Autowired
   @Qualifier("NodeService")
@@ -30,12 +31,12 @@ public class ContextStartupTest implements ApplicationContextAwareTest {
   private AuthenticationComponent authenticationComponent;
 
   @BeforeEach
-  public void setUpTest() {
+  public void initAuthorization() {
     authenticationComponent.setSystemUserAsCurrentUser();
   }
 
   @AfterEach
-  public void tearDown() {
+  public void clearAuthorization() {
     authenticationComponent.clearCurrentSecurityContext();
   }
 

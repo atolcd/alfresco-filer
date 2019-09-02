@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
-import com.atolcd.alfresco.filer.core.test.util.SiteBasedTest;
+import com.atolcd.alfresco.filer.core.test.framework.SiteBasedTest;
 
 public class DepartmentFolderFilerActionTest extends SiteBasedTest {
 

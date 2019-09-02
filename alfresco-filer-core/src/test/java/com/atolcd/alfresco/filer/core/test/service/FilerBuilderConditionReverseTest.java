@@ -1,6 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.service;
 
-import static com.atolcd.alfresco.filer.core.test.util.NodeRefUtils.randomNodeRef;
+import static com.atolcd.alfresco.filer.core.test.framework.util.NodeRefUtils.randomNodeRef;
 import static java.util.UUID.randomUUID;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;

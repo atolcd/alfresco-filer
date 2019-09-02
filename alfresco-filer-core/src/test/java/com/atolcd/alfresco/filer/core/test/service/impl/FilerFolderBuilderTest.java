@@ -1,6 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.service.impl;
 
-import static com.atolcd.alfresco.filer.core.test.util.NodeRefUtils.randomNodeRef;
+import static com.atolcd.alfresco.filer.core.test.framework.util.NodeRefUtils.randomNodeRef;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.service.FilerFolderService;
 import com.atolcd.alfresco.filer.core.service.FilerUpdateService;
-import com.atolcd.alfresco.filer.core.test.util.AutowiredMockAwareMockitoExtension;
+import com.atolcd.alfresco.filer.core.test.framework.AutowiredMockAwareMockitoExtension;
 
 /**
  * This test check that the (possibly future) parent node of a fileable node is effectively locked before attempting to move or

@@ -21,8 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
-import com.atolcd.alfresco.filer.core.test.util.ApplicationContextAwareTest;
-import com.atolcd.alfresco.filer.core.test.util.SiteBasedTest;
+import com.atolcd.alfresco.filer.core.test.framework.ApplicationContextAwareTest;
+import com.atolcd.alfresco.filer.core.test.framework.SiteBasedTest;
 
 public class DepartmentContentFilerActionTest extends SiteBasedTest {
 
@@ -33,9 +33,10 @@ public class DepartmentContentFilerActionTest extends SiteBasedTest {
   private NodeService nodeService;
 
   @Nested
-  // Re-implement ApplicationContextAwareTest as Spring does not find the configuration of nested class from the enclosing class
+  // @ApplicationContextAwareTest is necessary as Spring does not find the configuration of nested class from the enclosing class
   // See https://github.com/spring-projects/spring-framework/issues/19930
-  public class DepartmentDocument implements ApplicationContextAwareTest {
+  @ApplicationContextAwareTest
+  public class DepartmentDocument {
 
     @Test
     public void filerAspectHierarchy() {

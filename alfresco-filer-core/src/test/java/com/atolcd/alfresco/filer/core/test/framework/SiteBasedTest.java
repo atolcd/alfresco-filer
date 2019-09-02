@@ -1,4 +1,4 @@
-package com.atolcd.alfresco.filer.core.test.util;
+package com.atolcd.alfresco.filer.core.test.framework;
 
 import static java.util.UUID.randomUUID;
 

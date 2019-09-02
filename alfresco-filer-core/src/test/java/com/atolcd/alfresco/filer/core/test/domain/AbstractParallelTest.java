@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.model.impl.RepositoryNodeBuilder;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
-import com.atolcd.alfresco.filer.core.test.util.SiteBasedTest;
+import com.atolcd.alfresco.filer.core.test.framework.SiteBasedTest;
 
 /**
  * Provide base class for parallel tests of {@linkplain com.atolcd.alfresco.filer.core.model.FilerAction Filer actions}. Assert

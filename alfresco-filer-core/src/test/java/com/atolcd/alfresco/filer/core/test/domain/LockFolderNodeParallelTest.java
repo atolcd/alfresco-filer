@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.service.FilerOperationService;
 import com.atolcd.alfresco.filer.core.service.FilerUpdateService;
-import com.atolcd.alfresco.filer.core.test.util.AutowiredMockAwareMockitoExtension;
+import com.atolcd.alfresco.filer.core.test.framework.AutowiredMockAwareMockitoExtension;
 
 /**
  * During node creation or updating, when trying to lock the parent node, this parent one could have been already deleted in
