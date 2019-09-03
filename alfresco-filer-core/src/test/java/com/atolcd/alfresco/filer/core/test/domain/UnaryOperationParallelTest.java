@@ -23,8 +23,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
@@ -35,8 +33,6 @@ import com.atolcd.alfresco.filer.core.test.framework.SiteBasedTest;
  * Test multiple executions in parallel of one operation
  */
 public class UnaryOperationParallelTest extends AbstractParallelTest {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(UnaryOperationParallelTest.class);
 
   @Autowired
   private NodeService nodeService;
@@ -51,19 +47,16 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
     List<RepositoryNode> results = Collections.synchronizedList(new ArrayList<>());
 
     for (int i = 0; i < NUM_THREAD_TO_LAUNCH; i++) {
-      execute(() -> {
+      execute(endingLatch, () -> {
         RepositoryNode node = buildNode(departmentName, date).build();
 
-        try {
-          // Wait for every thread to be ready to launch parallel createNode
-          startingBarrier.await(10, TimeUnit.SECONDS);
+        // Wait for every thread to be ready to launch parallel createNode
+        startingBarrier.await(10, TimeUnit.SECONDS);
 
-          createNode(node);
-          results.add(node);
-        } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-          LOGGER.error("Could not create node", e);
-        }
-      }, endingLatch);
+        createNode(node);
+        results.add(node);
+        return null;
+      });
     }
 
     // Wait for every thread to finish job before asserting results
@@ -91,34 +84,31 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
     Set<NodeRef> closestNonSegmentAncestor = Collections.synchronizedSet(new HashSet<>());
 
     for (int i = 0; i < NUM_THREAD_TO_LAUNCH; i++) {
-      execute(() -> {
+      execute(endingLatch, () -> {
         RepositoryNode node = buildNode(departmentName, sourceDate).build();
 
-        try {
-          createNode(node);
-          results.add(node);
+        createNode(node);
+        results.add(node);
 
-          preparationAssertBarrier.await(10, TimeUnit.SECONDS);
-          // Wait for assertion on created nodes taking place in main thread
-          preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+        // Wait for assertion on created nodes taking place in main thread
+        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-          segmentAncestors.add(node.getParent());
-          NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent()).getParentRef();
-          segmentAncestors.add(grandParentRef);
-          NodeRef greatGrandParentRef = nodeService.getPrimaryParent(grandParentRef).getParentRef();
-          closestNonSegmentAncestor.add(greatGrandParentRef);
+        segmentAncestors.add(node.getParent());
+        NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent()).getParentRef();
+        segmentAncestors.add(grandParentRef);
+        NodeRef greatGrandParentRef = nodeService.getPrimaryParent(grandParentRef).getParentRef();
+        closestNonSegmentAncestor.add(greatGrandParentRef);
 
-          Map<QName, Serializable> dateProperty = Collections.singletonMap(FilerTestConstants.ImportedAspect.PROP_DATE,
-              Date.from(targetDate.atZone(ZoneId.systemDefault()).toInstant()));
+        Map<QName, Serializable> dateProperty = Collections.singletonMap(FilerTestConstants.ImportedAspect.PROP_DATE,
+            Date.from(targetDate.atZone(ZoneId.systemDefault()).toInstant()));
 
-          // Wait for every thread to be ready to launch parallel updateNode
-          startingBarrier.await(10, TimeUnit.SECONDS);
+        // Wait for every thread to be ready to launch parallel updateNode
+        startingBarrier.await(10, TimeUnit.SECONDS);
 
-          updateNode(node, dateProperty);
-        } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-          LOGGER.error("Could not update node", e);
-        }
-      }, endingLatch);
+        updateNode(node, dateProperty);
+        return null;
+      });
     }
 
     // Wait for node creation to finish and then assert all nodes are well created
@@ -156,33 +146,30 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
     Set<NodeRef> closestNonSegmentAncestor = Collections.synchronizedSet(new HashSet<>());
 
     for (int i = 0; i < NUM_THREAD_TO_LAUNCH; i++) {
-      execute(() -> {
+      execute(endingLatch, () -> {
         RepositoryNode node = buildNode(departmentName, date)
           .aspect(ContentModel.ASPECT_TEMPORARY) // Do not archive node, this could generate contention on creating user trashcan
           .build();
 
-        try {
-          createNode(node);
-          results.add(node);
+        createNode(node);
+        results.add(node);
 
-          preparationAssertBarrier.await(10, TimeUnit.SECONDS);
-          // Wait for assertion on created nodes taking place in main thread
-          preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+        // Wait for assertion on created nodes taking place in main thread
+        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-          segmentAncestors.add(node.getParent());
-          NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent()).getParentRef();
-          segmentAncestors.add(grandParentRef);
-          NodeRef greatGrandParentRef = nodeService.getPrimaryParent(grandParentRef).getParentRef();
-          closestNonSegmentAncestor.add(greatGrandParentRef);
+        segmentAncestors.add(node.getParent());
+        NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent()).getParentRef();
+        segmentAncestors.add(grandParentRef);
+        NodeRef greatGrandParentRef = nodeService.getPrimaryParent(grandParentRef).getParentRef();
+        closestNonSegmentAncestor.add(greatGrandParentRef);
 
-          // Wait for every thread to be ready to launch parallel deleteNode
-          startingBarrier.await(10, TimeUnit.SECONDS);
+        // Wait for every thread to be ready to launch parallel deleteNode
+        startingBarrier.await(10, TimeUnit.SECONDS);
 
-          deleteNode(node);
-        } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-          LOGGER.error("Could not delete node", e);
-        }
-      }, endingLatch);
+        deleteNode(node);
+        return null;
+      });
     }
 
     // Wait for node creation to finish and then assert all nodes are well created

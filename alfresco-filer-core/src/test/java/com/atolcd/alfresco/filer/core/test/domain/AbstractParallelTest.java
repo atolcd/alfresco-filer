@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -17,6 +18,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -41,8 +43,6 @@ import com.atolcd.alfresco.filer.core.test.framework.SiteBasedTest;
 @Execution(ExecutionMode.SAME_THREAD)
 public abstract class AbstractParallelTest extends SiteBasedTest {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractParallelTest.class);
-
   protected static final int NUM_THREAD_TO_LAUNCH = Runtime.getRuntime().availableProcessors() * 2;
 
   protected static final int MAIN_TASK = 1;
@@ -50,24 +50,36 @@ public abstract class AbstractParallelTest extends SiteBasedTest {
   protected static final int UPDATE_TASK = 1;
   protected static final int DELETE_TASK = 1;
 
+  private final Logger logger = LoggerFactory.getLogger(getClass());
+
   @Autowired
   private NodeService nodeService;
 
-  private final ExecutorService executor = Executors.newFixedThreadPool(NUM_THREAD_TO_LAUNCH);
+  private static ExecutorService executor;
 
   @BeforeAll
-  public static void assertParallelismIsAvailable() {
+  public static void preconditionAndStartExecutor() {
+    // Assert required level of parallelism is available
     assertThat(Runtime.getRuntime().availableProcessors()).isGreaterThan(1);
+
+    executor = Executors.newFixedThreadPool(NUM_THREAD_TO_LAUNCH);
   }
 
-  protected void execute(final Runnable task, final CountDownLatch endingLatch) {
+  @AfterAll
+  public static void stopExecutor() {
+    executor.shutdown();
+  }
+
+  protected void execute(final CountDownLatch endingLatch, final Callable<Void> task) {
     executor.submit(() -> {
       AuthenticationUtil.setRunAsUserSystem();
       try {
-        task.run();
+        task.call();
+      } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
+        logger.error("Parallel testing error", e);
       } finally {
-        endingLatch.countDown();
         AuthenticationUtil.clearCurrentSecurityContext();
+        endingLatch.countDown();
       }
     });
   }
@@ -89,49 +101,43 @@ public abstract class AbstractParallelTest extends SiteBasedTest {
     AtomicReference<RepositoryNode> createdNode = new AtomicReference<>();
     AtomicReference<RepositoryNode> nodeToDelete = new AtomicReference<>();
 
-    execute(() -> {
-      LOGGER.debug("Create task: task started");
+    execute(endingLatch, () -> {
+      logger.debug("Create task: task started");
       RepositoryNode node = buildNode(departmentName, date).build();
 
-      try {
-        // Wait for every task to be ready for launching parallel task execution
-        startingBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for every task to be ready for launching parallel task execution
+      startingBarrier.await(10, TimeUnit.SECONDS);
 
-        LOGGER.debug("Create task: node creation start");
-        createNode(node);
-        LOGGER.debug("Create task: node creation end");
-        createdNode.set(node);
-      } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-        LOGGER.error("Create task: could not create node", e);
-      }
-    }, endingLatch);
+      logger.debug("Create task: node creation start");
+      createNode(node);
+      logger.debug("Create task: node creation end");
+      createdNode.set(node);
+      return null;
+    });
 
-    execute(() -> {
-      LOGGER.debug("Delete task: task started");
+    execute(endingLatch, () -> {
+      logger.debug("Delete task: task started");
       RepositoryNode node = buildNode(departmentName, date)
           // Do not archive node, this could generate contention on creating user trashcan
           .aspect(ContentModel.ASPECT_TEMPORARY)
           .build();
 
-      try {
-        LOGGER.debug("Delete task: creating node that will be deleted");
-        createNode(node);
-        nodeToDelete.set(node);
+      logger.debug("Delete task: creating node that will be deleted");
+      createNode(node);
+      nodeToDelete.set(node);
 
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
-        // Wait for assertion on created nodes taking place in main task
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+      preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for assertion on created nodes taking place in main task
+      preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-        // Wait for every task to be ready for launching parallel task execution
-        startingBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for every task to be ready for launching parallel task execution
+      startingBarrier.await(10, TimeUnit.SECONDS);
 
-        LOGGER.debug("Delete task: node deletion start");
-        deleteNode(node);
-        LOGGER.debug("Delete task: node deletion end");
-      } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-        LOGGER.error("Delete task: could not delete node", e);
-      }
-    }, endingLatch);
+      logger.debug("Delete task: node deletion start");
+      deleteNode(node);
+      logger.debug("Delete task: node deletion end");
+      return null;
+    });
 
     // Wait for node creation to finish and then assert node is indeed created
     preparationAssertBarrier.await();
@@ -141,7 +147,7 @@ public abstract class AbstractParallelTest extends SiteBasedTest {
     // Wait for every task to finish job before asserting results
     endingLatch.await();
 
-    LOGGER.debug("All tasks are done, starting assertions");
+    logger.debug("All tasks are done, starting assertions");
 
     // Assert all tasks were ready for parallel task execution
     assertThat(startingBarrier.isBroken()).isFalse();

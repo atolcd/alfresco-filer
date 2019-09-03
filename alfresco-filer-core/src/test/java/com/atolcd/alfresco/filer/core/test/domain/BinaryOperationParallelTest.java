@@ -84,59 +84,53 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
     AtomicReference<RepositoryNode> nodeToUpdate = new AtomicReference<>();
     AtomicReference<RepositoryNode> nodeToDelete = new AtomicReference<>();
 
-    execute(() -> {
+    execute(endingLatch, () -> {
       LOGGER.debug("Update task: task started");
       RepositoryNode node = buildNode(departmentName, sourceDate).build();
 
-      try {
-        LOGGER.debug("Update task: creating node that will be updated");
-        createNode(node);
-        nodeToUpdate.set(node);
+      LOGGER.debug("Update task: creating node that will be updated");
+      createNode(node);
+      nodeToUpdate.set(node);
 
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
-        // Wait for assertion on created nodes taking place in main task
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+      preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for assertion on created nodes taking place in main task
+      preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-        Map<QName, Serializable> dateProperty = Collections.singletonMap(FilerTestConstants.ImportedAspect.PROP_DATE,
-            Date.from(targetDate.atZone(ZoneId.systemDefault()).toInstant()));
+      Map<QName, Serializable> dateProperty = Collections.singletonMap(FilerTestConstants.ImportedAspect.PROP_DATE,
+          Date.from(targetDate.atZone(ZoneId.systemDefault()).toInstant()));
 
-        // Wait for every task to be ready for launching parallel task execution
-        startingBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for every task to be ready for launching parallel task execution
+      startingBarrier.await(10, TimeUnit.SECONDS);
 
-        LOGGER.debug("Update task: node creation start");
-        updateNode(node, dateProperty);
-        LOGGER.debug("Update task: node creation end");
-      } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-        LOGGER.error("Update task: could not update node", e);
-      }
-    }, endingLatch);
+      LOGGER.debug("Update task: node creation start");
+      updateNode(node, dateProperty);
+      LOGGER.debug("Update task: node creation end");
+      return null;
+    });
 
-    execute(() -> {
+    execute(endingLatch, () -> {
       LOGGER.debug("Delete task: task started");
       RepositoryNode node = buildNode(departmentName, sourceDate)
           // Do not archive node, this could generate contention on creating user trashcan
           .aspect(ContentModel.ASPECT_TEMPORARY)
           .build();
 
-      try {
-        LOGGER.debug("Delete task: creating node that will be deleted");
-        createNode(node);
-        nodeToDelete.set(node);
+      LOGGER.debug("Delete task: creating node that will be deleted");
+      createNode(node);
+      nodeToDelete.set(node);
 
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
-        // Wait for assertion on created nodes taking place in main task
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+      preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for assertion on created nodes taking place in main task
+      preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-        // Wait for every task to be ready for launching parallel task execution
-        startingBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for every task to be ready for launching parallel task execution
+      startingBarrier.await(10, TimeUnit.SECONDS);
 
-        LOGGER.debug("Delete task: node deletion start");
-        deleteNode(node);
-        LOGGER.debug("Delete task: node deletion end");
-      } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-        LOGGER.error("Delete task: could not delete node", e);
-      }
-    }, endingLatch);
+      LOGGER.debug("Delete task: node deletion start");
+      deleteNode(node);
+      LOGGER.debug("Delete task: node deletion end");
+      return null;
+    });
 
     // Wait for node creation to finish and then assert all nodes are indeed created
     preparationAssertBarrier.await();
@@ -181,59 +175,53 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
     AtomicReference<RepositoryNode> nodeToUpdate = new AtomicReference<>();
     AtomicReference<RepositoryNode> nodeToDelete = new AtomicReference<>();
 
-    execute(() -> {
+    execute(endingLatch, () -> {
       LOGGER.debug("Update task: task started");
       RepositoryNode node = buildNode(departmentName, sourceDate).build();
 
-      try {
-        LOGGER.debug("Update task: creating node that will be updated");
-        createNode(node);
-        nodeToUpdate.set(node);
+      LOGGER.debug("Update task: creating node that will be updated");
+      createNode(node);
+      nodeToUpdate.set(node);
 
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
-        // Wait for assertion on created nodes taking place in main task
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+      preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for assertion on created nodes taking place in main task
+      preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-        Map<QName, Serializable> dateProperty = Collections.singletonMap(FilerTestConstants.ImportedAspect.PROP_DATE,
-            Date.from(targetDate.atZone(ZoneId.systemDefault()).toInstant()));
+      Map<QName, Serializable> dateProperty = Collections.singletonMap(FilerTestConstants.ImportedAspect.PROP_DATE,
+          Date.from(targetDate.atZone(ZoneId.systemDefault()).toInstant()));
 
-        // Wait for every task to be ready for launching parallel task execution
-        startingBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for every task to be ready for launching parallel task execution
+      startingBarrier.await(10, TimeUnit.SECONDS);
 
-        LOGGER.debug("Update task: node creation start");
-        updateNode(node, dateProperty);
-        LOGGER.debug("Update task: node creation end");
-      } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-        LOGGER.error("Update task: could not update node", e);
-      }
-    }, endingLatch);
+      LOGGER.debug("Update task: node creation start");
+      updateNode(node, dateProperty);
+      LOGGER.debug("Update task: node creation end");
+      return null;
+    });
 
-    execute(() -> {
+    execute(endingLatch, () -> {
       LOGGER.debug("Delete task: task started");
       RepositoryNode node = buildNode(departmentName, targetDate)
           // Do not archive node, this could generate contention on creating user trashcan
           .aspect(ContentModel.ASPECT_TEMPORARY)
           .build();
 
-      try {
-        LOGGER.debug("Delete task: creating node that will be deleted");
-        createNode(node);
-        nodeToDelete.set(node);
+      LOGGER.debug("Delete task: creating node that will be deleted");
+      createNode(node);
+      nodeToDelete.set(node);
 
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
-        // Wait for assertion on created nodes taking place in main task
-        preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+      preparationAssertBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for assertion on created nodes taking place in main task
+      preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-        // Wait for every task to be ready for launching parallel task execution
-        startingBarrier.await(10, TimeUnit.SECONDS);
+      // Wait for every task to be ready for launching parallel task execution
+      startingBarrier.await(10, TimeUnit.SECONDS);
 
-        LOGGER.debug("Delete task: node deletion start");
-        deleteNode(node);
-        LOGGER.debug("Delete task: node deletion end");
-      } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-        LOGGER.error("Delete task: could not delete node", e);
-      }
-    }, endingLatch);
+      LOGGER.debug("Delete task: node deletion start");
+      deleteNode(node);
+      LOGGER.debug("Delete task: node deletion end");
+      return null;
+    });
 
     // Wait for node creation to finish and then assert all nodes are indeed created
     preparationAssertBarrier.await();

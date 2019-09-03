@@ -42,33 +42,30 @@ public class DuplicateNameParallelTest extends AbstractParallelTest {
 
     for (int i = 0; i < NUM_THREAD_TO_LAUNCH; i++) {
       final int taskNumber = i;
-      execute(() -> {
+      execute(endingLatch, () -> {
         LOGGER.debug("Task {}: task started", taskNumber);
         RepositoryNode node = buildNode(departmentName, date).build();
 
-        try {
-          // Wait for every task to be ready for launching parallel task execution
-          startingBarrier.await(10, TimeUnit.SECONDS);
+        // Wait for every task to be ready for launching parallel task execution
+        startingBarrier.await(10, TimeUnit.SECONDS);
 
-          LOGGER.debug("Task {}: node creation start", taskNumber);
-          // Name generation and node creation must be in the same transaction as the whole transaction execution will be retried
-          // when there is an attempt to create nodes with duplicate name.
-          doInTransaction(() -> {
-            // Generate name based on a variable shared between all test threads
-            node.getProperties().put(ContentModel.PROP_NAME, "x" + Integer.toString(nodeNameSuffix.get()));
-            createNodeImpl(node);
-          });
-          LOGGER.debug("Task {}: node creation end", taskNumber);
+        LOGGER.debug("Task {}: node creation start", taskNumber);
+        // Name generation and node creation must be in the same transaction as the whole transaction execution will be retried
+        // when there is an attempt to create nodes with duplicate name.
+        doInTransaction(() -> {
+          // Generate name based on a variable shared between all test threads
+          node.getProperties().put(ContentModel.PROP_NAME, "x" + Integer.toString(nodeNameSuffix.get()));
+          createNodeImpl(node);
+        });
+        LOGGER.debug("Task {}: node creation end", taskNumber);
 
-          results.add(node);
+        results.add(node);
 
-          // Wait before incrementing suffix to let more chance to other thread to generate duplicate node name
-          TimeUnit.MILLISECONDS.sleep(250);
-          nodeNameSuffix.getAndIncrement();
-        } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-          LOGGER.error("Task " + taskNumber + ": could not create node", e);
-        }
-      }, endingLatch);
+        // Wait before incrementing suffix to let more chance to other thread to generate duplicate node name
+        TimeUnit.MILLISECONDS.sleep(250);
+        nodeNameSuffix.getAndIncrement();
+        return null;
+      });
     }
 
     // Wait for every task to finish job before asserting results
