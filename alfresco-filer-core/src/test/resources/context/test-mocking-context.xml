@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <bean id="mocking.dummy.impl"
+      class="com.atolcd.alfresco.filer.core.test.extension.AutowiredMockAwareMockitoExtensionTest.Dummy"/>
+
+  <bean id="mocking.dummy.spy" class="org.mockito.Mockito" factory-method="spy" primary="true">
+    <constructor-arg ref="mocking.dummy.impl"/>
+  </bean>
+</beans>
