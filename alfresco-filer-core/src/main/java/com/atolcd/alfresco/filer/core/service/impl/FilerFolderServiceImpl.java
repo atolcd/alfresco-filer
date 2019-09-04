@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -95,7 +96,12 @@ public class FilerFolderServiceImpl implements FilerFolderService {
   }
 
   private void doGetFolder(final RepositoryNode node, final Consumer<NodeRef> onGet) {
-    NodeRef nodeRef = nodeService.getChildByName(node.getParent(), ContentModel.ASSOC_CONTAINS, node.getName().get());
+    NodeRef nodeRef = null;
+    try {
+      nodeRef = nodeService.getChildByName(node.getParent(), ContentModel.ASSOC_CONTAINS, node.getName().get());
+    } catch (InvalidNodeRefException e) {
+      throw new ConcurrencyFailureException("Could not get node. Node does not exist: " + node.getParent(), e);
+    }
     if (nodeRef != null) {
       node.setNodeRef(nodeRef);
       afterGetFolder(node, onGet);
