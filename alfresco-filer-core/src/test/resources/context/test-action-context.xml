@@ -20,6 +20,11 @@
   <bean id="filer.action.department.content" parent="filer.test.action.base"
       class="com.atolcd.alfresco.filer.core.test.domain.action.DepartmentContentFilerAction"/>
 
+  <!-- Department management -->
+
+  <bean id="filer.action.department.management.content" parent="filer.test.action.base"
+      class="com.atolcd.alfresco.filer.core.test.domain.action.DepartmentManagementContentFilerAction"/>
+
   <!-- Denied -->
 
   <bean id="filer.action.denied" parent="filer.test.action.base"

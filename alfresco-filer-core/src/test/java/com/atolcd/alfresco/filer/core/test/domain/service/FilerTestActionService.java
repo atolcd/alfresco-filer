@@ -8,5 +8,7 @@ public interface FilerTestActionService {
 
   FilerFolderTypeBuilder departmentFolder(FilerBuilder builder);
 
+  FilerFolderTypeBuilder departmentManagementFolder(FilerBuilder builder);
+
   FilerFolderBuilder dateSegmentation(FilerFolderBuilder builder);
 }

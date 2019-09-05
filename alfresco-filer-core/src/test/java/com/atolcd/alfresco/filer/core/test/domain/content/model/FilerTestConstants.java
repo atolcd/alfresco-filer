@@ -24,8 +24,33 @@ public final class FilerTestConstants {
     public static final class Aspect { //NOPMD - name: not a utility class
       public static final QName NAME = QName.createQName(NAMESPACE_URI, "department");
       public static final QName PROP_NAME = QName.createQName(NAMESPACE_URI, "departmentName");
+      public static final QName PROP_ID = QName.createQName(NAMESPACE_URI, "departmentId");
 
       private Aspect() {}
+    }
+
+    public static final class Management {
+
+      public static final class FolderType {
+        public static final QName NAME = QName.createQName(NAMESPACE_URI, "departmentManagementFolder");
+
+        private FolderType() {}
+      }
+
+      public static final class DocumentType {
+        public static final QName NAME = QName.createQName(NAMESPACE_URI, "departmentManagementDocument");
+
+        private DocumentType() {}
+      }
+
+      public static final class Aspect { //NOPMD - name: not a utility class
+        public static final QName NAME = QName.createQName(NAMESPACE_URI, "departmentManagement");
+        public static final QName PROP_ID = QName.createQName(NAMESPACE_URI, "departmentManagementId");
+
+        private Aspect() {}
+      }
+
+      private Management() {}
     }
 
     private Department() {}

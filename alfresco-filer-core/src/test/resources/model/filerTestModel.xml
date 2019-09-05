@@ -30,6 +30,15 @@
       </mandatory-aspects>
     </type>
 
+    <!-- Department management - Folder -->
+    <type name="filerTest:departmentManagementFolder">
+      <title>Department management folder</title>
+      <parent>filerTest:departmentFolder</parent>
+      <mandatory-aspects>
+        <aspect>filerTest:departmentManagement</aspect>
+      </mandatory-aspects>
+    </type>
+
     <!-- Department - Document -->
     <type name="filerTest:departmentDocument">
       <title>Department document</title>
@@ -38,6 +47,15 @@
         <aspect>filer:fileable</aspect>
         <aspect>filerTest:department</aspect>
         <aspect>filerTest:imported</aspect>
+      </mandatory-aspects>
+    </type>
+
+    <!-- Department management - Document -->
+    <type name="filerTest:departmentManagementDocument">
+      <title>Department management document</title>
+      <parent>filerTest:departmentDocument</parent>
+      <mandatory-aspects>
+        <aspect>filerTest:departmentManagement</aspect>
       </mandatory-aspects>
     </type>
 
@@ -62,6 +80,21 @@
           <title>Department name</title>
           <type>d:text</type>
           <mandatory>true</mandatory>
+        </property>
+        <property name="filerTest:departmentId">
+          <title>Department ID</title>
+          <type>d:text</type>
+        </property>
+      </properties>
+    </aspect>
+
+    <aspect name="filerTest:departmentManagement">
+      <title>Department management</title>
+      <parent>filer:propertyInheritance</parent>
+      <properties>
+        <property name="filerTest:departmentManagementId">
+          <title>Department management id</title>
+          <type>d:text</type>
         </property>
       </properties>
     </aspect>

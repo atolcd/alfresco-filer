@@ -18,7 +18,16 @@ public class FilerTestActionServiceImpl implements FilerTestActionService {
         .folder()
             .named().with(SiteService.DOCUMENT_LIBRARY).get()
         .folder(FilerTestConstants.Department.FolderType.NAME)
+            .mandatoryPropertyInheritance(FilerTestConstants.Department.Aspect.NAME)
             .named().withProperty(FilerTestConstants.Department.Aspect.PROP_NAME);
+  }
+
+  @Override
+  public FilerFolderTypeBuilder departmentManagementFolder(final FilerBuilder builder) {
+    return builder.with(this::departmentFolder).getOrCreate()
+        .folder(FilerTestConstants.Department.Management.FolderType.NAME)
+            .mandatoryPropertyInheritance(FilerTestConstants.Department.Management.Aspect.NAME)
+            .named().withProperty(FilerTestConstants.Department.Management.Aspect.PROP_ID);
   }
 
   @Override
