@@ -19,4 +19,5 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
   "classpath:context/test-model-context.xml",
   "classpath:context/test-action-context.xml"
 })
-public @interface ApplicationContextAwareTest {}
+@ExtendWith(AuthenticationExtension.class)
+public @interface TestApplicationContext {}

@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.FilerException;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
-import com.atolcd.alfresco.filer.core.test.framework.SiteBasedTest;
+import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryProvider;
 
-public class DeniedFilerActionTest extends SiteBasedTest {
+public class DeniedFilerActionTest extends DocumentLibraryProvider {
 
   @Autowired
   private FilerModelService filerModelService;

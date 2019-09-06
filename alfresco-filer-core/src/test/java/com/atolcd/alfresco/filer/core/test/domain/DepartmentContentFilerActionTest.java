@@ -21,10 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
-import com.atolcd.alfresco.filer.core.test.framework.ApplicationContextAwareTest;
-import com.atolcd.alfresco.filer.core.test.framework.SiteBasedTest;
+import com.atolcd.alfresco.filer.core.test.framework.TestApplicationContext;
+import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryProvider;
 
-public class DepartmentContentFilerActionTest extends SiteBasedTest {
+public class DepartmentContentFilerActionTest extends DocumentLibraryProvider {
 
   @Autowired
   private FilerModelService filerModelService;
@@ -33,9 +33,9 @@ public class DepartmentContentFilerActionTest extends SiteBasedTest {
   private NodeService nodeService;
 
   @Nested
-  // @ApplicationContextAwareTest is necessary as Spring does not find the configuration of nested class from the enclosing class
+  // @TestApplicationContext is necessary as Spring does not find the configuration of nested class from the enclosing class
   // See https://github.com/spring-projects/spring-framework/issues/19930
-  @ApplicationContextAwareTest
+  @TestApplicationContext
   public class DepartmentDocument {
 
     @Test

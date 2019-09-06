@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -12,23 +11,17 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.transaction.TransactionListenerAdapter;
-import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 
-@ApplicationContextAwareTest
-public class TransactionalBasedTest {
+@TestApplicationContext
+public class RepositoryOperations {
 
   @Autowired
   private TransactionService transactionService;
   @Autowired
   private NodeService nodeService;
-
-  @AfterEach
-  public void clearAuthorization() {
-    AuthenticationUtil.clearCurrentSecurityContext();
-  }
 
   protected final void createNode(final RepositoryNode node) {
     doInTransaction(() -> {
@@ -76,7 +69,7 @@ public class TransactionalBasedTest {
     });
   }
 
-  protected final void bindTransactionListener(final RepositoryNode node) {
+  private void bindTransactionListener(final RepositoryNode node) {
     AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
       @Override
       public void afterCommit() {
@@ -94,5 +87,9 @@ public class TransactionalBasedTest {
       callback.run();
       return null;
     }, readOnly);
+  }
+
+  protected RepositoryOperations() {
+    // Prevent class instantiation
   }
 }

@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.model.impl.RepositoryNodeBuilder;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
-import com.atolcd.alfresco.filer.core.test.framework.SiteBasedTest;
+import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryProvider;
 
 /**
  * Provide base class for parallel tests of {@linkplain com.atolcd.alfresco.filer.core.model.FilerAction Filer actions}. Assert
@@ -41,7 +41,7 @@ import com.atolcd.alfresco.filer.core.test.framework.SiteBasedTest;
  * </p>
  */
 @Execution(ExecutionMode.SAME_THREAD)
-public abstract class AbstractParallelTest extends SiteBasedTest {
+public abstract class AbstractParallelTest extends DocumentLibraryProvider {
 
   protected static final int NUM_THREAD_TO_LAUNCH = Runtime.getRuntime().availableProcessors() * 2;
 
@@ -72,13 +72,11 @@ public abstract class AbstractParallelTest extends SiteBasedTest {
 
   protected void execute(final CountDownLatch endingLatch, final Callable<Void> task) {
     executor.submit(() -> {
-      AuthenticationUtil.setRunAsUserSystem();
       try {
-        task.call();
+        AuthenticationUtil.runAsSystem(() -> task.call());
       } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
         logger.error("Parallel testing error", e);
       } finally {
-        AuthenticationUtil.clearCurrentSecurityContext();
         endingLatch.countDown();
       }
     });

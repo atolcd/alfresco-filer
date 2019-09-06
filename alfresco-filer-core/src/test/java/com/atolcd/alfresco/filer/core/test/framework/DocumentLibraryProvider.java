@@ -22,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.model.impl.RepositoryNodeBuilder;
 
-public abstract class SiteBasedTest extends TransactionalBasedTest {
+public abstract class DocumentLibraryProvider extends RepositoryOperations {
 
-  private static final String NODE_PATH = SiteBasedTest.class + ".NODE_PATH";
+  private static final String NODE_PATH = DocumentLibraryProvider.class + ".NODE_PATH";
 
   @Autowired
   private TransactionService transactionService;
@@ -43,16 +43,17 @@ public abstract class SiteBasedTest extends TransactionalBasedTest {
   private void initSite() {
     String siteName = getSiteName();
 
-    doInTransaction(() -> {
-      AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+    AuthenticationUtil.runAs(() -> {
+      doInTransaction(() -> {
+        if (!siteService.hasSite(siteName)) {
+          siteService.createSite(siteName, siteName, siteName, siteName, SiteVisibility.PUBLIC);
+        }
 
-      if (!siteService.hasSite(siteName)) {
-        siteService.createSite(siteName, siteName, siteName, siteName, SiteVisibility.PUBLIC);
-      }
-
-      documentLibrary = SiteServiceImpl.getSiteContainer(siteName, SiteService.DOCUMENT_LIBRARY, true, siteService,
-        transactionService, taggingService);
-    });
+        documentLibrary = SiteServiceImpl.getSiteContainer(siteName, SiteService.DOCUMENT_LIBRARY, true, siteService,
+            transactionService, taggingService);
+      });
+      return null;
+    }, AuthenticationUtil.getAdminUserName());
   }
 
   protected String getSiteName() {
@@ -75,8 +76,7 @@ public abstract class SiteBasedTest extends TransactionalBasedTest {
 
   protected String buildSitePath() {
     return Paths
-        .get(nodeService.getPath(getDocumentLibrary()).toDisplayPath(nodeService, permissionService),
-            SiteService.DOCUMENT_LIBRARY)
+        .get(nodeService.getPath(documentLibrary).toDisplayPath(nodeService, permissionService), SiteService.DOCUMENT_LIBRARY)
         .toString();
   }
 

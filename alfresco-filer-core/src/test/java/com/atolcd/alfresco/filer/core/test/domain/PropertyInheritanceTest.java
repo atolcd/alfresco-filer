@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
-import com.atolcd.alfresco.filer.core.test.framework.SiteBasedTest;
+import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryProvider;
 
-public class PropertyInheritanceTest extends SiteBasedTest {
+public class PropertyInheritanceTest extends DocumentLibraryProvider {
 
   @Autowired
   private NodeService nodeService;
