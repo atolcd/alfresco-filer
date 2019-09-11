@@ -5,7 +5,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import com.atolcd.alfresco.filer.core.model.FilerEvent;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 
-public class PropertiesFilerScopeLoader extends AbstractFilerScopeLoader {
+public class PropertiesFilerScopeLoader extends EmptyFilerScopeLoader {
 
   private NodeService nodeService;
 

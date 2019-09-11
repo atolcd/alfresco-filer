@@ -7,7 +7,7 @@ import com.atolcd.alfresco.filer.core.model.FilerEvent;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 
-public class SiteFilerScopeLoader extends AbstractFilerScopeLoader {
+public class SiteFilerScopeLoader extends EmptyFilerScopeLoader {
 
   private SiteService siteService;
 

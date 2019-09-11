@@ -4,7 +4,11 @@ import com.atolcd.alfresco.filer.core.model.FilerEvent;
 
 public interface FilerScopeLoader {
 
-  void init(FilerEvent event);
+  default void init(FilerEvent event) {
+    // no op
+  }
 
-  void update(FilerEvent event);
+  default void update(FilerEvent event) {
+    // no op
+  }
 }
