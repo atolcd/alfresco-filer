@@ -29,7 +29,7 @@
       class="org.springframework.aop.framework.ProxyFactoryBean">
     <property name="proxyInterfaces">
       <list>
-        <value>com.atolcd.alfresco.filer.core.service.impl.FilerOperationService</value>
+        <value>com.atolcd.alfresco.filer.core.service.FilerOperationService</value>
       </list>
     </property>
     <property name="target" ref="filerOperationServiceImpl"/>
@@ -48,7 +48,7 @@
       class="org.springframework.aop.framework.ProxyFactoryBean">
     <property name="proxyInterfaces">
       <list>
-        <value>com.atolcd.alfresco.filer.core.service.impl.FilerFolderService</value>
+        <value>com.atolcd.alfresco.filer.core.service.FilerFolderService</value>
       </list>
     </property>
     <property name="target" ref="filerFolderServiceImpl"/>
@@ -65,7 +65,7 @@
       class="org.springframework.aop.framework.ProxyFactoryBean">
     <property name="proxyInterfaces">
       <list>
-        <value>com.atolcd.alfresco.filer.core.service.impl.FilerUpdateService</value>
+        <value>com.atolcd.alfresco.filer.core.service.FilerUpdateService</value>
       </list>
     </property>
     <property name="target" ref="filerUpdateServiceImpl"/>
@@ -83,7 +83,7 @@
       class="org.springframework.aop.framework.ProxyFactoryBean">
     <property name="proxyInterfaces">
       <list>
-        <value>com.atolcd.alfresco.filer.core.service.impl.PropertyInheritanceService</value>
+        <value>com.atolcd.alfresco.filer.core.service.PropertyInheritanceService</value>
       </list>
     </property>
     <property name="target" ref="filer.propertyInheritanceServiceImpl"/>
