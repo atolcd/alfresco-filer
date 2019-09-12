@@ -31,6 +31,10 @@ public class FilerBuilder {
     return root(nodeRefSupplier.get());
   }
 
+  public FilerFolderBuilder tree(final Function<FilerBuilder, FilerFolderBuilder> builder) {
+    return builder.apply(this);
+  }
+
   public FilerFolderTypeBuilder with(final Function<FilerBuilder, FilerFolderTypeBuilder> builder) {
     return builder.apply(this);
   }

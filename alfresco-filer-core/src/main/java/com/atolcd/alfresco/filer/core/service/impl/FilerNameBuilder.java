@@ -65,9 +65,13 @@ public class FilerNameBuilder<T> {
   }
 
   public T with(final Function<RepositoryNode, String> nodeNameFormatter) {
+    return withContext(filerFolderContext -> nodeNameFormatter.apply(filerFolderContext.getNode()));
+  }
+
+  public T withContext(final Function<FilerFolderContext, String> nodeNameFormatter) {
     String name = null;
     if (context.isEnabled()) {
-      name = nodeNameFormatter.apply(context.getNode());
+      name = nodeNameFormatter.apply(context);
     }
     return with(name);
   }
