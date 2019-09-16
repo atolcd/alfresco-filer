@@ -1,5 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
+import static com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension.getDocumentLibrary;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,9 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.FilerException;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
-import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryProvider;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
 
-public class DeniedFilerActionTest extends DocumentLibraryProvider {
+public class DeniedFilerActionTest extends RepositoryOperations {
 
   @Autowired
   private FilerModelService filerModelService;
@@ -28,7 +29,7 @@ public class DeniedFilerActionTest extends DocumentLibraryProvider {
   public void withTypeContent() {
     String name = randomUUID().toString();
 
-    RepositoryNode node = buildNode()
+    RepositoryNode node = getDocumentLibrary().childNode()
         .type(ContentModel.TYPE_CONTENT)
         .aspect(filerModelService.getFileableAspect())
         .named(name)
@@ -52,7 +53,7 @@ public class DeniedFilerActionTest extends DocumentLibraryProvider {
   public void withTypeFolder() {
     String name = randomUUID().toString();
 
-    RepositoryNode node = buildNode()
+    RepositoryNode node = getDocumentLibrary().childNode()
         .type(ContentModel.TYPE_FOLDER)
         .aspect(filerModelService.getFileableAspect())
         .named(name)

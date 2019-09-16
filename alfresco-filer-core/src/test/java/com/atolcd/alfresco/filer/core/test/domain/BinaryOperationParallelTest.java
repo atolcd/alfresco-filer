@@ -1,5 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
+import static com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils.nodePath;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -134,8 +135,8 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
 
     // Wait for node creation to finish and then assert all nodes are indeed created
     preparationAssertBarrier.await();
-    assertThat(getPath(nodeToUpdate.get())).isEqualTo(buildNodePath(departmentName, sourceDate));
-    assertThat(getPath(nodeToDelete.get())).isEqualTo(buildNodePath(departmentName, sourceDate));
+    assertThat(getPath(nodeToUpdate.get())).isEqualTo(nodePath(departmentName, sourceDate));
+    assertThat(getPath(nodeToDelete.get())).isEqualTo(nodePath(departmentName, sourceDate));
     preparationAssertBarrier.await();
 
     // Wait for every task to finish job before asserting results
@@ -146,7 +147,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
     // Assert all tasks were ready for parallel task execution
     assertThat(startingBarrier.isBroken()).isFalse();
 
-    assertThat(getPath(nodeToUpdate.get())).isEqualTo(buildNodePath(departmentName, targetDate));
+    assertThat(getPath(nodeToUpdate.get())).isEqualTo(nodePath(departmentName, targetDate));
 
     assertThat(nodeService.exists(nodeToDelete.get().getNodeRef())).isFalse();
     assertThat(nodeService.exists(nodeToDelete.get().getParent())).isFalse();
@@ -225,8 +226,8 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
 
     // Wait for node creation to finish and then assert all nodes are indeed created
     preparationAssertBarrier.await();
-    assertThat(getPath(nodeToUpdate.get())).isEqualTo(buildNodePath(departmentName, sourceDate));
-    assertThat(getPath(nodeToDelete.get())).isEqualTo(buildNodePath(departmentName, targetDate));
+    assertThat(getPath(nodeToUpdate.get())).isEqualTo(nodePath(departmentName, sourceDate));
+    assertThat(getPath(nodeToDelete.get())).isEqualTo(nodePath(departmentName, targetDate));
     preparationAssertBarrier.await();
 
     // Wait for every task to finish job before asserting results
@@ -237,7 +238,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
     // Assert all tasks were ready for parallel task execution
     assertThat(startingBarrier.isBroken()).isFalse();
 
-    assertThat(getPath(nodeToUpdate.get())).isEqualTo(buildNodePath(departmentName, targetDate));
+    assertThat(getPath(nodeToUpdate.get())).isEqualTo(nodePath(departmentName, targetDate));
 
     assertThat(nodeService.exists(nodeToDelete.get().getNodeRef())).isFalse();
     NodeRef nodeToDeleteParent = nodeToDelete.get().getParent();

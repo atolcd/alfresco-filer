@@ -1,5 +1,7 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
+import static com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils.nodePath;
+import static com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension.getDocumentLibrary;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,15 +16,15 @@ import org.junit.jupiter.api.Test;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
-import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryProvider;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
 
-public class DepartmentFolderFilerActionTest extends DocumentLibraryProvider {
+public class DepartmentFolderFilerActionTest extends RepositoryOperations {
 
   @Test
   public void withDepartmentName() {
     String departmentName = randomUUID().toString();
 
-    RepositoryNode node = buildNode()
+    RepositoryNode node = getDocumentLibrary().childNode()
         .type(FilerTestConstants.Department.FolderType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
         .build();
@@ -30,13 +32,13 @@ public class DepartmentFolderFilerActionTest extends DocumentLibraryProvider {
     createNode(node);
 
     assertThat(node.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class)).isEqualTo(departmentName);
-    assertThat(getPath(node)).isEqualTo(buildSitePath());
+    assertThat(getPath(node)).isEqualTo(getDocumentLibrary().getPath());
   }
 
   @Test
   public void updateDepartmentName() {
     // Create folder node
-    RepositoryNode departmentFolderNode = buildNode()
+    RepositoryNode departmentFolderNode = getDocumentLibrary().childNode()
         .type(FilerTestConstants.Department.FolderType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
         .build();
@@ -45,7 +47,7 @@ public class DepartmentFolderFilerActionTest extends DocumentLibraryProvider {
 
     // Create document node in folder
     LocalDateTime date = LocalDateTime.of(2004, 8, 12, 0, 0, 0);
-    RepositoryNode documentNode = buildNode()
+    RepositoryNode documentNode = getDocumentLibrary().childNode()
         .type(FilerTestConstants.Department.DocumentType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME,
             departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class))
@@ -55,7 +57,7 @@ public class DepartmentFolderFilerActionTest extends DocumentLibraryProvider {
     createNode(documentNode);
 
     assertThat(getPath(documentNode)).isEqualTo(
-        buildNodePath(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class), date));
+        nodePath(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class), date));
 
     // Update folder's name
     Map<QName, Serializable> departmentNameProperty = Collections.singletonMap(FilerTestConstants.Department.Aspect.PROP_NAME,
@@ -67,6 +69,6 @@ public class DepartmentFolderFilerActionTest extends DocumentLibraryProvider {
     fetchNode(documentNode);
 
     assertThat(getPath(documentNode)).isEqualTo(
-        buildNodePath(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class), date));
+        nodePath(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class), date));
   }
 }

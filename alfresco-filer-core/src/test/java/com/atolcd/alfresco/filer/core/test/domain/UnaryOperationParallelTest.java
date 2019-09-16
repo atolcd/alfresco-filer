@@ -1,5 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
+import static com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils.nodePath;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
-import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryProvider;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
 
 /**
  * Test multiple executions in parallel of one operation
@@ -65,9 +66,9 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
     // Assert all threads were ready for parallel createNode
     assertThat(startingBarrier.isBroken()).isFalse();
 
-    assertThat(results.stream().map(DocumentLibraryProvider::getPath))
+    assertThat(results.stream().map(RepositoryOperations::getPath))
         .hasSize(NUM_THREAD_TO_LAUNCH)
-        .containsOnly(buildNodePath(departmentName, date));
+        .containsOnly(nodePath(departmentName, date));
   }
 
   @Test
@@ -115,7 +116,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
     preparationAssertBarrier.await();
     assertThat(results).hasSize(NUM_THREAD_TO_LAUNCH);
     for (RepositoryNode node : results) {
-      assertThat(getPath(node)).isEqualTo(buildNodePath(departmentName, sourceDate));
+      assertThat(getPath(node)).isEqualTo(nodePath(departmentName, sourceDate));
     }
     preparationAssertBarrier.await();
 
@@ -125,9 +126,9 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
     // Assert all threads were ready for parallel updateNode
     assertThat(startingBarrier.isBroken()).isFalse();
 
-    assertThat(results.stream().map(DocumentLibraryProvider::getPath))
+    assertThat(results.stream().map(RepositoryOperations::getPath))
         .hasSize(NUM_THREAD_TO_LAUNCH)
-        .containsOnly(buildNodePath(departmentName, targetDate));
+        .containsOnly(nodePath(departmentName, targetDate));
 
     assertThat(segmentAncestors.stream().map(nodeService::exists)).isNotEmpty().containsOnly(false);
     assertThat(closestNonSegmentAncestor.stream().map(nodeService::exists)).isNotEmpty().containsOnly(true);
@@ -176,7 +177,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
     preparationAssertBarrier.await();
     assertThat(results).hasSize(NUM_THREAD_TO_LAUNCH);
     for (RepositoryNode node : results) {
-      assertThat(getPath(node)).isEqualTo(buildNodePath(departmentName, date));
+      assertThat(getPath(node)).isEqualTo(nodePath(departmentName, date));
     }
     preparationAssertBarrier.await();
 

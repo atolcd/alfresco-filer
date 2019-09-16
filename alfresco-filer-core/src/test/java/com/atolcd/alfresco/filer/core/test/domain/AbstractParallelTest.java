@@ -1,5 +1,7 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
+import static com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils.nodePath;
+import static com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension.getDocumentLibrary;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.model.impl.RepositoryNodeBuilder;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
-import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryProvider;
+import com.atolcd.alfresco.filer.core.test.framework.DocumentLibrary;
+import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
 
 /**
  * Provide base class for parallel tests of {@linkplain com.atolcd.alfresco.filer.core.model.FilerAction Filer actions}. Assert
@@ -41,7 +45,7 @@ import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryProvider;
  * </p>
  */
 @Execution(ExecutionMode.SAME_THREAD)
-public abstract class AbstractParallelTest extends DocumentLibraryProvider {
+public abstract class AbstractParallelTest extends RepositoryOperations {
 
   protected static final int NUM_THREAD_TO_LAUNCH = Runtime.getRuntime().availableProcessors() * 2;
 
@@ -71,19 +75,22 @@ public abstract class AbstractParallelTest extends DocumentLibraryProvider {
   }
 
   protected void execute(final CountDownLatch endingLatch, final Callable<Void> task) {
+    DocumentLibrary documentLibrary = getDocumentLibrary();
     executor.submit(() -> {
-      try {
-        AuthenticationUtil.runAsSystem(() -> task.call());
-      } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
-        logger.error("Parallel testing error", e);
-      } finally {
-        endingLatch.countDown();
-      }
+      DocumentLibraryExtension.withDocumentLibrary(documentLibrary, () -> {
+        try {
+          AuthenticationUtil.runAsSystem(() -> task.call());
+        } catch (Exception e) { //NOPMD Catch all exceptions that might occur in thread as they will not be thrown to main thread
+          logger.error("Parallel testing error", e);
+        } finally {
+          endingLatch.countDown();
+        }
+      });
     });
   }
 
   protected RepositoryNodeBuilder buildNode(final String departmentName, final LocalDateTime date) {
-    return buildNode()
+    return getDocumentLibrary().childNode()
         .type(FilerTestConstants.Department.DocumentType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
         .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()));
@@ -139,7 +146,7 @@ public abstract class AbstractParallelTest extends DocumentLibraryProvider {
 
     // Wait for node creation to finish and then assert node is indeed created
     preparationAssertBarrier.await();
-    assertThat(getPath(nodeToDelete.get())).isEqualTo(buildNodePath(departmentName, date));
+    assertThat(getPath(nodeToDelete.get())).isEqualTo(nodePath(departmentName, date));
     preparationAssertBarrier.await();
 
     // Wait for every task to finish job before asserting results
@@ -150,7 +157,7 @@ public abstract class AbstractParallelTest extends DocumentLibraryProvider {
     // Assert all tasks were ready for parallel task execution
     assertThat(startingBarrier.isBroken()).isFalse();
 
-    assertThat(getPath(createdNode.get())).isEqualTo(buildNodePath(departmentName, date));
+    assertThat(getPath(createdNode.get())).isEqualTo(nodePath(departmentName, date));
 
     assertThat(nodeService.exists(nodeToDelete.get().getNodeRef())).isFalse();
     NodeRef nodeToDeleteParent = nodeToDelete.get().getParent();

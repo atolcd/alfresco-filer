@@ -7,6 +7,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -14,14 +15,17 @@ import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
+import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 
-@TestApplicationContext
+@TestDocumentLibrary
 public class RepositoryOperations {
 
   @Autowired
   private TransactionService transactionService;
   @Autowired
   private NodeService nodeService;
+  @Autowired
+  private PermissionService permissionService;
 
   protected final void createNode(final RepositoryNode node) {
     doInTransaction(() -> {
@@ -42,17 +46,14 @@ public class RepositoryOperations {
 
   protected final void fetchNode(final RepositoryNode node) {
     doInTransaction(() -> {
-      fetchNodeImpl(node);
+      node.setParent(nodeService.getPrimaryParent(node.getNodeRef()).getParentRef());
+      node.setType(nodeService.getType(node.getNodeRef()));
+      node.getAspects().clear();
+      node.getAspects().addAll(nodeService.getAspects(node.getNodeRef()));
+      node.getProperties().clear();
+      node.getProperties().putAll(nodeService.getProperties(node.getNodeRef()));
+      FilerNodeUtils.setDisplayPath(node, nodeService.getPath(node.getNodeRef()).toDisplayPath(nodeService, permissionService));
     }, true);
-  }
-
-  protected void fetchNodeImpl(final RepositoryNode node) {
-    node.setParent(nodeService.getPrimaryParent(node.getNodeRef()).getParentRef());
-    node.setType(nodeService.getType(node.getNodeRef()));
-    node.getAspects().clear();
-    node.getAspects().addAll(nodeService.getAspects(node.getNodeRef()));
-    node.getProperties().clear();
-    node.getProperties().putAll(nodeService.getProperties(node.getNodeRef()));
   }
 
   protected final void updateNode(final RepositoryNode node, final Map<QName, Serializable> properties) {
@@ -67,6 +68,10 @@ public class RepositoryOperations {
     doInTransaction(() -> {
       nodeService.deleteNode(node.getNodeRef());
     });
+  }
+
+  protected static String getPath(final RepositoryNode node) {
+    return FilerNodeUtils.getDisplayPath(node);
   }
 
   private void bindTransactionListener(final RepositoryNode node) {
