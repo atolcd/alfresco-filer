@@ -1,7 +1,7 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
-import static com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils.nodePath;
 import static com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension.getDocumentLibrary;
+import static com.atolcd.alfresco.filer.core.util.FilerNodeUtils.getPath;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.model.impl.RepositoryNodeBuilder;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
+import com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils;
 import com.atolcd.alfresco.filer.core.test.framework.DocumentLibrary;
 import com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension;
 import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
@@ -146,7 +147,7 @@ public abstract class AbstractParallelTest extends RepositoryOperations {
 
     // Wait for node creation to finish and then assert node is indeed created
     preparationAssertBarrier.await();
-    assertThat(getPath(nodeToDelete.get())).isEqualTo(nodePath(departmentName, date));
+    assertThat(getPath(nodeToDelete.get())).isEqualTo(NodePathUtils.nodePath(departmentName, date));
     preparationAssertBarrier.await();
 
     // Wait for every task to finish job before asserting results
@@ -157,7 +158,7 @@ public abstract class AbstractParallelTest extends RepositoryOperations {
     // Assert all tasks were ready for parallel task execution
     assertThat(startingBarrier.isBroken()).isFalse();
 
-    assertThat(getPath(createdNode.get())).isEqualTo(nodePath(departmentName, date));
+    assertThat(getPath(createdNode.get())).isEqualTo(NodePathUtils.nodePath(departmentName, date));
 
     assertThat(nodeService.exists(nodeToDelete.get().getNodeRef())).isFalse();
     NodeRef nodeToDeleteParent = nodeToDelete.get().getParent();

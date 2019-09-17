@@ -51,8 +51,7 @@ public class DocumentLibraryExtension implements BeforeAllCallback, AfterAllCall
 
     DocumentLibrary documentLibrary = new DocumentLibrary(siteName, nodeRef -> {
       return Paths
-          .get(nodeService.getPath(nodeRef).toDisplayPath(nodeService, permissionService), SiteService.DOCUMENT_LIBRARY)
-          .toString();
+          .get(nodeService.getPath(nodeRef).toDisplayPath(nodeService, permissionService), SiteService.DOCUMENT_LIBRARY);
     });
     initDocumentLibrary(documentLibrary);
     documentLibraryHolder.set(documentLibrary);

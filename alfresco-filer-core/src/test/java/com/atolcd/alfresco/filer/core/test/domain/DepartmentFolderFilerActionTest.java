@@ -1,7 +1,7 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
-import static com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils.nodePath;
 import static com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension.getDocumentLibrary;
+import static com.atolcd.alfresco.filer.core.util.FilerNodeUtils.getPath;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
+import com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils;
 import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
 
 public class DepartmentFolderFilerActionTest extends RepositoryOperations {
@@ -56,8 +57,8 @@ public class DepartmentFolderFilerActionTest extends RepositoryOperations {
 
     createNode(documentNode);
 
-    assertThat(getPath(documentNode)).isEqualTo(
-        nodePath(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class), date));
+    assertThat(getPath(documentNode)).isEqualTo(NodePathUtils
+        .nodePath(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class), date));
 
     // Update folder's name
     Map<QName, Serializable> departmentNameProperty = Collections.singletonMap(FilerTestConstants.Department.Aspect.PROP_NAME,
@@ -68,7 +69,7 @@ public class DepartmentFolderFilerActionTest extends RepositoryOperations {
     // Get document node and check if it has been updated automatically
     fetchNode(documentNode);
 
-    assertThat(getPath(documentNode)).isEqualTo(
-        nodePath(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class), date));
+    assertThat(getPath(documentNode)).isEqualTo(NodePathUtils
+        .nodePath(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class), date));
   }
 }

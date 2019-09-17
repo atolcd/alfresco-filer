@@ -52,7 +52,7 @@ public class RepositoryOperations {
       node.getAspects().addAll(nodeService.getAspects(node.getNodeRef()));
       node.getProperties().clear();
       node.getProperties().putAll(nodeService.getProperties(node.getNodeRef()));
-      FilerNodeUtils.setDisplayPath(node, nodeService.getPath(node.getNodeRef()).toDisplayPath(nodeService, permissionService));
+      FilerNodeUtils.setPath(node, nodeService.getPath(node.getNodeRef()).toDisplayPath(nodeService, permissionService));
     }, true);
   }
 
@@ -68,10 +68,6 @@ public class RepositoryOperations {
     doInTransaction(() -> {
       nodeService.deleteNode(node.getNodeRef());
     });
-  }
-
-  protected static String getPath(final RepositoryNode node) {
-    return FilerNodeUtils.getDisplayPath(node);
   }
 
   private void bindTransactionListener(final RepositoryNode node) {

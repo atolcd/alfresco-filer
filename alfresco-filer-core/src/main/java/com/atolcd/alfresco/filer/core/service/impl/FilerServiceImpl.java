@@ -1,5 +1,7 @@
 package com.atolcd.alfresco.filer.core.service.impl;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
@@ -90,19 +92,18 @@ public class FilerServiceImpl implements FilerService {
       // Put display path for logging purposes
       if (LOGGER.isDebugEnabled()) {
         // Compute display path now, because it may not exist afterwards if a filer has been removed
-        FilerNodeUtils.setDisplayPath(node,
-            nodeService.getPath(node.getNodeRef()).toDisplayPath(nodeService, permissionService));
+        FilerNodeUtils.setPath(node, nodeService.getPath(node.getNodeRef()).toDisplayPath(nodeService, permissionService));
       }
       // Execute filer action
       event.setExecuted();
       filerOperationService.execute(event.getAction().get(), node);
       if (LOGGER.isDebugEnabled()) {
-        String beforePath = FilerNodeUtils.getDisplayPath(node);
-        String afterPath = nodeService.getPath(node.getNodeRef()).toDisplayPath(nodeService, permissionService);
-        afterPath = afterPath.equals(beforePath) ? "Same location" : "It is now at " + afterPath;
+        Path beforePath = FilerNodeUtils.getPath(node);
+        Path afterPath = Paths.get(nodeService.getPath(node.getNodeRef()).toDisplayPath(nodeService, permissionService));
+        String afterLocation = afterPath.equals(beforePath) ? "Same location" : "It is now at " + afterPath.toString();
         String afterName = (String) nodeService.getProperty(node.getNodeRef(), ContentModel.PROP_NAME);
         afterName = node.getName().get().equals(afterName) ? "" : " and renamed " + afterName;
-        LOGGER.debug("Executed filer on {} at {}: {}{}", event, beforePath, afterPath, afterName);
+        LOGGER.debug("Executed filer on {} at {}: {}{}", event, beforePath, afterLocation, afterName);
       }
     }
   }

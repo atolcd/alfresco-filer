@@ -1,11 +1,12 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
-import static com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils.nodePath;
 import static com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension.getDocumentLibrary;
+import static com.atolcd.alfresco.filer.core.util.FilerNodeUtils.getPath;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
+import com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils;
 import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
 import com.atolcd.alfresco.filer.core.test.framework.TestDocumentLibrary;
 
@@ -95,7 +97,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
 
       createNode(node);
 
-      assertThat(getPath(node)).isEqualTo(nodePath(departmentName, date));
+      assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, date));
     }
 
     @Test
@@ -109,7 +111,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
 
       createNode(node);
 
-      assertThat(getPath(node)).isEqualTo(nodePath(departmentName, LocalDateTime.now()));
+      assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));
     }
 
     @Test
@@ -137,7 +139,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
 
       createNode(node);
 
-      assertThat(getPath(node)).isEqualTo(nodePath(departmentNom, targetDate));
+      assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentNom, targetDate));
     }
 
     @Test
@@ -155,7 +157,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
 
       createNode(node);
 
-      assertThat(getPath(node)).isEqualTo(nodePath(departmentNom, sourceDate));
+      assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentNom, sourceDate));
 
       // Get ancestors before updating node as they will change
       NodeRef oldParent = node.getParent();
@@ -169,7 +171,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
 
       assertThat(nodeService.exists(oldParent)).isFalse();
       assertThat(nodeService.exists(oldGrandParent)).isFalse();
-      assertThat(getPath(node)).isEqualTo(nodePath(departmentNom, targetDate));
+      assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentNom, targetDate));
     }
 
     @Test
@@ -186,7 +188,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
 
       createNode(node);
 
-      assertThat(getPath(node)).isEqualTo(nodePath(departmentNom, date));
+      assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentNom, date));
 
       // Get ancestors before deleting node
       NodeRef grandParent = nodeService.getPrimaryParent(node.getParent()).getParentRef();
@@ -220,7 +222,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       createNode(firstNode);
       createNode(secondNode);
 
-      String nodePath = nodePath(departmentName, date);
+      Path nodePath = NodePathUtils.nodePath(departmentName, date);
 
       assertThat(getPath(firstNode)).isEqualTo(nodePath);
       assertThat(getPath(secondNode)).isEqualTo(nodePath);
@@ -240,6 +242,6 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
     createNode(node);
 
     assertThat(node.getType()).isEqualTo(type);
-    assertThat(getPath(node)).isEqualTo(nodePath(departmentName, LocalDateTime.now()));
+    assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));
   }
 }

@@ -1,5 +1,7 @@
 package com.atolcd.alfresco.filer.core.util;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -10,7 +12,7 @@ import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 
 public final class FilerNodeUtils {
 
-  private static final String DISPLAY_PATH_KEY = "displayPath";
+  private static final String PATH_KEY = "path";
   private static final String SITE_INFO_KEY = "siteInfo";
   private static final String ORIGINAL_KEY = "original";
   private static final String ORIGINAL_NODE_KEY = "originalNode";
@@ -49,12 +51,12 @@ public final class FilerNodeUtils {
     node.getExtensions().put(ORIGINAL_NODE_KEY, originalNode);
   }
 
-  public static String getDisplayPath(final RepositoryNode node) {
-    return Optional.ofNullable(node.getExtension(DISPLAY_PATH_KEY, String.class)).orElse("");
+  public static Path getPath(final RepositoryNode node) {
+    return node.getExtension(PATH_KEY, Path.class);
   }
 
-  public static void setDisplayPath(final RepositoryNode node, final String path) {
-    node.getExtensions().put(DISPLAY_PATH_KEY, path);
+  public static void setPath(final RepositoryNode node, final String path) {
+    node.getExtensions().put(PATH_KEY, Paths.get(path));
   }
 
   private FilerNodeUtils() {}

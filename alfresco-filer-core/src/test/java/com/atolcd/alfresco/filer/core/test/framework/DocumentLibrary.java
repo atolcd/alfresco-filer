@@ -2,7 +2,7 @@ package com.atolcd.alfresco.filer.core.test.framework;
 
 import static java.util.UUID.randomUUID;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -15,10 +15,10 @@ public class DocumentLibrary {
 
   private final String siteName;
   private NodeRef nodeRef;
-  private String path;
-  private final Function<NodeRef, String> pathProvider;
+  private Path path;
+  private final Function<NodeRef, Path> pathProvider;
 
-  public DocumentLibrary(final String siteName, final Function<NodeRef, String> pathProvider) {
+  public DocumentLibrary(final String siteName, final Function<NodeRef, Path> pathProvider) {
     this.siteName = siteName;
     this.pathProvider = pathProvider;
   }
@@ -41,12 +41,16 @@ public class DocumentLibrary {
     this.nodeRef = nodeRef;
   }
 
-  public String getPath() {
+  public Path getPath() {
     path = Optional.ofNullable(path).orElseGet(() -> pathProvider.apply(nodeRef));
     return path;
   }
 
-  public String childPath(final String... children) {
-    return Paths.get(getPath(), children).toString();
+  public Path childPath(final String... children) {
+    Path childPath = getPath();
+    for (String child : children) {
+      childPath = childPath.resolve(child);
+    }
+    return childPath;
   }
 }

@@ -1,6 +1,7 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
 import static com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils.nodePath;
+import static com.atolcd.alfresco.filer.core.util.FilerNodeUtils.getPath;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
