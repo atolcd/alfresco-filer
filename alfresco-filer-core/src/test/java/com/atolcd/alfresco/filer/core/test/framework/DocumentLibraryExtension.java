@@ -3,6 +3,7 @@ package com.atolcd.alfresco.filer.core.test.framework;
 import static java.util.UUID.randomUUID;
 
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.site.SiteServiceImpl;
@@ -16,6 +17,7 @@ import org.alfresco.service.transaction.TransactionService;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.util.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -38,13 +40,13 @@ public class DocumentLibraryExtension implements BeforeAllCallback, AfterAllCall
   @Override
   public void beforeAll(final ExtensionContext context) {
     Class<?> clazz = context.getRequiredTestClass();
-    String siteName;
-    if (!clazz.isAnnotationPresent(TestDocumentLibrary.class)
-        || clazz.getAnnotation(TestDocumentLibrary.class).value().isEmpty()) {
-      siteName = randomUUID().toString();
-    } else {
-      siteName = clazz.getAnnotation(TestDocumentLibrary.class).value();
+    Optional<TestDocumentLibrary> annotation = AnnotationUtils.findAnnotation(clazz, TestDocumentLibrary.class);
+    if (!annotation.isPresent()) {
+      throw new IllegalStateException("Could not find TestDocumentLibrary annotation on class: " + clazz);
     }
+
+    String siteName = annotation.map(TestDocumentLibrary::value).filter(value -> !value.isEmpty())
+        .orElseGet(() -> randomUUID().toString());
 
     ApplicationContext applicationContext = SpringExtension.getApplicationContext(context);
     applicationContext.getAutowireCapableBeanFactory().autowireBean(this);

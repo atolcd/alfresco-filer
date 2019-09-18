@@ -1,10 +1,11 @@
 package com.atolcd.alfresco.filer.core.test.framework;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.util.AnnotationUtils;
 import org.mockito.Mockito;
 import org.mockito.internal.util.MockUtil;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -38,22 +39,18 @@ public class AutowiredMockAwareMockitoExtension extends MockitoExtension {
   }
 
   private static List<Object> getAutowiredMocks(final Object testInstance) {
-    List<Object> result = new ArrayList<>();
+    List<Field> fields = AnnotationUtils.findAnnotatedFields(testInstance.getClass(),
+        Autowired.class, field -> MockUtil.isMock(getFieldValue(testInstance, field)));
+    return fields.stream().map(field -> getFieldValue(testInstance, field)).collect(Collectors.toList());
+  }
 
-    Field[] fields = testInstance.getClass().getDeclaredFields();
-    for (Field field : fields) {
+  private static Object getFieldValue(final Object testInstance, final Field field) {
+    try {
       field.setAccessible(true);
-      Object instance;
-      try {
-        instance = field.get(testInstance);
-        if (field.isAnnotationPresent(Autowired.class) && MockUtil.isMock(instance)) {
-          result.add(instance);
-        }
-      } catch (IllegalArgumentException | IllegalAccessException e) {
-        throw new IllegalStateException(e);
-      }
+      return field.get(testInstance);
+    } catch (IllegalArgumentException | IllegalAccessException e) {
+      throw new IllegalStateException(e);
     }
-    return result;
   }
 
   @Override

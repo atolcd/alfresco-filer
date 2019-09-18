@@ -21,12 +21,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.engine.JupiterTestEngine;
 import org.junit.platform.engine.DiscoverySelector;
+import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
 import org.junit.platform.testkit.engine.Events;
 import org.mockito.Mockito;
 import org.mockito.exceptions.misusing.UnnecessaryStubbingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -35,11 +38,15 @@ import com.atolcd.alfresco.filer.core.test.framework.AutowiredMockAwareMockitoEx
 
 public class AutowiredMockAwareMockitoExtensionTest {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(AutowiredMockAwareMockitoExtensionTest.class);
+
   private final JupiterTestEngine engine = new JupiterTestEngine();
 
   @Test
   public void necessaryStubbing() {
     Events testEvents = executeTestsForClass(NecessaryStubbingTestClass.class).tests();
+
+    logTestFailures(testEvents);
 
     assertThat(testEvents.started().count()).isEqualTo(2);
     assertThat(testEvents.succeeded().count()).isEqualTo(2);
@@ -75,6 +82,8 @@ public class AutowiredMockAwareMockitoExtensionTest {
   public void unnecessaryStubbing() {
     Events testEvents = executeTestsForClass(UnnecessaryStubbingTestClass.class).tests();
 
+    logTestFailures(testEvents);
+
     assertThat(testEvents.started().count()).isEqualTo(2);
     assertThat(testEvents.succeeded().count()).isEqualTo(2);
     assertThat(testEvents.skipped().count()).isEqualTo(0);
@@ -107,6 +116,8 @@ public class AutowiredMockAwareMockitoExtensionTest {
   @Test
   public void stubbing() {
     Events testEvents = executeTestsForClass(StubbingTestClass.class).tests();
+
+    logTestFailures(testEvents);
 
     assertThat(testEvents.started().count()).isEqualTo(2);
     assertThat(testEvents.succeeded().count()).isEqualTo(2);
@@ -146,6 +157,15 @@ public class AutowiredMockAwareMockitoExtensionTest {
     DiscoverySelector selectors = selectClass(testClass);
     LauncherDiscoveryRequest request = request().selectors(selectors).build();
     return EngineTestKit.execute(this.engine, request);
+  }
+
+  private static void logTestFailures(final Events testEvents) {
+    testEvents.finished().failed().stream()
+        .map(event -> event.getPayload(TestExecutionResult.class))
+        .map(Optional::get) // Event of type FINISHED cannot have empty payload
+        .map(TestExecutionResult::getThrowable)
+        .map(Optional::get) // Throwable is always present on failed test
+        .forEach(thrown -> LOGGER.error("Extension test error:", thrown));
   }
 
   /**
