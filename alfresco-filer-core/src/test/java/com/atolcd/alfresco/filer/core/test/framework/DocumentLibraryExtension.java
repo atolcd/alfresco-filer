@@ -24,6 +24,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 public class DocumentLibraryExtension implements BeforeAllCallback, AfterAllCallback {
 
+  private static final Object SITE_CREATE_LOCK = new Object();
+
   @Autowired
   private TransactionService transactionService;
   @Autowired
@@ -60,21 +62,25 @@ public class DocumentLibraryExtension implements BeforeAllCallback, AfterAllCall
   }
 
   private void initDocumentLibrary(final DocumentLibrary documentLibrary) {
-    AuthenticationUtil.runAs(() -> {
-      transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-        String siteName = documentLibrary.getSiteName();
+    // Synchronization is required to avoid race condition: multiple test classes executed in parallel trying to create the same
+    // site at the same time, leading to duplicate child name errors.
+    synchronized (SITE_CREATE_LOCK) {
+      AuthenticationUtil.runAs(() -> {
+        transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+          String siteName = documentLibrary.getSiteName();
 
-        if (!siteService.hasSite(siteName)) {
-          siteService.createSite(siteName, siteName, siteName, siteName, SiteVisibility.PUBLIC);
-        }
+          if (!siteService.hasSite(siteName)) {
+            siteService.createSite(siteName, siteName, siteName, siteName, SiteVisibility.PUBLIC);
+          }
 
-        NodeRef library = SiteServiceImpl.getSiteContainer(siteName, SiteService.DOCUMENT_LIBRARY, true, siteService,
-            transactionService, taggingService);
-        documentLibrary.setNodeRef(library);
+          NodeRef library = SiteServiceImpl.getSiteContainer(siteName, SiteService.DOCUMENT_LIBRARY, true, siteService,
+              transactionService, taggingService);
+          documentLibrary.setNodeRef(library);
+          return null;
+        }, false);
         return null;
-      }, false);
-      return null;
-    }, AuthenticationUtil.getAdminUserName());
+      }, AuthenticationUtil.getAdminUserName());
+    }
   }
 
   @Override
