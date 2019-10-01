@@ -79,11 +79,11 @@ public class RepositoryOperations {
     });
   }
 
-  protected <T> void doInTransaction(final Runnable callback) {
+  protected void doInTransaction(final Runnable callback) {
     doInTransaction(callback, false);
   }
 
-  protected <T> void doInTransaction(final Runnable callback, final boolean readOnly) {
+  protected void doInTransaction(final Runnable callback, final boolean readOnly) {
     transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
       callback.run();
       return null;
