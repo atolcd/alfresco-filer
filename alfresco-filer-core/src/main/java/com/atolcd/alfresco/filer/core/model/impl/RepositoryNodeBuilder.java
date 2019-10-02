@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.alfresco.model.ContentModel;
@@ -81,6 +82,11 @@ public class RepositoryNodeBuilder {
 
   public RepositoryNodeBuilder with(final Consumer<RepositoryNodeBuilder> consumer) {
     consumer.accept(this);
+    return this;
+  }
+
+  public <T> RepositoryNodeBuilder with(final BiConsumer<RepositoryNode, T> consumer, final T value) {
+    consumer.accept(node, value);
     return this;
   }
 
