@@ -4,12 +4,14 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.namespace.QName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -20,9 +22,7 @@ import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 import com.atolcd.alfresco.filer.core.service.impl.FilerFolderTypeBuilder;
 
-// Could be executed in parallel but Mockito JUnit Jupiter extension does not correctly support parallel test execution yet
-// See https://github.com/mockito/mockito/issues/1630
-//@Execution(ExecutionMode.CONCURRENT)
+@Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(MockitoExtension.class)
 public class FilerFolderTypeBuilderTest {
 
@@ -51,7 +51,7 @@ public class FilerFolderTypeBuilderTest {
 
     filerFolderTypeBuilder.getOrCreate();
 
-    verifyZeroInteractions(filerService);
+    verifyNoInteractions(filerService);
   }
 
   @Test
@@ -76,7 +76,7 @@ public class FilerFolderTypeBuilderTest {
 
     filerFolderTypeBuilder.get();
 
-    verifyZeroInteractions(filerService);
+    verifyNoInteractions(filerService);
   }
 
   @Test
@@ -102,7 +102,7 @@ public class FilerFolderTypeBuilderTest {
 
     filerFolderTypeBuilder.updateAndMove();
 
-    verifyZeroInteractions(filerService);
+    verifyNoInteractions(filerService);
   }
 
   @Test

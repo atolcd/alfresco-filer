@@ -7,6 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -17,9 +19,7 @@ import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 import com.atolcd.alfresco.filer.core.service.impl.FilerFolderBuilder;
 
-// Could be executed in parallel but Mockito JUnit Jupiter extension does not correctly support parallel test execution yet
-// See https://github.com/mockito/mockito/issues/1630
-//@Execution(ExecutionMode.CONCURRENT)
+@Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(MockitoExtension.class)
 public class FilerFolderBuilderTest {
 
@@ -85,7 +85,7 @@ public class FilerFolderBuilderTest {
 
     filerFolderBuilder.updateAndMove();
 
-    Mockito.verifyZeroInteractions(filerService);
+    Mockito.verifyNoInteractions(filerService);
   }
 
   @Test
