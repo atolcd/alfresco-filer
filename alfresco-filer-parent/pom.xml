@@ -19,6 +19,7 @@
     <alfresco-filer-parent.checkstyle.includes />
     <alfresco-filer-parent.maven-pmd-plugin.version>3.12.0</alfresco-filer-parent.maven-pmd-plugin.version>
     <alfresco-filer-parent.pmd.version>6.16.0</alfresco-filer-parent.pmd.version>
+    <alfresco-filer-parent.maven-spotbugs-plugin.version>3.1.12</alfresco-filer-parent.maven-spotbugs-plugin.version>
     <alfresco-filer-parent.maven-surefire-plugin.version>2.22.2</alfresco-filer-parent.maven-surefire-plugin.version>
 
     <alfresco-filer-parent.junit.version>5.5.2</alfresco-filer-parent.junit.version>
@@ -185,6 +186,32 @@
             <groupId>net.sourceforge.pmd</groupId>
             <artifactId>pmd-java</artifactId>
             <version>${alfresco-filer-parent.pmd.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>${alfresco-filer-parent.maven-spotbugs-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>check</id>
+            <phase>test</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includeTests>true</includeTests>
+          <maxRank>20</maxRank> <!-- 1-4 scariest, 5-9 scary, 10-14 troubling, and 15-20 concern bugs -->
+          <excludeFilterFile>filer/spotbugs-exclude.xml</excludeFilterFile>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.atolcd.alfresco.filer</groupId>
+            <artifactId>alfresco-filer-quality</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>

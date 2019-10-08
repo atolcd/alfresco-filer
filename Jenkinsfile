@@ -45,13 +45,13 @@ pipeline {
         MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} ${params.MAVEN_OPTIONS}"
       }
       steps {
-        sh 'mvn $MAVEN_OPTIONS verify'
+        sh 'mvn $MAVEN_OPTIONS test'
       }
     }
     stage('Package') {
       environment {
         // Uses maven.test.skip rather than skipTests to also ignore the goals compile:testCompile, resources:testResources
-        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -Dmaven.test.skip=true ${params.MAVEN_OPTIONS}"
+        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -Dmaven.test.skip=true -Dspotbugs.skip=true ${params.MAVEN_OPTIONS}"
       }
       steps {
         sh 'mvn $MAVEN_OPTIONS package'
@@ -83,7 +83,8 @@ pipeline {
           mavenConsole(),
           java(),
           checkStyle(pattern: '**/target/checkstyle-result.xml', reportEncoding: 'UTF-8'),
-          pmdParser(pattern: '**/target/pmd.xml')
+          pmdParser(pattern: '**/target/pmd.xml'),
+          spotBugs(pattern: '**/target/spotbugsXml.xml')
         ]
       )
     }
