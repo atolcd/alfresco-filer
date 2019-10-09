@@ -35,6 +35,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>${alfresco-filer.java.version}</maven.compiler.source>
     <maven.compiler.target>${alfresco-filer.java.version}</maven.compiler.target>
+    <replacer.skip>false</replacer.skip>
 
     <alfresco-filer.maven-enforcer-plugin.version>1.4.1</alfresco-filer.maven-enforcer-plugin.version>
     <alfresco-filer.maven-clean-plugin.version>3.1.0</alfresco-filer.maven-clean-plugin.version>
@@ -133,6 +134,9 @@
           <groupId>com.google.code.maven-replacer-plugin</groupId>
           <artifactId>replacer</artifactId>
           <version>${alfresco-filer.replacer-plugin.version}</version>
+          <configuration>
+            <skip>${replacer.skip}</skip>
+          </configuration>
         </plugin>
         <plugin>
             <groupId>external.atlassian.jgitflow</groupId>
@@ -299,6 +303,26 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
         <assembly.skipAssembly>false</assembly.skipAssembly>
+      </properties>
+    </profile>
+    <profile>
+      <id>skipBuildPlugins</id>
+      <properties>
+        <tidy.skip>true</tidy.skip>
+        <checkstyle.skip>true</checkstyle.skip>
+        <pmd.skip>true</pmd.skip>
+        <mdep.skip>true</mdep.skip>
+        <replacer.skip>true</replacer.skip>
+        <maven.resources.skip>true</maven.resources.skip>
+        <maven.main.skip>true</maven.main.skip>
+      </properties>
+    </profile>
+    <profile>
+      <id>skipTestPlugins</id>
+      <properties>
+        <!-- Uses maven.test.skip rather than skipTests to also ignore the goals compile:testCompile, resources:testResources -->
+        <maven.test.skip>true</maven.test.skip>
+        <spotbugs.skip>true</spotbugs.skip>
       </properties>
     </profile>
   </profiles>

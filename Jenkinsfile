@@ -27,7 +27,7 @@ pipeline {
   stages {
     stage('Build') {
       environment {
-        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -U -DskipTests ${params.MAVEN_OPTIONS}"
+        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -U ${params.MAVEN_OPTIONS}"
       }
       steps {
         // Print disk space
@@ -42,7 +42,7 @@ pipeline {
         not { branch 'master' }
       }
       environment {
-        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} ${params.MAVEN_OPTIONS}"
+        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -PskipBuildPlugins ${params.MAVEN_OPTIONS}"
       }
       steps {
         sh 'mvn $MAVEN_OPTIONS test'
@@ -50,8 +50,7 @@ pipeline {
     }
     stage('Package') {
       environment {
-        // Uses maven.test.skip rather than skipTests to also ignore the goals compile:testCompile, resources:testResources
-        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -Dmaven.test.skip=true -Dspotbugs.skip=true ${params.MAVEN_OPTIONS}"
+        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -PskipBuildPlugins,skipTestPlugins ${params.MAVEN_OPTIONS}"
       }
       steps {
         sh 'mvn $MAVEN_OPTIONS package'
@@ -67,7 +66,7 @@ pipeline {
         }
       }
       environment {
-        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -Dmaven.test.skip=true ${params.MAVEN_OPTIONS}"
+        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -PskipBuildPlugins,skipTestPlugins ${params.MAVEN_OPTIONS}"
       }
       steps {
         sh 'mvn $MAVEN_OPTIONS deploy'
