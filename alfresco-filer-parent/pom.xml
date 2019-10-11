@@ -21,6 +21,7 @@
     <alfresco-filer-parent.pmd.version>6.16.0</alfresco-filer-parent.pmd.version>
     <alfresco-filer-parent.maven-spotbugs-plugin.version>3.1.12</alfresco-filer-parent.maven-spotbugs-plugin.version>
     <alfresco-filer-parent.maven-surefire-plugin.version>2.22.2</alfresco-filer-parent.maven-surefire-plugin.version>
+    <alfresco-filer-parent.jacoco-maven-plugin.version>0.8.4</alfresco-filer-parent.jacoco-maven-plugin.version>
 
     <alfresco-filer-parent.junit.version>5.5.2</alfresco-filer-parent.junit.version>
     <alfresco-filer-parent.junit.platform.version>1.5.2</alfresco-filer-parent.junit.platform.version>
@@ -214,6 +215,26 @@
             <version>0.1.0-SNAPSHOT</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${alfresco-filer-parent.jacoco-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>prepare</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

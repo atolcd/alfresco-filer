@@ -86,6 +86,10 @@ pipeline {
           spotBugs(pattern: '**/target/spotbugsXml.xml')
         ]
       )
+      publishCoverage(
+        adapters: [jacocoAdapter('**/target/site/jacoco/jacoco.xml')],
+        sourceFileResolver: sourceFiles('STORE_ALL_BUILD')
+      )
     }
     success {
       archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true

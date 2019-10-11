@@ -282,6 +282,7 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <assembly.skipAssembly>true</assembly.skipAssembly>
+        <jacoco.skip>true</jacoco.skip>
       </properties>
     </profile>
     <profile>
@@ -303,6 +304,7 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
         <assembly.skipAssembly>false</assembly.skipAssembly>
+        <jacoco.skip>true</jacoco.skip>
       </properties>
     </profile>
     <profile>
@@ -313,6 +315,7 @@
         <pmd.skip>true</pmd.skip>
         <maven.resources.skip>true</maven.resources.skip>
         <maven.main.skip>true</maven.main.skip>
+        <jacoco.skip>false</jacoco.skip>
       </properties>
     </profile>
     <profile>
@@ -323,6 +326,7 @@
         <!-- Uses maven.test.skip rather than skipTests to also ignore the goals compile:testCompile, resources:testResources -->
         <maven.test.skip>true</maven.test.skip>
         <spotbugs.skip>true</spotbugs.skip>
+        <jacoco.skip>true</jacoco.skip>
       </properties>
     </profile>
   </profiles>
