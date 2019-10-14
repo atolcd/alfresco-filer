@@ -60,7 +60,7 @@ public class FilerOperationServiceImpl implements FilerOperationService {
     try {
       filerFolderService.fetchFolder(node, onGet);
     } catch (RuntimeException e) { // NOPMD - for logging purposes
-      LOGGER.error("Could not get filer folder: " + node, e);
+      LOGGER.error("Could not get filer folder: {}", node, e);
       throw e;
     }
     return node.getNodeRef();
@@ -73,7 +73,7 @@ public class FilerOperationServiceImpl implements FilerOperationService {
     try {
       filerFolderService.fetchOrCreateFolder(node, onGet, onCreate);
     } catch (RuntimeException e) { // NOPMD - for logging purposes
-      LOGGER.error("Could not get or create filer folder: " + node, e);
+      LOGGER.error("Could not get or create filer folder: {}", node, e);
       throw e;
     }
     return node.getNodeRef();
@@ -88,7 +88,7 @@ public class FilerOperationServiceImpl implements FilerOperationService {
     try {
       filerUpdateService.updateAndMoveFileable(initialNode, originalNode, node);
     } catch (RuntimeException e) { // NOPMD - for logging purposes
-      LOGGER.error("Could not update fileable: " + node, e);
+      LOGGER.error("Could not update fileable: {}", node, e);
       throw e;
     }
     // Delete previous parent if it became an empty segment
@@ -100,7 +100,7 @@ public class FilerOperationServiceImpl implements FilerOperationService {
     try {
       filerFolderService.updateFolder(node, onGet, onCreate);
     } catch (RuntimeException e) { // NOPMD - for logging purposes
-      LOGGER.error("Could not update filer folder: " + node, e);
+      LOGGER.error("Could not update filer folder: {}", node, e);
       throw e;
     }
   }
@@ -114,7 +114,7 @@ public class FilerOperationServiceImpl implements FilerOperationService {
         return null;
       });
     } catch (RuntimeException e) { // NOPMD - for logging purposes
-      LOGGER.error("Could not remove filer segment: " + nodeRef, e);
+      LOGGER.error("Could not remove filer segment: {}", nodeRef, e);
       throw e;
     }
   }

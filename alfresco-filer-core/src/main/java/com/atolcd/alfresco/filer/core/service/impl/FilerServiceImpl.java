@@ -65,7 +65,7 @@ public class FilerServiceImpl implements FilerService {
     try {
       executeActionImpl(event);
     } catch (RuntimeException e) { // NOPMD - for logging purposes
-      LOGGER.error("Could not execute action: " + event, e);
+      LOGGER.error("Could not execute action: {}", event, e);
       throw e;
     }
   }
@@ -81,7 +81,7 @@ public class FilerServiceImpl implements FilerService {
       }
       return result;
     } catch (RuntimeException e) { // NOPMD - for logging purposes
-      LOGGER.error("Could not resolve fileable: " + event, e);
+      LOGGER.error("Could not resolve fileable: {}", event, e);
       throw e;
     }
   }
@@ -175,7 +175,7 @@ public class FilerServiceImpl implements FilerService {
           .count();
       if (updatedPropertiesCount + updatedAspectCount == 0) {
         result = false;
-        LOGGER.debug("Ignoring update event without any updated property nor aspect: " + event);
+        LOGGER.debug("Ignoring update event without any updated property nor aspect: {}", event);
       }
     }
     return result;

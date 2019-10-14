@@ -165,7 +165,7 @@ public class AutowiredMockAwareMockitoExtensionTest {
         .map(Optional::get) // Event of type FINISHED cannot have empty payload
         .map(TestExecutionResult::getThrowable)
         .map(Optional::get) // Throwable is always present on failed test
-        .forEach(thrown -> LOGGER.error("Extension test error:", thrown));
+        .forEach(thrown -> LOGGER.error("Extension test error", thrown));
   }
 
   /**

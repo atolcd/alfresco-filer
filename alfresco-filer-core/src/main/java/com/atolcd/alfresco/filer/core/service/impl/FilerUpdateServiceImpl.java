@@ -51,8 +51,8 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
     }
     // Update node (ignore node name for now) if filer made changes
     RepositoryNodeDifference originalDifference = updateFileable(originalNode, resultingNode);
-    if (!originalDifference.isEmpty()) {
-      LOGGER.debug("Node updated: " + originalDifference);
+    if (LOGGER.isDebugEnabled() && !originalDifference.isEmpty()) {
+      LOGGER.debug("Node updated: {}", originalDifference);
     }
     // Lock target segment to prevent its deletion by another transaction
     filerFolderService.lockFolder(resultingNode.getParent());
@@ -62,8 +62,8 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
     RepositoryNodeDifference initialDifference = new RepositoryNodeDifference(initialNode, resultingNode);
     PropertyInheritancePayload inheritance = propertyInheritanceService.getPayload(initialDifference);
     propertyInheritanceService.setInheritance(resultingNode.getNodeRef(), inheritance);
-    if (!inheritance.isEmpty()) {
-      LOGGER.debug("Node inheritance updated: " + inheritance);
+    if (LOGGER.isDebugEnabled() && !inheritance.isEmpty()) {
+      LOGGER.debug("Node inheritance updated: {}", inheritance);
     }
   }
 
