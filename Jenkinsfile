@@ -25,7 +25,7 @@ pipeline {
   }
 
   stages {
-    stage('Build') {
+    stage('Compile') {
       environment {
         MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -U ${params.MAVEN_OPTIONS}"
       }
@@ -42,7 +42,7 @@ pipeline {
         not { branch 'master' }
       }
       environment {
-        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -PskipBuildPlugins ${params.MAVEN_OPTIONS}"
+        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -PskipCompilePlugins ${params.MAVEN_OPTIONS}"
       }
       steps {
         sh 'mvn $MAVEN_OPTIONS test'
@@ -50,7 +50,7 @@ pipeline {
     }
     stage('Package') {
       environment {
-        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -PskipBuildPlugins,skipTestPlugins ${params.MAVEN_OPTIONS}"
+        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -PskipCompilePlugins,skipTestPlugins ${params.MAVEN_OPTIONS}"
       }
       steps {
         sh 'mvn $MAVEN_OPTIONS package'
@@ -66,7 +66,7 @@ pipeline {
         }
       }
       environment {
-        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -PskipBuildPlugins,skipTestPlugins ${params.MAVEN_OPTIONS}"
+        MAVEN_OPTIONS = "${env.MAVEN_GLOBAL_OPTIONS} -PskipCompilePlugins,skipTestPlugins ${params.MAVEN_OPTIONS}"
       }
       steps {
         sh 'mvn $MAVEN_OPTIONS deploy'

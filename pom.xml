@@ -306,13 +306,11 @@
       </properties>
     </profile>
     <profile>
-      <id>skipBuildPlugins</id>
+      <id>skipCompilePlugins</id>
       <properties>
         <tidy.skip>true</tidy.skip>
         <checkstyle.skip>true</checkstyle.skip>
         <pmd.skip>true</pmd.skip>
-        <mdep.skip>true</mdep.skip>
-        <replacer.skip>true</replacer.skip>
         <maven.resources.skip>true</maven.resources.skip>
         <maven.main.skip>true</maven.main.skip>
       </properties>
@@ -320,6 +318,8 @@
     <profile>
       <id>skipTestPlugins</id>
       <properties>
+        <mdep.skip>true</mdep.skip>
+        <replacer.skip>true</replacer.skip>
         <!-- Uses maven.test.skip rather than skipTests to also ignore the goals compile:testCompile, resources:testResources -->
         <maven.test.skip>true</maven.test.skip>
         <spotbugs.skip>true</spotbugs.skip>
