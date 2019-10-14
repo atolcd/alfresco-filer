@@ -19,7 +19,7 @@
     <alfresco-filer-parent.checkstyle.includes />
     <alfresco-filer-parent.maven-pmd-plugin.version>3.12.0</alfresco-filer-parent.maven-pmd-plugin.version>
     <alfresco-filer-parent.pmd.version>6.16.0</alfresco-filer-parent.pmd.version>
-    <alfresco-filer-parent.maven-spotbugs-plugin.version>3.1.12</alfresco-filer-parent.maven-spotbugs-plugin.version>
+    <alfresco-filer-parent.spotbugs-maven-plugin.version>3.1.12.2</alfresco-filer-parent.spotbugs-maven-plugin.version>
     <alfresco-filer-parent.maven-surefire-plugin.version>2.22.2</alfresco-filer-parent.maven-surefire-plugin.version>
     <alfresco-filer-parent.jacoco-maven-plugin.version>0.8.4</alfresco-filer-parent.jacoco-maven-plugin.version>
 
@@ -193,7 +193,7 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${alfresco-filer-parent.maven-spotbugs-plugin.version}</version>
+        <version>${alfresco-filer-parent.spotbugs-maven-plugin.version}</version>
         <executions>
           <execution>
             <id>check</id>

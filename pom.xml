@@ -29,21 +29,20 @@
 
   <properties>
     <alfresco-filer.maven.version>3.6.0</alfresco-filer.maven.version>
-    <alfresco-filer.java.version>1.8</alfresco-filer.java.version>
+    <alfresco-filer.java.version>8</alfresco-filer.java.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>${alfresco-filer.java.version}</maven.compiler.source>
-    <maven.compiler.target>${alfresco-filer.java.version}</maven.compiler.target>
+    <maven.compiler.release>${alfresco-filer.java.version}</maven.compiler.release>
     <replacer.skip>false</replacer.skip>
 
     <alfresco-filer.maven-enforcer-plugin.version>1.4.1</alfresco-filer.maven-enforcer-plugin.version>
     <alfresco-filer.maven-clean-plugin.version>3.1.0</alfresco-filer.maven-clean-plugin.version>
     <alfresco-filer.maven-resources-plugin.version>3.1.0</alfresco-filer.maven-resources-plugin.version>
-    <alfresco-filer.maven-compiler-plugin.version>3.8.0</alfresco-filer.maven-compiler-plugin.version>
+    <alfresco-filer.maven-compiler-plugin.version>3.8.1</alfresco-filer.maven-compiler-plugin.version>
     <alfresco-filer.maven-jar-plugin.version>3.1.2</alfresco-filer.maven-jar-plugin.version>
-    <alfresco-filer.maven-source-plugin.version>3.0.1</alfresco-filer.maven-source-plugin.version>
-    <alfresco-filer.maven-javadoc-plugin.version>3.0.1</alfresco-filer.maven-javadoc-plugin.version>
+    <alfresco-filer.maven-source-plugin.version>3.1.0</alfresco-filer.maven-source-plugin.version>
+    <alfresco-filer.maven-javadoc-plugin.version>3.1.1</alfresco-filer.maven-javadoc-plugin.version>
     <alfresco-filer.maven-assembly-plugin.version>2.6</alfresco-filer.maven-assembly-plugin.version> <!-- only versions < 3.0.0 are compatible with alfresco-maven-plugin -->
     <alfresco-filer.maven-install-plugin.version>2.5.2</alfresco-filer.maven-install-plugin.version>
     <alfresco-filer.maven-deploy-plugin.version>2.8.2</alfresco-filer.maven-deploy-plugin.version>
