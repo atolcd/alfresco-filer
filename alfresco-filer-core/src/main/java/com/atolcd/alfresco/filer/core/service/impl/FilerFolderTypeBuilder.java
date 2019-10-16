@@ -116,6 +116,10 @@ public class FilerFolderTypeBuilder {
     return new FilerFolderBuilder(filerService, context, child);
   }
 
+  public FilerFolderBuilder get(final boolean createIfAbsent) {
+    return createIfAbsent ? getOrCreate() : get();
+  }
+
   public void updateAndMove() {
     if (context.isEnabled()) {
       RepositoryNode node = context.getNode();
