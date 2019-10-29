@@ -20,5 +20,5 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
   "classpath:context/test-model-context.xml",
   "classpath:context/test-action-context.xml"
 })
-@ExtendWith(AuthenticationExtension.class)
+@TestAuthentication("admin")
 public @interface TestApplicationContext {}

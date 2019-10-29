@@ -11,9 +11,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-@TestApplicationContext
-@ExtendWith(DocumentLibraryExtension.class)
-public @interface TestDocumentLibrary {
+@ExtendWith(LibraryExtension.class)
+public @interface TestLibrary {
 
+  /**
+   * Site name
+   */
   String value() default "";
 }

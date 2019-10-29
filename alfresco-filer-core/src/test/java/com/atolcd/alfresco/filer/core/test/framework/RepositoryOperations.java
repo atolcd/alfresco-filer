@@ -17,7 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 
-@TestDocumentLibrary
+@TestApplicationContext
+@TestLibrary
 public class RepositoryOperations {
 
   @Autowired

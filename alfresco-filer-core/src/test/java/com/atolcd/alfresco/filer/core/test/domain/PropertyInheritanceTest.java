@@ -1,6 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
-import static com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension.getDocumentLibrary;
+import static com.atolcd.alfresco.filer.core.test.framework.LibraryExtension.getLibrary;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +26,7 @@ public class PropertyInheritanceTest extends RepositoryOperations {
 
   @Test
   public void createNodeInDepartmentFolder() {
-    RepositoryNode folderNode = getDocumentLibrary().childNode()
+    RepositoryNode folderNode = getLibrary().childNode()
         .type(FilerTestConstants.Department.FolderType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
         .property(FilerTestConstants.Department.Aspect.PROP_ID, randomUUID())
@@ -35,7 +35,7 @@ public class PropertyInheritanceTest extends RepositoryOperations {
     createNode(folderNode);
 
     // Create node in department folder and check if properties have been inheritated from department folder
-    RepositoryNode testNode = getDocumentLibrary().childNode()
+    RepositoryNode testNode = getLibrary().childNode()
         .type(FilerTestConstants.Department.DocumentType.NAME)
         .parent(folderNode.getNodeRef())
         .build();
@@ -79,7 +79,7 @@ public class PropertyInheritanceTest extends RepositoryOperations {
 
   @Test
   public void changePropertyOfDepartmentFolder() {
-    RepositoryNode testNode = getDocumentLibrary().childNode()
+    RepositoryNode testNode = getLibrary().childNode()
         .type(FilerTestConstants.Department.DocumentType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
         .property(FilerTestConstants.Department.Aspect.PROP_ID, randomUUID())
@@ -108,7 +108,7 @@ public class PropertyInheritanceTest extends RepositoryOperations {
 
   @Test
   public void createNodeInDepartmentFolderWithWrongProperty() {
-    RepositoryNode folderNode = getDocumentLibrary().childNode()
+    RepositoryNode folderNode = getLibrary().childNode()
         .type(FilerTestConstants.Department.FolderType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
         .property(FilerTestConstants.Department.Aspect.PROP_ID, randomUUID())
@@ -117,7 +117,7 @@ public class PropertyInheritanceTest extends RepositoryOperations {
     createNode(folderNode);
 
     // Create node in department folder with wrong property and check if correct property is inherited from folder
-    RepositoryNode testNode = getDocumentLibrary().childNode()
+    RepositoryNode testNode = getLibrary().childNode()
         .type(FilerTestConstants.Department.DocumentType.NAME)
         .parent(folderNode.getNodeRef())
         .property(FilerTestConstants.Department.Aspect.PROP_ID, randomUUID())
@@ -163,7 +163,7 @@ public class PropertyInheritanceTest extends RepositoryOperations {
   @Test
   public void createNodeInFolderHierarchyWithMultipleLevelInheritance() {
 
-    RepositoryNode departmentFolderNode = getDocumentLibrary().childNode()
+    RepositoryNode departmentFolderNode = getLibrary().childNode()
         .type(FilerTestConstants.Department.FolderType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
         .property(FilerTestConstants.Department.Aspect.PROP_ID, randomUUID())
@@ -172,7 +172,7 @@ public class PropertyInheritanceTest extends RepositoryOperations {
     createNode(departmentFolderNode);
 
     // Create management folder in department folder and check if department properties are inherited
-    RepositoryNode managementFolderNode = getDocumentLibrary().childNode()
+    RepositoryNode managementFolderNode = getLibrary().childNode()
         .type(FilerTestConstants.Department.Management.DocumentType.NAME)
         .parent(departmentFolderNode.getNodeRef())
         .property(FilerTestConstants.Department.Management.Aspect.PROP_ID, randomUUID())
@@ -186,7 +186,7 @@ public class PropertyInheritanceTest extends RepositoryOperations {
         .isEqualTo(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_ID, String.class));
 
     // Create node in management folder and check if department and management properties are inherited
-    RepositoryNode testNode = getDocumentLibrary().childNode()
+    RepositoryNode testNode = getLibrary().childNode()
         .type(FilerTestConstants.Department.Management.DocumentType.NAME)
         .parent(managementFolderNode.getParent())
         .build();
@@ -203,6 +203,6 @@ public class PropertyInheritanceTest extends RepositoryOperations {
 
   private NodeRef getDepartmentFolder(final RepositoryNode node) {
     String departmentName = node.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class);
-    return nodeService.getChildByName(getDocumentLibrary().getNodeRef(), ContentModel.ASSOC_CONTAINS, departmentName);
+    return nodeService.getChildByName(getLibrary().getNodeRef(), ContentModel.ASSOC_CONTAINS, departmentName);
   }
 }

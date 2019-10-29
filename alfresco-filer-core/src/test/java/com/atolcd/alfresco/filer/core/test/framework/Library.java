@@ -11,14 +11,14 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.model.impl.RepositoryNodeBuilder;
 
-public class DocumentLibrary {
+public class Library {
 
   private final String siteName;
   private NodeRef nodeRef;
   private Path path;
   private final Function<NodeRef, Path> pathProvider;
 
-  public DocumentLibrary(final String siteName, final Function<NodeRef, Path> pathProvider) {
+  public Library(final String siteName, final Function<NodeRef, Path> pathProvider) {
     this.siteName = siteName;
     this.pathProvider = pathProvider;
   }

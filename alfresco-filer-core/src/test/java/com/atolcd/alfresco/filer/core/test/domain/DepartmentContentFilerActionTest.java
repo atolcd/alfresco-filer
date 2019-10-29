@@ -1,6 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
-import static com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension.getDocumentLibrary;
+import static com.atolcd.alfresco.filer.core.test.framework.LibraryExtension.getLibrary;
 import static com.atolcd.alfresco.filer.core.util.FilerNodeUtils.getPath;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +26,8 @@ import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
 import com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils;
 import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
-import com.atolcd.alfresco.filer.core.test.framework.TestDocumentLibrary;
+import com.atolcd.alfresco.filer.core.test.framework.TestApplicationContext;
+import com.atolcd.alfresco.filer.core.test.framework.TestLibrary;
 
 public class DepartmentContentFilerActionTest extends RepositoryOperations {
 
@@ -37,14 +38,15 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
   private NodeService nodeService;
 
   @Nested
-  // @TestDocumentLibrary is necessary as Spring does not find the configuration of nested class from the enclosing class
+  // The annotations below are necessary as Spring does not find the configuration of nested class from the enclosing class
   // See https://github.com/spring-projects/spring-framework/issues/19930
-  @TestDocumentLibrary
+  @TestApplicationContext
+  @TestLibrary
   public class DepartmentDocument {
 
     @Test
     public void filerAspectHierarchy() {
-      RepositoryNode node = getDocumentLibrary().childNode()
+      RepositoryNode node = getLibrary().childNode()
           .type(FilerTestConstants.Department.DocumentType.NAME)
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
           .build();
@@ -67,7 +69,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
     public void typeHierarchy() {
       QName type = FilerTestConstants.Department.DocumentType.NAME;
 
-      RepositoryNode node = getDocumentLibrary().childNode()
+      RepositoryNode node = getLibrary().childNode()
           .type(FilerTestConstants.Department.DocumentType.NAME)
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
           .build();
@@ -89,7 +91,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       String departmentName = randomUUID().toString();
       LocalDateTime date = LocalDateTime.of(2004, 8, 12, 0, 0, 0);
 
-      RepositoryNode node = getDocumentLibrary().childNode()
+      RepositoryNode node = getLibrary().childNode()
           .type(FilerTestConstants.Department.DocumentType.NAME)
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
@@ -104,7 +106,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
     public void withoutImportDate() {
       String departmentName = randomUUID().toString();
 
-      RepositoryNode node = getDocumentLibrary().childNode()
+      RepositoryNode node = getLibrary().childNode()
           .type(FilerTestConstants.Department.DocumentType.NAME)
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
           .build();
@@ -121,7 +123,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       LocalDateTime targetDate = LocalDateTime.of(2002, 4, 6, 0, 0, 0);
 
       // Create a node with the wrong date to create corresponding folder
-      RepositoryNode wrongSegmentNode = getDocumentLibrary().childNode()
+      RepositoryNode wrongSegmentNode = getLibrary().childNode()
           .type(FilerTestConstants.Department.DocumentType.NAME)
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentNom)
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, wrongDate.atZone(ZoneId.systemDefault()))
@@ -130,7 +132,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       createNode(wrongSegmentNode);
 
       // Create node with the target date in the wrong folder
-      RepositoryNode node = getDocumentLibrary().childNode()
+      RepositoryNode node = getLibrary().childNode()
           .type(FilerTestConstants.Department.DocumentType.NAME)
           .parent(wrongSegmentNode.getParent())
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentNom)
@@ -149,7 +151,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       LocalDateTime targetDate = LocalDateTime.of(2002, 4, 6, 0, 0, 0);
 
       // Create node that will be updated
-      RepositoryNode node = getDocumentLibrary().childNode()
+      RepositoryNode node = getLibrary().childNode()
           .type(FilerTestConstants.Department.DocumentType.NAME)
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentNom)
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, sourceDate.atZone(ZoneId.systemDefault()))
@@ -180,7 +182,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       LocalDateTime date = LocalDateTime.of(2004, 8, 12, 0, 0, 0);
 
       // Create node that will be deleted
-      RepositoryNode node = getDocumentLibrary().childNode()
+      RepositoryNode node = getLibrary().childNode()
           .type(FilerTestConstants.Department.DocumentType.NAME)
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentNom)
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
@@ -207,13 +209,13 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       String departmentName = randomUUID().toString();
       LocalDateTime date = LocalDateTime.of(2004, 8, 12, 0, 0, 0);
 
-      RepositoryNode firstNode = getDocumentLibrary().childNode()
+      RepositoryNode firstNode = getLibrary().childNode()
           .type(FilerTestConstants.Department.DocumentType.NAME)
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
           .build();
 
-      RepositoryNode secondNode = getDocumentLibrary().childNode()
+      RepositoryNode secondNode = getLibrary().childNode()
           .type(FilerTestConstants.Department.DocumentType.NAME)
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
@@ -234,7 +236,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
     QName type = FilerTestConstants.SpecialDocumentType.NAME;
     String departmentName = randomUUID().toString();
 
-    RepositoryNode node = getDocumentLibrary().childNode()
+    RepositoryNode node = getLibrary().childNode()
         .type(type)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
         .build();

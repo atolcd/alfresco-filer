@@ -1,6 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
-import static com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension.getDocumentLibrary;
+import static com.atolcd.alfresco.filer.core.test.framework.LibraryExtension.getLibrary;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +29,7 @@ public class DeniedFilerActionTest extends RepositoryOperations {
   public void withTypeContent() {
     String name = randomUUID().toString();
 
-    RepositoryNode node = getDocumentLibrary().childNode()
+    RepositoryNode node = getLibrary().childNode()
         .type(ContentModel.TYPE_CONTENT)
         .aspect(filerModelService.getFileableAspect())
         .named(name)
@@ -53,7 +53,7 @@ public class DeniedFilerActionTest extends RepositoryOperations {
   public void withTypeFolder() {
     String name = randomUUID().toString();
 
-    RepositoryNode node = getDocumentLibrary().childNode()
+    RepositoryNode node = getLibrary().childNode()
         .type(ContentModel.TYPE_FOLDER)
         .aspect(filerModelService.getFileableAspect())
         .named(name)

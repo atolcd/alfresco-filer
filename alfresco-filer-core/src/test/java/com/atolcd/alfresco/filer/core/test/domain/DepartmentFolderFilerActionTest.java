@@ -1,6 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.domain;
 
-import static com.atolcd.alfresco.filer.core.test.framework.DocumentLibraryExtension.getDocumentLibrary;
+import static com.atolcd.alfresco.filer.core.test.framework.LibraryExtension.getLibrary;
 import static com.atolcd.alfresco.filer.core.util.FilerNodeUtils.getPath;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +25,7 @@ public class DepartmentFolderFilerActionTest extends RepositoryOperations {
   public void withDepartmentName() {
     String departmentName = randomUUID().toString();
 
-    RepositoryNode node = getDocumentLibrary().childNode()
+    RepositoryNode node = getLibrary().childNode()
         .type(FilerTestConstants.Department.FolderType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
         .build();
@@ -33,13 +33,13 @@ public class DepartmentFolderFilerActionTest extends RepositoryOperations {
     createNode(node);
 
     assertThat(node.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class)).isEqualTo(departmentName);
-    assertThat(getPath(node)).isEqualTo(getDocumentLibrary().getPath());
+    assertThat(getPath(node)).isEqualTo(getLibrary().getPath());
   }
 
   @Test
   public void updateDepartmentName() {
     // Create folder node
-    RepositoryNode departmentFolderNode = getDocumentLibrary().childNode()
+    RepositoryNode departmentFolderNode = getLibrary().childNode()
         .type(FilerTestConstants.Department.FolderType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
         .build();
@@ -48,7 +48,7 @@ public class DepartmentFolderFilerActionTest extends RepositoryOperations {
 
     // Create document node in folder
     LocalDateTime date = LocalDateTime.of(2004, 8, 12, 0, 0, 0);
-    RepositoryNode documentNode = getDocumentLibrary().childNode()
+    RepositoryNode documentNode = getLibrary().childNode()
         .type(FilerTestConstants.Department.DocumentType.NAME)
         .property(FilerTestConstants.Department.Aspect.PROP_NAME,
             departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class))
