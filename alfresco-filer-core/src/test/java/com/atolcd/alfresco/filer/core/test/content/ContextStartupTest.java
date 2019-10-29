@@ -10,7 +10,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -21,7 +20,6 @@ import com.atolcd.alfresco.filer.core.test.framework.TestApplicationContext;
 public class ContextStartupTest {
 
   @Autowired
-  @Qualifier("NodeService")
   private NodeService nodeService;
 
   @Test
