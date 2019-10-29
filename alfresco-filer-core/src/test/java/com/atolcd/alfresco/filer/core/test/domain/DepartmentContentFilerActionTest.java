@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -27,7 +28,9 @@ import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstan
 import com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils;
 import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
 import com.atolcd.alfresco.filer.core.test.framework.TestApplicationContext;
+import com.atolcd.alfresco.filer.core.test.framework.TestAuthentication;
 import com.atolcd.alfresco.filer.core.test.framework.TestLibrary;
+import com.atolcd.alfresco.filer.core.test.framework.TestLibraryRole;
 
 public class DepartmentContentFilerActionTest extends RepositoryOperations {
 
@@ -42,6 +45,8 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
   // See https://github.com/spring-projects/spring-framework/issues/19930
   @TestApplicationContext
   @TestLibrary
+  @TestAuthentication
+  @TestLibraryRole(SiteModel.SITE_CONTRIBUTOR)
   public class DepartmentDocument {
 
     @Test

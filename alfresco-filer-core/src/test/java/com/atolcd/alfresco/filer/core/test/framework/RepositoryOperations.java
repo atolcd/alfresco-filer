@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.site.SiteModel;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -19,6 +20,8 @@ import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 
 @TestApplicationContext
 @TestLibrary
+@TestAuthentication
+@TestLibraryRole(SiteModel.SITE_CONTRIBUTOR)
 public class RepositoryOperations {
 
   @Autowired
