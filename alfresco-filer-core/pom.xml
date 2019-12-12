@@ -163,7 +163,7 @@
                 <!-- Remove trailing whitespaces -->
                 <replacement>
                   <token><![CDATA[\ +$]]></token>
-                  <value></value>
+                  <value />
                 </replacement>
               </replacements>
             </configuration>
