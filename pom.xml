@@ -4,7 +4,7 @@
 
   <groupId>com.atolcd.alfresco.filer</groupId>
   <artifactId>alfresco-filer</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <packaging>pom</packaging>
 
   <name>AtolCD Alfresco Filer</name>
