@@ -20,7 +20,7 @@
     <alfresco.module.title>${project.name}</alfresco.module.title>
     <alfresco.module.description>${project.description}</alfresco.module.description>
 
-    <alfresco-filer-core.alfresco-content-services.version>6.2.0-A2</alfresco-filer-core.alfresco-content-services.version>
+    <alfresco-filer-core.alfresco-content-services.version>6.2.0-ga</alfresco-filer-core.alfresco-content-services.version>
 
     <alfresco-filer-core.generated-test-resources.directory>${project.build.directory}/generated-test-resources</alfresco-filer-core.generated-test-resources.directory>
   </properties>
