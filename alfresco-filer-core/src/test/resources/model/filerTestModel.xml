@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="filerTest:model" xmlns="http://www.alfresco.org/model/dictionary/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.alfresco.org/model/dictionary/1.0 https://svn.alfresco.com/repos/alfresco-open-mirror/alfresco/HEAD/root/projects/repository/config/alfresco/model/modelSchema.xsd">
+
+  <description>Filer test model</description>
+  <author>Atol CD</author>
+  <version>1.0</version>
+
+  <imports>
+    <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+    <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+    <import uri="http://www.atolcd.com/model/filer/1.0" prefix="filer"/>
+  </imports>
+
+  <namespaces>
+    <namespace uri="http://www.atolcd.com/model/filer/test/1.0" prefix="filerTest"/>
+  </namespaces>
+
+  <types>
+
+    <!-- Department - Folder -->
+    <type name="filerTest:departmentFolder">
+      <title>Department folder</title>
+      <parent>cm:folder</parent>
+      <mandatory-aspects>
+        <aspect>filer:fileable</aspect>
+        <aspect>filer:subscriber</aspect>
+        <aspect>filerTest:department</aspect>
+      </mandatory-aspects>
+    </type>
+
+    <!-- Department management - Folder -->
+    <type name="filerTest:departmentManagementFolder">
+      <title>Department management folder</title>
+      <parent>filerTest:departmentFolder</parent>
+      <mandatory-aspects>
+        <aspect>filerTest:departmentManagement</aspect>
+      </mandatory-aspects>
+    </type>
+
+    <!-- Department - Document -->
+    <type name="filerTest:departmentDocument">
+      <title>Department document</title>
+      <parent>cm:content</parent>
+      <mandatory-aspects>
+        <aspect>filer:fileable</aspect>
+        <aspect>filerTest:department</aspect>
+        <aspect>filerTest:imported</aspect>
+      </mandatory-aspects>
+    </type>
+
+    <!-- Department management - Document -->
+    <type name="filerTest:departmentManagementDocument">
+      <title>Department management document</title>
+      <parent>filerTest:departmentDocument</parent>
+      <mandatory-aspects>
+        <aspect>filerTest:departmentManagement</aspect>
+      </mandatory-aspects>
+    </type>
+
+    <!-- Special - Document -->
+    <type name="filerTest:specialDocument">
+      <title>Special document</title>
+      <parent>cm:content</parent>
+      <mandatory-aspects>
+        <aspect>filer:fileable</aspect>
+      </mandatory-aspects>
+    </type>
+
+  </types>
+
+  <aspects>
+
+    <aspect name="filerTest:department">
+      <title>Department</title>
+      <parent>filer:propertyInheritance</parent>
+      <properties>
+        <property name="filerTest:departmentName">
+          <title>Department name</title>
+          <type>d:text</type>
+          <mandatory>true</mandatory>
+        </property>
+        <property name="filerTest:departmentId">
+          <title>Department ID</title>
+          <type>d:text</type>
+        </property>
+      </properties>
+    </aspect>
+
+    <aspect name="filerTest:departmentManagement">
+      <title>Department management</title>
+      <parent>filer:propertyInheritance</parent>
+      <properties>
+        <property name="filerTest:departmentManagementId">
+          <title>Department management id</title>
+          <type>d:text</type>
+        </property>
+      </properties>
+    </aspect>
+
+    <aspect name="filerTest:imported">
+      <title>Imported</title>
+      <properties>
+        <property name="filerTest:importedDate">
+          <title>Imported date</title>
+          <type>d:datetime</type>
+        </property>
+      </properties>
+    </aspect>
+
+  </aspects>
+</model>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <bean id="auditService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.audit.AuditService</value>
+      </list>
+    </property>
+    <property name="target" ref="AuditService"/>
+  </bean>
+
+  <bean id="authenticationService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.security.AuthenticationService</value>
+      </list>
+    </property>
+    <property name="target" ref="AuthenticationService"/>
+  </bean>
+
+  <bean id="authorityService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.security.AuthorityService</value>
+      </list>
+    </property>
+    <property name="target" ref="AuthorityService"/>
+  </bean>
+
+  <bean id="checkOutCheckInService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.coci.CheckOutCheckInService</value>
+      </list>
+    </property>
+    <property name="target" ref="CheckOutCheckInService"/>
+  </bean>
+
+  <bean id="contentService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.repository.ContentService</value>
+      </list>
+    </property>
+    <property name="target" ref="ContentService"/>
+  </bean>
+
+  <bean id="copyService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.repository.CopyService</value>
+      </list>
+    </property>
+    <property name="target" ref="CopyService"/>
+  </bean>
+
+  <bean id="fileFolderService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.model.FileFolderService</value>
+      </list>
+    </property>
+    <property name="target" ref="FileFolderService"/>
+  </bean>
+
+  <bean id="lockService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.lock.LockService</value>
+      </list>
+    </property>
+    <property name="target" ref="LockService"/>
+  </bean>
+
+  <bean id="nodeService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.repository.NodeService</value>
+      </list>
+    </property>
+    <property name="target" ref="NodeService"/>
+  </bean>
+
+  <bean id="ownableService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.security.OwnableService</value>
+      </list>
+    </property>
+    <property name="target" ref="OwnableService"/>
+  </bean>
+
+  <bean id="permissionService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.security.PermissionService</value>
+      </list>
+    </property>
+    <property name="target" ref="PermissionService"/>
+  </bean>
+
+  <bean id="personService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.security.PersonService</value>
+      </list>
+    </property>
+    <property name="target" ref="PersonService"/>
+  </bean>
+
+  <bean id="searchService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.search.SearchService</value>
+      </list>
+    </property>
+    <property name="target" ref="SearchService"/>
+  </bean>
+
+  <bean id="siteService_primary"
+      class="org.springframework.aop.framework.ProxyFactoryBean"
+      primary="true">
+    <property name="proxyInterfaces">
+      <list>
+        <value>org.alfresco.service.cmr.site.SiteService</value>
+      </list>
+    </property>
+    <property name="target" ref="SiteService"/>
+  </bean>
+
+</beans>

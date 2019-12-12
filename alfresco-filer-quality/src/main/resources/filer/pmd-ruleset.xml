@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<ruleset name="CCSP Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+  <description>
+    Code Quality Rules
+  </description>
+
+  <rule ref="category/java/bestpractices.xml">
+    <exclude name="GuardLogStatement"/>
+    <exclude name="AccessorMethodGeneration"/>
+    <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+    <exclude name="JUnitTestContainsTooManyAsserts"/>
+    <exclude name="JUnitTestsShouldIncludeAssert"/> <!-- AssertJ is used instead of JUnit assertions -->
+  </rule>
+  <rule ref="category/java/codestyle.xml">
+    <exclude name="LocalVariableCouldBeFinal"/>
+    <exclude name="AtLeastOneConstructor"/>
+    <exclude name="LongVariable"/>
+  </rule>
+  <rule ref="category/java/design.xml">
+    <exclude name="DataClass"/>
+    <exclude name="LawOfDemeter"/>
+    <exclude name="LoosePackageCoupling"/>
+  </rule>
+  <rule ref="category/java/documentation.xml">
+    <exclude name="CommentSize"/> <!-- enforced by Checkstyle LineLength -->
+    <exclude name="CommentRequired"/>
+  </rule>
+  <rule ref="category/java/errorprone.xml">
+    <exclude name="SimpleDateFormatNeedsLocale"/>
+    <exclude name="BeanMembersShouldSerialize"/>
+    <exclude name="DataflowAnomalyAnalysis"/>
+    <exclude name="AvoidLiteralsInIfCondition"/> <!-- enforced by Checkstyle MagicNumber -->
+  </rule>
+  <rule ref="category/java/multithreading.xml">
+    <exclude name="UseConcurrentHashMap"/>
+    <exclude name="DoNotUseThreads"/> <!-- allow using Runnable -->
+  </rule>
+  <rule ref="category/java/performance.xml">
+  </rule>
+  <rule ref="category/java/security.xml">
+  </rule>
+  <!-- Suppress UnusedPrivateMethod warning on @PostConstruct methods -->
+  <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod">
+    <properties>
+      <property name="violationSuppressXPath"
+                value="ancestor::ClassOrInterfaceBodyDeclaration/Annotation[@AnnotationName='PostConstruct']"/>
+    </properties>
+  </rule>
+  <!-- Add suffixes Constants|Aspect|Type -->
+  <rule ref="category/java/codestyle.xml/ClassNamingConventions">
+    <properties>
+      <property name="utilityClassPattern" value="[A-Z][a-zA-Z0-9]+(Utils?|Helper|Constants|Aspect|Type)"/>
+    </properties>
+  </rule>
+  <!-- Allow equals method to return early for simple checks -->
+  <rule ref="category/java/codestyle.xml/OnlyOneReturn">
+    <properties>
+      <property name="violationSuppressXPath"
+                value="ancestor::ClassOrInterfaceBodyDeclaration[MethodDeclaration/MethodDeclarator[@Image='equals']]"/>
+    </properties>
+  </rule>
+  <!-- Allow Builders to have many methods -->
+  <rule ref="category/java/design.xml/TooManyMethods">
+    <properties>
+      <property name="violationSuppressXPath"
+                value="ancestor::ClassOrInterfaceDeclaration[ends-with(@Image, 'Builder')]"/>
+    </properties>
+  </rule>
+  <!-- Adding @RepeatedTest annotated method as test case -->
+  <rule ref="category/java/errorprone.xml/TestClassWithoutTestCases">
+    <properties>
+      <property name="violationSuppressXPath"
+                value="ClassOrInterfaceBody/ClassOrInterfaceBodyDeclaration/Annotation[@AnnotationName='RepeatedTest']"/>
+    </properties>
+  </rule>
+  <!-- Do not limit import number for tests -->
+  <rule ref="category/java/design.xml/ExcessiveImports">
+    <properties>
+      <property name="violationSuppressXPath"
+                value="TypeDeclaration/ClassOrInterfaceDeclaration[matches(@Image, 'Test$')]"/>
+    </properties>
+  </rule>
+  <!-- Do not limit Mockito static import  -->
+  <rule ref="category/java/codestyle.xml/TooManyStaticImports">
+    <properties>
+      <property name="xpath">
+        <value><![CDATA[
+          .[count(ImportDeclaration[@Static = 'true' and not(matches(@PackageName, '^org\.mockito\.'))]) > $maximumStaticImports]
+        ]]></value>
+      </property>
+    </properties>
+  </rule>
+</ruleset>
