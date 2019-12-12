@@ -40,7 +40,7 @@
     <alfresco-filer.maven-clean-plugin.version>3.1.0</alfresco-filer.maven-clean-plugin.version>
     <alfresco-filer.maven-resources-plugin.version>3.1.0</alfresco-filer.maven-resources-plugin.version>
     <alfresco-filer.maven-compiler-plugin.version>3.8.1</alfresco-filer.maven-compiler-plugin.version>
-    <alfresco-filer.maven-jar-plugin.version>3.1.2</alfresco-filer.maven-jar-plugin.version>
+    <alfresco-filer.maven-jar-plugin.version>3.2.0</alfresco-filer.maven-jar-plugin.version>
     <alfresco-filer.maven-source-plugin.version>3.1.0</alfresco-filer.maven-source-plugin.version>
     <alfresco-filer.maven-javadoc-plugin.version>3.1.1</alfresco-filer.maven-javadoc-plugin.version>
     <alfresco-filer.maven-assembly-plugin.version>2.6</alfresco-filer.maven-assembly-plugin.version> <!-- only versions < 3.0.0 are compatible with alfresco-maven-plugin -->
