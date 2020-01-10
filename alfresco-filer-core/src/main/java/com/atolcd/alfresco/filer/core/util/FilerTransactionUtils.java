@@ -8,6 +8,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import com.atolcd.alfresco.filer.core.model.FilerEvent;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
+import com.atolcd.alfresco.filer.core.policy.FileableAspect;
 import com.atolcd.alfresco.filer.core.policy.FilerSubscriberAspect;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 import com.atolcd.alfresco.filer.core.service.FilerUpdateService;
@@ -16,6 +17,7 @@ public final class FilerTransactionUtils {
 
   private static final Class<?> TRANSACTION_EVENT_NODE_KEY = FilerService.class;
   private static final Class<?> TRANSACTION_INITIAL_NODE_KEY = FilerUpdateService.class;
+  private static final Class<?> TRANSACTION_UPDATE_USER_KEY = FileableAspect.class;
   private static final Class<?> TRANSACTION_DELETED_ASSOC_KEY = FilerSubscriberAspect.class;
 
   public static Optional<FilerEvent> getEventNode(final NodeRef nodeRef) {
@@ -40,6 +42,18 @@ public final class FilerTransactionUtils {
 
   private static Map<NodeRef, RepositoryNode> getInitialNodeMap() {
     return TransactionalResourceHelper.getMap(TRANSACTION_INITIAL_NODE_KEY);
+  }
+
+  public static String getUpdateUser(final NodeRef nodeRef) {
+    return Optional.ofNullable(getUpdateUserMap().get(nodeRef)).orElseThrow(IllegalStateException::new);
+  }
+
+  public static void putUpdateUser(final NodeRef nodeRef, final String updateUser) {
+    getUpdateUserMap().put(nodeRef, updateUser);
+  }
+
+  private static Map<NodeRef, String> getUpdateUserMap() {
+    return TransactionalResourceHelper.getMap(TRANSACTION_UPDATE_USER_KEY);
   }
 
   public static Optional<NodeRef> getDeletedAssoc(final NodeRef childRef) {
