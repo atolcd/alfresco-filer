@@ -47,7 +47,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
   @TestLibrary
   @TestAuthentication
   @TestLibraryRole(SiteModel.SITE_CONTRIBUTOR)
-  public class DepartmentDocument {
+  public class DepartmentDocumentCreateOp {
 
     @Test
     public void filerAspectHierarchy() {
@@ -150,6 +150,42 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
     }
 
     @Test
+    public void multipleDocumentWithSameImportDate() {
+      String departmentName = randomUUID().toString();
+      LocalDateTime date = LocalDateTime.of(2004, 8, 12, 0, 0, 0);
+
+      RepositoryNode firstNode = getLibrary().childNode()
+          .type(FilerTestConstants.Department.DocumentType.NAME)
+          .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
+          .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
+          .build();
+
+      RepositoryNode secondNode = getLibrary().childNode()
+          .type(FilerTestConstants.Department.DocumentType.NAME)
+          .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
+          .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
+          .build();
+
+      createNode(firstNode);
+      createNode(secondNode);
+
+      Path nodePath = NodePathUtils.nodePath(departmentName, date);
+
+      assertThat(getPath(firstNode)).isEqualTo(nodePath);
+      assertThat(getPath(secondNode)).isEqualTo(nodePath);
+    }
+  }
+
+  @Nested
+  // Spring does not find the configuration of nested class from the enclosing class
+  // See https://github.com/spring-projects/spring-framework/issues/19930
+  @TestApplicationContext
+  @TestLibrary
+  @TestAuthentication
+  @TestLibraryRole(SiteModel.SITE_COLLABORATOR)
+  public class DepartmentDocumentUpdateOp {
+
+    @Test
     public void updateImportDate() {
       String departmentNom = randomUUID().toString();
       LocalDateTime sourceDate = LocalDateTime.of(2004, 8, 12, 0, 0, 0);
@@ -180,6 +216,16 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       assertThat(nodeService.exists(oldGrandParent)).isFalse();
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentNom, targetDate));
     }
+  }
+
+  @Nested
+  // Spring does not find the configuration of nested class from the enclosing class
+  // See https://github.com/spring-projects/spring-framework/issues/19930
+  @TestApplicationContext
+  @TestLibrary
+  @TestAuthentication
+  @TestLibraryRole(SiteModel.SITE_MANAGER)
+  public class DepartmentDocumentDeleteOp {
 
     @Test
     public void deleteDocument() {
@@ -207,32 +253,6 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       assertThat(nodeService.exists(node.getParent())).isFalse();
       assertThat(nodeService.exists(grandParent)).isFalse();
       assertThat(nodeService.exists(greatGrandParent)).isTrue();
-    }
-
-    @Test
-    public void multipleDocumentWithSameImportDate() {
-      String departmentName = randomUUID().toString();
-      LocalDateTime date = LocalDateTime.of(2004, 8, 12, 0, 0, 0);
-
-      RepositoryNode firstNode = getLibrary().childNode()
-          .type(FilerTestConstants.Department.DocumentType.NAME)
-          .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
-          .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
-          .build();
-
-      RepositoryNode secondNode = getLibrary().childNode()
-          .type(FilerTestConstants.Department.DocumentType.NAME)
-          .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
-          .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
-          .build();
-
-      createNode(firstNode);
-      createNode(secondNode);
-
-      Path nodePath = NodePathUtils.nodePath(departmentName, date);
-
-      assertThat(getPath(firstNode)).isEqualTo(nodePath);
-      assertThat(getPath(secondNode)).isEqualTo(nodePath);
     }
   }
 

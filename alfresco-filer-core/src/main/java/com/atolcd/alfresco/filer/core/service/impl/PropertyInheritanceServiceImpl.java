@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.dictionary.DictionaryListener;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -162,11 +161,7 @@ public class PropertyInheritanceServiceImpl implements PropertyInheritanceServic
   @Override
   public void setInheritance(final NodeRef root, final PropertyInheritancePayload payload) {
     if (!payload.isEmpty()) {
-      // Run as System because current user may not have the permission to see all nodes nor to edit nodes properties
-      AuthenticationUtil.runAsSystem(() -> {
-        setInheritanceImpl(root, payload);
-        return null;
-      });
+      setInheritanceImpl(root, payload);
     }
   }
 

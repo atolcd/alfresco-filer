@@ -10,6 +10,7 @@ import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -25,12 +26,17 @@ public class FileableAspect implements InitializingBean, NodeServicePolicies.OnA
   private FilerService filerService;
   private FilerModelService filerModelService;
   private PolicyComponent policyComponent;
+  private OwnableService ownableService;
+
+  private String username;
 
   @Override
   public void afterPropertiesSet() {
     Objects.requireNonNull(filerService);
     Objects.requireNonNull(filerModelService);
     Objects.requireNonNull(policyComponent);
+    Objects.requireNonNull(ownableService);
+    Objects.requireNonNull(username);
     QName fileableAspect = filerModelService.getFileableAspect();
     // Using TRANSACTION_COMMIT ensures all properties are added/updated before applying filer
     policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME,
@@ -47,6 +53,7 @@ public class FileableAspect implements InitializingBean, NodeServicePolicies.OnA
 
   @Override
   public void onAddAspect(final NodeRef nodeRef, final QName aspectTypeQName) {
+    ownableService.setOwner(nodeRef, username);
     filerService.executeAction(new InboundFilerEvent(nodeRef, false));
   }
 
@@ -91,5 +98,13 @@ public class FileableAspect implements InitializingBean, NodeServicePolicies.OnA
 
   public void setPolicyComponent(final PolicyComponent policyComponent) {
     this.policyComponent = policyComponent;
+  }
+
+  public void setOwnableService(final OwnableService ownableService) {
+    this.ownableService = ownableService;
+  }
+
+  public void setUsername(final String username) {
+    this.username = username;
   }
 }

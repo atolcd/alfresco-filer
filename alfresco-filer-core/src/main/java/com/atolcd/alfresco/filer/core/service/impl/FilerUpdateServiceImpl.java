@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.AbstractBaseCopyService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.DuplicateChildNodeNameException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -38,7 +39,11 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
     NodeRef parent = resultingNode.getParent();
     // Disable behaviours on parent in case node needs to be moved
     filerModelService.runWithoutSubscriberBehaviour(parent, () -> {
-      updateAndMoveFileableImpl(initialNode, originalNode, resultingNode);
+      // Run as System because current user may not have the update permission on the node (he might not be the owner)
+      AuthenticationUtil.runAsSystem(() -> {
+        updateAndMoveFileableImpl(initialNode, originalNode, resultingNode);
+        return null;
+      });
     });
   }
 
