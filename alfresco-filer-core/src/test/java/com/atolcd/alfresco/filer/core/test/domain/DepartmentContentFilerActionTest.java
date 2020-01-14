@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -23,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
-import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
 import com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils;
 import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
@@ -33,9 +31,6 @@ import com.atolcd.alfresco.filer.core.test.framework.TestLibrary;
 import com.atolcd.alfresco.filer.core.test.framework.TestLibraryRole;
 
 public class DepartmentContentFilerActionTest extends RepositoryOperations {
-
-  @Autowired
-  private FilerModelService filerModelService;
 
   @Autowired
   private NodeService nodeService;
@@ -48,48 +43,6 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
   @TestAuthentication
   @TestLibraryRole(SiteModel.SITE_CONTRIBUTOR)
   public class DepartmentDocumentCreateOp {
-
-    @Test
-    public void filerAspectHierarchy() {
-      RepositoryNode node = getLibrary().childNode()
-          .type(FilerTestConstants.Department.DocumentType.NAME)
-          .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
-          .build();
-
-      createNode(node);
-
-      assertThat(node.getAspects()).contains(filerModelService.getFileableAspect());
-
-      NodeRef parent = node.getParent();
-      assertThat(nodeService.getAspects(parent)).contains(filerModelService.getSegmentAspect());
-
-      NodeRef grandParent = nodeService.getPrimaryParent(parent).getParentRef();
-      assertThat(nodeService.getAspects(grandParent)).contains(filerModelService.getSegmentAspect());
-
-      NodeRef greatGrandParent = nodeService.getPrimaryParent(grandParent).getParentRef();
-      assertThat(nodeService.getAspects(greatGrandParent)).contains(filerModelService.getSubscriberAspect());
-    }
-
-    @Test
-    public void typeHierarchy() {
-      QName type = FilerTestConstants.Department.DocumentType.NAME;
-
-      RepositoryNode node = getLibrary().childNode()
-          .type(FilerTestConstants.Department.DocumentType.NAME)
-          .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
-          .build();
-
-      createNode(node);
-
-      assertThat(node.getType()).isEqualTo(type);
-      assertThat(nodeService.getType(node.getParent())).isEqualTo(ContentModel.TYPE_FOLDER);
-
-      NodeRef grandParent = nodeService.getPrimaryParent(node.getParent()).getParentRef();
-      assertThat(nodeService.getType(grandParent)).isEqualTo(ContentModel.TYPE_FOLDER);
-
-      NodeRef greatGrandParent = nodeService.getPrimaryParent(grandParent).getParentRef();
-      assertThat(nodeService.getType(greatGrandParent)).isEqualTo(FilerTestConstants.Department.FolderType.NAME);
-    }
 
     @Test
     public void withImportDate() {
