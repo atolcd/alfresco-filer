@@ -15,7 +15,7 @@
 
   <properties>
     <alfresco-filer-parent.maven-checkstyle-plugin.version>3.1.0</alfresco-filer-parent.maven-checkstyle-plugin.version>
-    <alfresco-filer-parent.checkstyle.version>8.22</alfresco-filer-parent.checkstyle.version>
+    <alfresco-filer-parent.checkstyle.version>8.29</alfresco-filer-parent.checkstyle.version>
     <alfresco-filer-parent.checkstyle.includes />
     <alfresco-filer-parent.maven-pmd-plugin.version>3.12.0</alfresco-filer-parent.maven-pmd-plugin.version>
     <alfresco-filer-parent.pmd.version>6.16.0</alfresco-filer-parent.pmd.version>

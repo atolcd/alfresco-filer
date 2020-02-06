@@ -15,10 +15,6 @@
       <property name="arrayInitIndent" value="2"/>
       <property name="lineWrappingIndentation" value="2"/>
     </module>
-    <!-- Check that lines do not go over 130 characters -->
-    <module name="LineLength">
-      <property name="max" value="130"/>
-    </module>
     <module name="ConstantName"/>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
@@ -94,10 +90,16 @@
   </module>
   <!-- Check consistency of translated properties files -->
   <module name="Translation"/>
+  <!-- Check that lines do not go over 130 characters in java files -->
+  <module name="LineLength">
+    <property name="max" value="130"/>
+    <property name="fileExtensions" value="java"/>
+  </module>
   <!-- Check that file length is not too big -->
   <module name="FileLength">
     <property name="max" value="1500"/>
   </module>
+  <!-- Check that there are no tab characters -->
   <module name="FileTabCharacter"/>
   <!-- Check that there is an empty line at the end -->
   <module name="NewlineAtEndOfFile">
