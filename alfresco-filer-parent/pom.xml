@@ -23,8 +23,8 @@
     <alfresco-filer-parent.maven-surefire-plugin.version>2.22.2</alfresco-filer-parent.maven-surefire-plugin.version>
     <alfresco-filer-parent.jacoco-maven-plugin.version>0.8.5</alfresco-filer-parent.jacoco-maven-plugin.version>
 
-    <alfresco-filer-parent.junit.version>5.5.2</alfresco-filer-parent.junit.version>
-    <alfresco-filer-parent.junit.platform.version>1.5.2</alfresco-filer-parent.junit.platform.version>
+    <alfresco-filer-parent.junit.version>5.6.0</alfresco-filer-parent.junit.version>
+    <alfresco-filer-parent.junit.platform.version>1.6.0</alfresco-filer-parent.junit.platform.version>
     <alfresco-filer-parent.spring.version>5.1.8.RELEASE</alfresco-filer-parent.spring.version>
     <alfresco-filer-parent.mockito.version>3.2.0</alfresco-filer-parent.mockito.version>
     <alfresco-filer-parent.assertj.version>3.14.0</alfresco-filer-parent.assertj.version>

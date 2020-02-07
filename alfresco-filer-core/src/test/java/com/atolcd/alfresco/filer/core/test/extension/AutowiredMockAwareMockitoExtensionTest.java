@@ -44,7 +44,7 @@ public class AutowiredMockAwareMockitoExtensionTest {
 
   @Test
   public void necessaryStubbing() {
-    Events testEvents = executeTestsForClass(NecessaryStubbingTestClass.class).tests();
+    Events testEvents = executeTestsForClass(NecessaryStubbingTestClass.class).testEvents();
 
     logTestFailures(testEvents);
 
@@ -80,7 +80,7 @@ public class AutowiredMockAwareMockitoExtensionTest {
 
   @Test
   public void unnecessaryStubbing() {
-    Events testEvents = executeTestsForClass(UnnecessaryStubbingTestClass.class).tests();
+    Events testEvents = executeTestsForClass(UnnecessaryStubbingTestClass.class).testEvents();
 
     logTestFailures(testEvents);
 
@@ -115,7 +115,7 @@ public class AutowiredMockAwareMockitoExtensionTest {
 
   @Test
   public void stubbing() {
-    Events testEvents = executeTestsForClass(StubbingTestClass.class).tests();
+    Events testEvents = executeTestsForClass(StubbingTestClass.class).testEvents();
 
     logTestFailures(testEvents);
 
