@@ -165,7 +165,8 @@ public class AutowiredMockAwareMockitoExtensionTest {
         .map(Optional::get) // Event of type FINISHED cannot have empty payload
         .map(TestExecutionResult::getThrowable)
         .map(Optional::get) // Throwable is always present on failed test
-        .forEach(thrown -> LOGGER.error("Extension test error", thrown));
+        // TODO wait for https://github.com/pmd/pmd/issues/2255
+        .forEach(thrown -> LOGGER.error("Extension test error", thrown)); // NOPMD InvalidLogMessageFormat false positive
   }
 
   /**
