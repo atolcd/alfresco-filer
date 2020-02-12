@@ -11,6 +11,7 @@ import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,6 +31,7 @@ public class FileableAspect implements InitializingBean, NodeServicePolicies.OnC
   private FilerService filerService;
   private FilerModelService filerModelService;
   private PolicyComponent policyComponent;
+  private NodeService nodeService;
   private OwnableService ownableService;
 
   private String username;
@@ -74,7 +76,9 @@ public class FileableAspect implements InitializingBean, NodeServicePolicies.OnC
   public void onAddAspect(final NodeRef nodeRef, final QName aspectTypeQName) {
     String user = FilerTransactionUtils.getUpdateUser(nodeRef);
     AuthenticationUtil.runAs(() -> {
-      ownableService.setOwner(nodeRef, username);
+      if (nodeService.exists(nodeRef)) {
+        ownableService.setOwner(nodeRef, username);
+      }
       return null;
     }, user);
 
@@ -142,6 +146,10 @@ public class FileableAspect implements InitializingBean, NodeServicePolicies.OnC
 
   public void setPolicyComponent(final PolicyComponent policyComponent) {
     this.policyComponent = policyComponent;
+  }
+
+  public void setNodeService(final NodeService nodeService) {
+    this.nodeService = nodeService;
   }
 
   public void setOwnableService(final OwnableService ownableService) {

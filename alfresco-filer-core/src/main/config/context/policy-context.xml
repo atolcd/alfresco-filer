@@ -7,6 +7,7 @@
     <property name="filerService" ref="filerService"/>
     <property name="filerModelService" ref="filerModelService"/>
     <property name="policyComponent" ref="policyComponent"/>
+    <property name="nodeService" ref="NodeService"/>
     <property name="ownableService" ref="ownableService"/>
     <property name="username" value="${filer.owner.username}"/>
   </bean>
