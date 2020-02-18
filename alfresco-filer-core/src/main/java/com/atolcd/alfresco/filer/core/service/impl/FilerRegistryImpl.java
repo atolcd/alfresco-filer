@@ -8,6 +8,7 @@ import java.util.TreeSet;
 
 import com.atolcd.alfresco.filer.core.model.FilerAction;
 import com.atolcd.alfresco.filer.core.scope.FilerScopeLoader;
+import com.atolcd.alfresco.filer.core.scope.impl.EmptyFilerScopeLoader;
 import com.atolcd.alfresco.filer.core.service.FilerRegistry;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -26,7 +27,9 @@ public class FilerRegistryImpl implements FilerRegistry {
 
   @Override
   public void registerScopeLoader(final FilerScopeLoader scopeLoader) {
-    getScopeLoaders().add(scopeLoader);
+    if (!EmptyFilerScopeLoader.class.equals(scopeLoader.getClass())) {
+      getScopeLoaders().add(scopeLoader);
+    }
   }
 
   @Override

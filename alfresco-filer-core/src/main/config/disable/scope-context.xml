@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- In order to disable the registration of the default filer scope :
+       1. create a file named "scope-context.xml" in /alfresco/module/*/filer/scope-context.xml
+       2. include this beans file : <import resource="classpath:alfresco/module/filer/disable/scope-context.xml"/>
+  -->
+
+  <!-- EmptyFilerScopeLoader, so this effectively performs NOOP -->
+  <bean id="filer.scope.defaultLoader" parent="filer.scope.base"
+      class="com.atolcd.alfresco.filer.core.scope.impl.EmptyFilerScopeLoader"/>
+
+  <!-- EmptyFilerScopeLoader, so this effectively performs NOOP -->
+  <bean id="filer.scope.aspectsLoader" parent="filer.scope.base"
+      class="com.atolcd.alfresco.filer.core.scope.impl.EmptyFilerScopeLoader"/>
+
+  <!-- EmptyFilerScopeLoader, so this effectively performs NOOP -->
+  <bean id="filer.scope.propertiesLoader" parent="filer.scope.base"
+      class="com.atolcd.alfresco.filer.core.scope.impl.EmptyFilerScopeLoader"/>
+
+  <!-- EmptyFilerScopeLoader, so this effectively performs NOOP -->
+  <bean id="filer.scope.siteLoader" parent="filer.scope.base"
+      class="com.atolcd.alfresco.filer.core.scope.impl.EmptyFilerScopeLoader"/>
+
+</beans>

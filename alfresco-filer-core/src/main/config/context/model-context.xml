@@ -11,4 +11,6 @@
     </property>
   </bean>
 
+  <import resource="classpath:alfresco/module/*/filer/model-context.xml"/>
+
 </beans>

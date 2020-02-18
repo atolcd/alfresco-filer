@@ -27,4 +27,6 @@
     <constructor-arg ref="siteService"/>
   </bean>
 
+  <import resource="classpath:alfresco/module/*/filer/scope-context.xml"/>
+
 </beans>
