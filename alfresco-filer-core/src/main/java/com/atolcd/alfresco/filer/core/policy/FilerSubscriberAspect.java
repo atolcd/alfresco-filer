@@ -1,6 +1,5 @@
 package com.atolcd.alfresco.filer.core.policy;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import org.alfresco.repo.node.NodeServicePolicies;
@@ -16,23 +15,22 @@ import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 import com.atolcd.alfresco.filer.core.util.FilerTransactionUtils;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 public class FilerSubscriberAspect implements InitializingBean, NodeServicePolicies.BeforeDeleteChildAssociationPolicy,
     NodeServicePolicies.OnCreateChildAssociationPolicy {
 
-  @Nullable
-  private FilerService filerService;
-  @Nullable
-  private FilerModelService filerModelService;
-  @Nullable
-  private PolicyComponent policyComponent;
+  private final FilerService filerService;
+  private final FilerModelService filerModelService;
+  private final PolicyComponent policyComponent;
+
+  public FilerSubscriberAspect(final FilerService filerService, final FilerModelService filerModelService,
+      final PolicyComponent policyComponent) {
+    this.filerService = filerService;
+    this.filerModelService = filerModelService;
+    this.policyComponent = policyComponent;
+  }
 
   @Override
   public void afterPropertiesSet() {
-    Objects.requireNonNull(filerService);
-    Objects.requireNonNull(filerModelService);
-    Objects.requireNonNull(policyComponent);
     QName subscriberAspect = filerModelService.getSubscriberAspect();
     policyComponent.bindAssociationBehaviour(NodeServicePolicies.BeforeDeleteChildAssociationPolicy.QNAME,
         subscriberAspect, new JavaBehaviour(this, "beforeDeleteChildAssociation"));
@@ -61,17 +59,5 @@ public class FilerSubscriberAspect implements InitializingBean, NodeServicePolic
     Optional<NodeRef> oldParent = FilerTransactionUtils.getDeletedAssoc(childAssocRef.getChildRef());
     // It is in fact a rename if a previous deletion of the child happened on the same parent
     return oldParent.isPresent() && oldParent.get().equals(childAssocRef.getParentRef());
-  }
-
-  public void setFilerService(final FilerService filerService) {
-    this.filerService = filerService;
-  }
-
-  public void setFilerModelService(final FilerModelService filerModelService) {
-    this.filerModelService = filerModelService;
-  }
-
-  public void setPolicyComponent(final PolicyComponent policyComponent) {
-    this.policyComponent = policyComponent;
   }
 }

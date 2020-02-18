@@ -10,8 +10,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class FilerModelServiceImpl implements FilerModelService {
 
-  @Nullable
-  private BehaviourFilter behaviourFilter;
+  private final BehaviourFilter behaviourFilter;
 
   @Nullable
   private QName fileableAspect;
@@ -21,6 +20,10 @@ public class FilerModelServiceImpl implements FilerModelService {
   private QName subscriberAspect;
   @Nullable
   private QName propertyInheritanceAspect;
+
+  public FilerModelServiceImpl(final BehaviourFilter behaviourFilter) {
+    this.behaviourFilter = behaviourFilter;
+  }
 
   @Override
   public QName getFileableAspect() {
@@ -76,10 +79,6 @@ public class FilerModelServiceImpl implements FilerModelService {
         behaviourFilter.enableBehaviour(nodeRef, behaviour);
       }
     }
-  }
-
-  public void setBehaviourFilter(final BehaviourFilter behaviourFilter) {
-    this.behaviourFilter = behaviourFilter;
   }
 
   public void setFileableAspectQName(final String fileableAspectQName) {

@@ -4,27 +4,27 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <bean id="filer.scope.base" abstract="true">
-    <property name="filerRegistry" ref="filerRegistry"/>
+    <constructor-arg ref="filerRegistry"/>
   </bean>
 
   <bean id="filer.scope.defaultLoader" parent="filer.scope.base"
       class="com.atolcd.alfresco.filer.core.scope.impl.DefaultFilerScopeLoader">
-    <property name="nodeService" ref="NodeService"/>
+    <constructor-arg ref="NodeService"/>
   </bean>
 
   <bean id="filer.scope.aspectsLoader" parent="filer.scope.base"
       class="com.atolcd.alfresco.filer.core.scope.impl.AspectsFilerScopeLoader">
-    <property name="nodeService" ref="NodeService"/>
+    <constructor-arg ref="NodeService"/>
   </bean>
 
   <bean id="filer.scope.propertiesLoader" parent="filer.scope.base"
       class="com.atolcd.alfresco.filer.core.scope.impl.PropertiesFilerScopeLoader">
-    <property name="nodeService" ref="NodeService"/>
+    <constructor-arg ref="NodeService"/>
   </bean>
 
   <bean id="filer.scope.siteLoader" parent="filer.scope.base"
       class="com.atolcd.alfresco.filer.core.scope.impl.SiteFilerScopeLoader">
-    <property name="siteService" ref="siteService"/>
+    <constructor-arg ref="siteService"/>
   </bean>
 
 </beans>

@@ -21,16 +21,18 @@ import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class FilerFolderServiceImpl implements FilerFolderService {
 
-  @Nullable
-  private FilerModelService filerModelService;
-  @Nullable
-  private NodeService nodeService;
-  @Nullable
-  private NodeDAO nodeDAO;
+  private final FilerModelService filerModelService;
+  private final NodeService nodeService;
+  private final NodeDAO nodeDAO;
+
+  public FilerFolderServiceImpl(final FilerModelService filerModelService, final NodeService nodeService, final NodeDAO nodeDAO) {
+    this.filerModelService = filerModelService;
+    this.nodeService = nodeService;
+    this.nodeDAO = nodeDAO;
+  }
 
   @Override
   public void fetchFolder(final RepositoryNode node, final Consumer<NodeRef> onGet) {
@@ -137,17 +139,5 @@ public class FilerFolderServiceImpl implements FilerFolderService {
       });
       return null;
     });
-  }
-
-  public void setFilerModelService(final FilerModelService filerModelService) {
-    this.filerModelService = filerModelService;
-  }
-
-  public void setNodeService(final NodeService nodeService) {
-    this.nodeService = nodeService;
-  }
-
-  public void setNodeDAO(final NodeDAO nodeDAO) {
-    this.nodeDAO = nodeDAO;
   }
 }

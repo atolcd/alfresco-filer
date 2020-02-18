@@ -4,25 +4,25 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <bean id="filer.policy.fileableAspect" class="com.atolcd.alfresco.filer.core.policy.FileableAspect">
-    <property name="filerService" ref="filerService"/>
-    <property name="filerModelService" ref="filerModelService"/>
-    <property name="policyComponent" ref="policyComponent"/>
-    <property name="nodeService" ref="NodeService"/>
-    <property name="ownableService" ref="ownableService"/>
-    <property name="username" value="${filer.owner.username}"/>
+    <constructor-arg ref="filerService"/>
+    <constructor-arg ref="filerModelService"/>
+    <constructor-arg ref="policyComponent"/>
+    <constructor-arg ref="NodeService"/>
+    <constructor-arg ref="ownableService"/>
+    <constructor-arg value="${filer.owner.username}"/>
   </bean>
 
   <bean id="filer.policy.subscriberAspect" class="com.atolcd.alfresco.filer.core.policy.FilerSubscriberAspect">
-    <property name="filerService" ref="filerService"/>
-    <property name="filerModelService" ref="filerModelService"/>
-    <property name="policyComponent" ref="policyComponent"/>
+    <constructor-arg ref="filerService"/>
+    <constructor-arg ref="filerModelService"/>
+    <constructor-arg ref="policyComponent"/>
   </bean>
 
   <bean id="filer.policy.segmentAspect" class="com.atolcd.alfresco.filer.core.policy.FilerSegmentAspect">
-    <property name="filerModelService" ref="filerModelService"/>
-    <property name="policyComponent" ref="policyComponent"/>
-    <property name="ownableService" ref="ownableService"/>
-    <property name="username" value="${filer.owner.username}"/>
+    <constructor-arg ref="filerModelService"/>
+    <constructor-arg ref="policyComponent"/>
+    <constructor-arg ref="ownableService"/>
+    <constructor-arg value="${filer.owner.username}"/>
   </bean>
 
 </beans>

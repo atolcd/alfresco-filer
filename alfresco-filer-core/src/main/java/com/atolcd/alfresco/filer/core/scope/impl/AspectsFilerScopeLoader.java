@@ -4,22 +4,21 @@ import org.alfresco.service.cmr.repository.NodeService;
 
 import com.atolcd.alfresco.filer.core.model.FilerEvent;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
-
-import edu.umd.cs.findbugs.annotations.Nullable;
+import com.atolcd.alfresco.filer.core.service.FilerRegistry;
 
 public class AspectsFilerScopeLoader extends EmptyFilerScopeLoader {
 
-  @Nullable
-  private NodeService nodeService;
+  private final NodeService nodeService;
+
+  public AspectsFilerScopeLoader(final FilerRegistry filerRegistry, final NodeService nodeService) {
+    super(filerRegistry);
+    this.nodeService = nodeService;
+  }
 
   @Override
   public void update(final FilerEvent event) {
     RepositoryNode node = event.getNode();
     // Put aspects
     node.getAspects().addAll(nodeService.getAspects(node.getNodeRef().get()));
-  }
-
-  public void setNodeService(final NodeService nodeService) {
-    this.nodeService = nodeService;
   }
 }

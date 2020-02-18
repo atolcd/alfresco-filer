@@ -18,7 +18,7 @@
 
   <bean id="filerModelService"
       class="com.atolcd.alfresco.filer.core.service.impl.FilerModelServiceImpl">
-    <property name="behaviourFilter" ref="policyBehaviourFilter"/>
+    <constructor-arg ref="policyBehaviourFilter"/>
     <property name="fileableAspectQName" value="${filer.aspect.fileable}"/>
     <property name="segmentAspectQName" value="${filer.aspect.segment}"/>
     <property name="subscriberAspectQName" value="${filer.aspect.subscriber}"/>
@@ -56,9 +56,9 @@
 
   <bean id="filerFolderServiceImpl"
       class="com.atolcd.alfresco.filer.core.service.impl.FilerFolderServiceImpl">
-    <property name="filerModelService" ref="filerModelService"/>
-    <property name="nodeService" ref="NodeService"/>
-    <property name="nodeDAO" ref="nodeDAO"/>
+    <constructor-arg ref="filerModelService"/>
+    <constructor-arg ref="NodeService"/>
+    <constructor-arg ref="nodeDAO"/>
   </bean>
 
   <bean id="filerUpdateService"
@@ -91,10 +91,10 @@
 
   <bean id="filer.propertyInheritanceServiceImpl"
       class="com.atolcd.alfresco.filer.core.service.impl.PropertyInheritanceServiceImpl">
-    <property name="filerModelService" ref="filerModelService"/>
-    <property name="nodeService" ref="NodeService"/>
-    <property name="dictionaryService" ref="dictionaryService"/>
-    <property name="dictionaryDAO" ref="dictionaryDAO"/>
+    <constructor-arg ref="filerModelService"/>
+    <constructor-arg ref="NodeService"/>
+    <constructor-arg ref="dictionaryService"/>
+    <constructor-arg ref="dictionaryDAO"/>
   </bean>
 
   <bean id="filer.action.base" abstract="true">

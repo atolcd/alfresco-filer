@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,26 +34,26 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class PropertyInheritanceServiceImpl implements PropertyInheritanceService, InitializingBean, DictionaryListener {
 
-  @Nullable
-  private FilerModelService filerModelService;
-  @Nullable
-  private NodeService nodeService;
-  @Nullable
-  private DictionaryService dictionaryService;
-  @Nullable
-  private DictionaryDAO dictionaryDAO;
+  private final FilerModelService filerModelService;
+  private final NodeService nodeService;
+  private final DictionaryService dictionaryService;
+  private final DictionaryDAO dictionaryDAO;
 
   @Nullable
   private Collection<QName> inheritedAspects;
   @Nullable
   private Map<QName, QName> inheritedProperties;
 
+  public PropertyInheritanceServiceImpl(final FilerModelService filerModelService, final NodeService nodeService,
+      final DictionaryService dictionaryService, final DictionaryDAO dictionaryDAO) {
+    this.filerModelService = filerModelService;
+    this.nodeService = nodeService;
+    this.dictionaryService = dictionaryService;
+    this.dictionaryDAO = dictionaryDAO;
+  }
+
   @Override
   public void afterPropertiesSet() {
-    Objects.requireNonNull(filerModelService);
-    Objects.requireNonNull(nodeService);
-    Objects.requireNonNull(dictionaryService);
-    Objects.requireNonNull(dictionaryDAO);
     dictionaryDAO.registerListener(this);
   }
 
@@ -219,21 +218,5 @@ public class PropertyInheritanceServiceImpl implements PropertyInheritanceServic
   @Override
   public void afterDictionaryDestroy() { // NOPMD - default empty method, nothing to do after dictionary deletion
     // no op
-  }
-
-  public void setFilerModelService(final FilerModelService filerModelService) {
-    this.filerModelService = filerModelService;
-  }
-
-  public void setNodeService(final NodeService nodeService) {
-    this.nodeService = nodeService;
-  }
-
-  public void setDictionaryService(final DictionaryService dictionaryService) {
-    this.dictionaryService = dictionaryService;
-  }
-
-  public void setDictionaryDAO(final DictionaryDAO dictionaryDAO) {
-    this.dictionaryDAO = dictionaryDAO;
   }
 }

@@ -1,7 +1,5 @@
 package com.atolcd.alfresco.filer.core.policy;
 
-import java.util.Objects;
-
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
@@ -12,26 +10,24 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 public class FilerSegmentAspect implements InitializingBean, NodeServicePolicies.OnAddAspectPolicy {
 
-  @Nullable
-  private FilerModelService filerModelService;
-  @Nullable
-  private PolicyComponent policyComponent;
-  @Nullable
-  private OwnableService ownableService;
+  private final FilerModelService filerModelService;
+  private final PolicyComponent policyComponent;
+  private final OwnableService ownableService;
 
-  @Nullable
-  private String username;
+  private final String username;
+
+  public FilerSegmentAspect(final FilerModelService filerModelService, final PolicyComponent policyComponent,
+      final OwnableService ownableService, final String username) {
+    this.filerModelService = filerModelService;
+    this.policyComponent = policyComponent;
+    this.ownableService = ownableService;
+    this.username = username;
+  }
 
   @Override
   public void afterPropertiesSet() {
-    Objects.requireNonNull(filerModelService);
-    Objects.requireNonNull(policyComponent);
-    Objects.requireNonNull(ownableService);
-    Objects.requireNonNull(username);
     policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME,
         filerModelService.getSegmentAspect(), new JavaBehaviour(this, "onAddAspect"));
   }
@@ -39,21 +35,5 @@ public class FilerSegmentAspect implements InitializingBean, NodeServicePolicies
   @Override
   public void onAddAspect(final NodeRef nodeRef, final QName aspectTypeQName) {
     ownableService.setOwner(nodeRef, username);
-  }
-
-  public void setFilerModelService(final FilerModelService filerModelService) {
-    this.filerModelService = filerModelService;
-  }
-
-  public void setPolicyComponent(final PolicyComponent policyComponent) {
-    this.policyComponent = policyComponent;
-  }
-
-  public void setOwnableService(final OwnableService ownableService) {
-    this.ownableService = ownableService;
-  }
-
-  public void setUsername(final String username) {
-    this.username = username;
   }
 }

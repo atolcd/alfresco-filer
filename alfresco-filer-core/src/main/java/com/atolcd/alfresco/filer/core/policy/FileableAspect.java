@@ -2,7 +2,6 @@ package com.atolcd.alfresco.filer.core.policy;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Objects;
 
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
@@ -23,34 +22,32 @@ import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 import com.atolcd.alfresco.filer.core.util.FilerTransactionUtils;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 public class FileableAspect implements InitializingBean, NodeServicePolicies.OnCreateNodePolicy,
     NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.BeforeUpdateNodePolicy,
     NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy,
     NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnMoveNodePolicy {
 
-  @Nullable
-  private FilerService filerService;
-  @Nullable
-  private FilerModelService filerModelService;
-  @Nullable
-  private PolicyComponent policyComponent;
-  @Nullable
-  private NodeService nodeService;
-  @Nullable
-  private OwnableService ownableService;
+  private final FilerService filerService;
+  private final FilerModelService filerModelService;
+  private final PolicyComponent policyComponent;
+  private final NodeService nodeService;
+  private final OwnableService ownableService;
 
-  @Nullable
-  private String username;
+  private final String username;
+
+  public FileableAspect(final FilerService filerService, final FilerModelService filerModelService,
+      final PolicyComponent policyComponent, final NodeService nodeService, final OwnableService ownableService,
+      final String username) {
+    this.filerService = filerService;
+    this.filerModelService = filerModelService;
+    this.policyComponent = policyComponent;
+    this.nodeService = nodeService;
+    this.ownableService = ownableService;
+    this.username = username;
+  }
 
   @Override
   public void afterPropertiesSet() {
-    Objects.requireNonNull(filerService);
-    Objects.requireNonNull(filerModelService);
-    Objects.requireNonNull(policyComponent);
-    Objects.requireNonNull(ownableService);
-    Objects.requireNonNull(username);
     QName fileableAspect = filerModelService.getFileableAspect();
     policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME,
         fileableAspect, new JavaBehaviour(this, "onCreateNode"));
@@ -142,29 +139,5 @@ public class FileableAspect implements InitializingBean, NodeServicePolicies.OnC
       filerService.executeAction(event);
       return null;
     }, user);
-  }
-
-  public void setFilerService(final FilerService filerService) {
-    this.filerService = filerService;
-  }
-
-  public void setFilerModelService(final FilerModelService filerModelService) {
-    this.filerModelService = filerModelService;
-  }
-
-  public void setPolicyComponent(final PolicyComponent policyComponent) {
-    this.policyComponent = policyComponent;
-  }
-
-  public void setNodeService(final NodeService nodeService) {
-    this.nodeService = nodeService;
-  }
-
-  public void setOwnableService(final OwnableService ownableService) {
-    this.ownableService = ownableService;
-  }
-
-  public void setUsername(final String username) {
-    this.username = username;
   }
 }

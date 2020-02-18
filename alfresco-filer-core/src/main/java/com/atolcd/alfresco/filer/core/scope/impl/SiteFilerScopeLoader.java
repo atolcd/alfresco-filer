@@ -5,14 +5,17 @@ import org.alfresco.service.cmr.site.SiteService;
 
 import com.atolcd.alfresco.filer.core.model.FilerEvent;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
+import com.atolcd.alfresco.filer.core.service.FilerRegistry;
 import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
-
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class SiteFilerScopeLoader extends EmptyFilerScopeLoader {
 
-  @Nullable
-  private SiteService siteService;
+  private final SiteService siteService;
+
+  public SiteFilerScopeLoader(final FilerRegistry filerRegistry, final SiteService siteService) {
+    super(filerRegistry);
+    this.siteService = siteService;
+  }
 
   @Override
   public void init(final FilerEvent event) {
@@ -20,9 +23,5 @@ public class SiteFilerScopeLoader extends EmptyFilerScopeLoader {
     // Init site information
     SiteInfo siteInfo = siteService.getSite(node.getNodeRef().get());
     FilerNodeUtils.setSiteInfo(node, siteInfo);
-  }
-
-  public void setSiteService(final SiteService siteService) {
-    this.siteService = siteService;
   }
 }
