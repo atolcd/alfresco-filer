@@ -1,5 +1,6 @@
 package com.atolcd.alfresco.filer.core.test.service.impl;
 
+import static com.atolcd.alfresco.filer.core.test.framework.util.NodeRefUtils.randomNode;
 import static com.atolcd.alfresco.filer.core.test.framework.util.NodeRefUtils.randomNodeRef;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +16,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.atolcd.alfresco.filer.core.model.FilerFolderContext;
-import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 import com.atolcd.alfresco.filer.core.service.impl.FilerFolderBuilder;
 
@@ -28,8 +28,7 @@ public class FilerFolderBuilderTest {
 
   @Test
   public void condition() {
-    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, new FilerFolderContext(new RepositoryNode()),
-        randomNodeRef());
+    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, randomNode(), randomNodeRef());
 
     filerFolderBuilder.condition(x -> false);
     assertThat(filerFolderBuilder.getContext().isEnabled()).isFalse();
@@ -40,8 +39,7 @@ public class FilerFolderBuilderTest {
 
   @Test
   public void conditionReverse() {
-    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, new FilerFolderContext(new RepositoryNode()),
-        randomNodeRef());
+    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, randomNode(), randomNodeRef());
 
     filerFolderBuilder.conditionReverse();
     assertThat(filerFolderBuilder.getContext().isEnabled()).isFalse();
@@ -52,11 +50,9 @@ public class FilerFolderBuilderTest {
 
   @Test
   public void conditionEnd() {
-    FilerFolderContext context = new FilerFolderContext(new RepositoryNode());
+    FilerFolderContext context = new FilerFolderContext(randomNode(), randomNodeRef());
     context.enable(false);
-
-    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, context,
-        randomNodeRef());
+    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, context, randomNodeRef());
 
     filerFolderBuilder.conditionEnd();
     assertThat(filerFolderBuilder.getContext().isEnabled()).isTrue();
@@ -64,8 +60,7 @@ public class FilerFolderBuilderTest {
 
   @Test
   public void updateAndMoveWithContextEnabled() {
-    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, new FilerFolderContext(new RepositoryNode()),
-        randomNodeRef());
+    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, randomNode(), randomNodeRef());
 
     filerFolderBuilder.rename().with(randomUUID().toString());
 
@@ -77,11 +72,9 @@ public class FilerFolderBuilderTest {
 
   @Test
   public void updateAndMoveWithContextDisabled() {
-    FilerFolderContext context = new FilerFolderContext(new RepositoryNode());
+    FilerFolderContext context = new FilerFolderContext(randomNode(), randomNodeRef());
     context.enable(false);
-
-    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, context,
-        randomNodeRef());
+    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, context, randomNodeRef());
 
     filerFolderBuilder.updateAndMove();
 
@@ -90,28 +83,25 @@ public class FilerFolderBuilderTest {
 
   @Test
   public void contextWithContextEnabled() {
-    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, new FilerFolderContext(new RepositoryNode()),
-        randomNodeRef());
+    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, randomNode(), randomNodeRef());
 
     NodeRef nodeRef = randomNodeRef();
 
     filerFolderBuilder.contextFrom(context -> context.getNode().setNodeRef(nodeRef));
 
-    assertThat(filerFolderBuilder.getContext().getNode().getNodeRef()).isEqualTo(nodeRef);
+    assertThat(filerFolderBuilder.getContext().getNode().getNodeRef()).contains(nodeRef);
   }
 
   @Test
   public void contextWithContextDisabled() {
-    FilerFolderContext contextDisabled = new FilerFolderContext(new RepositoryNode());
+    FilerFolderContext contextDisabled = new FilerFolderContext(randomNode(), randomNodeRef());
     contextDisabled.enable(false);
-
-    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, contextDisabled,
-        randomNodeRef());
+    FilerFolderBuilder filerFolderBuilder = new FilerFolderBuilder(filerService, contextDisabled, randomNodeRef());
 
     NodeRef nodeRef = randomNodeRef();
 
     filerFolderBuilder.contextFrom(context -> context.getNode().setNodeRef(nodeRef));
 
-    assertThat(filerFolderBuilder.getContext().getNode().getNodeRef()).isNotEqualTo(nodeRef);
+    assertThat(filerFolderBuilder.getContext().getNode().getNodeRef().get()).isNotEqualTo(nodeRef);
   }
 }

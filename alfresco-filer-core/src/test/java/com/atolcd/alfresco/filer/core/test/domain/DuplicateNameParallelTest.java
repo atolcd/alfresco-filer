@@ -78,7 +78,7 @@ public class DuplicateNameParallelTest extends AbstractParallelTest {
 
     assertThat(results.stream().map(RepositoryNode::getName).map(Optional::get))
         .doesNotHaveDuplicates();
-    assertThat(results.stream().map(RepositoryNode::getNodeRef).map(nodeService::exists))
+    assertThat(results.stream().map(RepositoryNode::getNodeRef).map(Optional::get).map(nodeService::exists))
         .hasSize(NUM_THREAD_TO_LAUNCH)
         .containsOnly(true);
   }

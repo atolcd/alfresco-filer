@@ -11,7 +11,7 @@ public class DepartmentManagementContentFilerAction extends AbstractFilerTestAct
 
   @Override
   public boolean supportsActionResolution(final FilerEvent event) {
-    return event.getNode().getType().equals(FilerTestConstants.Department.Management.DocumentType.NAME)
+    return event.getNode().getType().get().equals(FilerTestConstants.Department.Management.DocumentType.NAME)
         && event.getNode().getAspects()
             .containsAll(Arrays.asList(
                 FilerTestConstants.Department.Aspect.NAME, FilerTestConstants.Department.Management.Aspect.NAME));

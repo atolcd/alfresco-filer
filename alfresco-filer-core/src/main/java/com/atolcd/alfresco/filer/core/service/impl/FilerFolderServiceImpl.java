@@ -1,7 +1,6 @@
 package com.atolcd.alfresco.filer.core.service.impl;
 
 import java.util.Collections;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.alfresco.model.ContentModel;
@@ -21,44 +20,45 @@ import com.atolcd.alfresco.filer.core.service.FilerFolderService;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class FilerFolderServiceImpl implements FilerFolderService {
 
+  @Nullable
   private FilerModelService filerModelService;
+  @Nullable
   private NodeService nodeService;
+  @Nullable
   private NodeDAO nodeDAO;
 
   @Override
   public void fetchFolder(final RepositoryNode node, final Consumer<NodeRef> onGet) {
-    Objects.requireNonNull(onGet);
     fetchOrCreateFolderImpl(node, onGet, null);
-    if (node.getNodeRef() == null) {
+    if (!node.getNodeRef().isPresent()) {
       throw new FilerException("Could not get filer folder: " + node);
     }
   }
 
   @Override
   public void fetchOrCreateFolder(final RepositoryNode node, final Consumer<NodeRef> onGet, final Consumer<NodeRef> onCreate) {
-    Objects.requireNonNull(onGet);
-    Objects.requireNonNull(onCreate);
     fetchOrCreateFolderImpl(node, onGet, onCreate);
   }
 
   @Override
   public void updateFolder(final RepositoryNode node, final Consumer<NodeRef> onGet, final Consumer<NodeRef> onCreate) {
-    Objects.requireNonNull(onGet);
-    Objects.requireNonNull(onCreate);
     if (FilerNodeUtils.isOriginal(node)) {
       afterCreateFolder(node, onCreate);
     } else {
-      afterGetFolder(node, onGet);
+      afterGetFolder(node.getNodeRef().get(), onGet);
     }
   }
 
   private void fetchOrCreateFolderImpl(final RepositoryNode node, final Consumer<NodeRef> onGet,
-      final Consumer<NodeRef> onCreate) {
+      final @CheckForNull Consumer<NodeRef> onCreate) {
     doGetFolder(node, onGet);
-    if (onCreate != null && node.getNodeRef() == null) {
-      NodeRef nodeRef = node.getParent();
+    if (onCreate != null && !node.getNodeRef().isPresent()) {
+      NodeRef nodeRef = node.getParent().get();
       lockFolder(nodeRef);
       // Proceed with creation
       filerModelService.runWithoutSubscriberBehaviour(nodeRef, () -> {
@@ -98,18 +98,18 @@ public class FilerFolderServiceImpl implements FilerFolderService {
   private void doGetFolder(final RepositoryNode node, final Consumer<NodeRef> onGet) {
     NodeRef nodeRef = null;
     try {
-      nodeRef = nodeService.getChildByName(node.getParent(), ContentModel.ASSOC_CONTAINS, node.getName().get());
+      nodeRef = nodeService.getChildByName(node.getParent().get(), ContentModel.ASSOC_CONTAINS, node.getName().get());
     } catch (InvalidNodeRefException e) {
       throw new ConcurrencyFailureException("Could not get node. Node does not exist: " + node.getParent(), e);
     }
     if (nodeRef != null) {
       node.setNodeRef(nodeRef);
-      afterGetFolder(node, onGet);
+      afterGetFolder(nodeRef, onGet);
     }
   }
 
-  private void afterGetFolder(final RepositoryNode node, final Consumer<NodeRef> onGet) {
-    onGet.accept(node.getNodeRef());
+  private void afterGetFolder(final NodeRef nodeRef, final Consumer<NodeRef> onGet) {
+    onGet.accept(nodeRef);
   }
 
   private void doCreateFolder(final RepositoryNode node, final Consumer<NodeRef> onCreate) {
@@ -117,7 +117,7 @@ public class FilerFolderServiceImpl implements FilerFolderService {
     // Node can have a fileable mandatory-aspect, but it is already created at the right place so there is no need to
     // trigger filer on it (FileableAspect#onAddAspect). Disable behaviour globally because nodeRef is unknown at creation time
     filerModelService.runWithoutFileableBehaviour(() -> {
-      NodeRef nodeRef = nodeService.createNode(node.getParent(), ContentModel.ASSOC_CONTAINS, assoc, node.getType(),
+      NodeRef nodeRef = nodeService.createNode(node.getParent().get(), ContentModel.ASSOC_CONTAINS, assoc, node.getType().get(),
           Collections.singletonMap(ContentModel.PROP_NAME, node.getName().get())).getChildRef();
       node.setNodeRef(nodeRef);
     });
@@ -132,8 +132,8 @@ public class FilerFolderServiceImpl implements FilerFolderService {
     AuthenticationUtil.runAsSystem(() -> {
       // Do not trigger a filer action on itself i.e. the updated node (FileableAspect#OnUpdateProperties).
       // This is mainly due to property inheritance
-      filerModelService.runWithoutFileableBehaviour(node.getNodeRef(), () -> {
-        onCreate.accept(node.getNodeRef());
+      filerModelService.runWithoutFileableBehaviour(node.getNodeRef().get(), () -> {
+        onCreate.accept(node.getNodeRef().get());
       });
       return null;
     });

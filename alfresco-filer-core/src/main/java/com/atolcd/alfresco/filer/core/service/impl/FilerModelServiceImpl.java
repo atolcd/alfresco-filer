@@ -6,13 +6,20 @@ import org.alfresco.service.namespace.QName;
 
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class FilerModelServiceImpl implements FilerModelService {
 
+  @Nullable
   private BehaviourFilter behaviourFilter;
 
+  @Nullable
   private QName fileableAspect;
+  @Nullable
   private QName segmentAspect;
+  @Nullable
   private QName subscriberAspect;
+  @Nullable
   private QName propertyInheritanceAspect;
 
   @Override

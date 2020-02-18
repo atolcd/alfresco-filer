@@ -9,7 +9,7 @@ public class DepartmentFolderFilerAction extends AbstractFilerTestAction {
 
   @Override
   public boolean supportsActionResolution(final FilerEvent event) {
-    return event.getNode().getType().equals(FilerTestConstants.Department.FolderType.NAME);
+    return event.getNode().getType().get().equals(FilerTestConstants.Department.FolderType.NAME);
   }
 
   @Override

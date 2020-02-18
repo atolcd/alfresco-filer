@@ -4,11 +4,14 @@ import java.util.Optional;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 public final class FilerFolderContext {
 
   private final RepositoryNode node;
   private final NodeRef parent;
 
+  @CheckForNull
   private PropertyInheritance propertyInheritance;
   private boolean enabled;
 
@@ -20,12 +23,8 @@ public final class FilerFolderContext {
     this.enabled = enabled;
   }
 
-  public FilerFolderContext(final RepositoryNode node) {
-    this(node, null, null, true);
-  }
-
-  public FilerFolderContext(final FilerFolderContext other) {
-    this(other, other.parent);
+  public FilerFolderContext(final RepositoryNode node, final NodeRef parent) {
+    this(node, parent, null, true);
   }
 
   public FilerFolderContext(final FilerFolderContext other, final NodeRef parent) {

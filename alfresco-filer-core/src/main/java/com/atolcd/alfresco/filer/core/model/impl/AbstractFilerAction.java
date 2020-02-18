@@ -16,13 +16,18 @@ import com.atolcd.alfresco.filer.core.service.FilerRegistry;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 import com.atolcd.alfresco.filer.core.service.impl.FilerBuilder;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public abstract class AbstractFilerAction implements FilerAction, InitializingBean, BeanNameAware {
 
   private static final Comparator<FilerAction> NATURAL_ORDER_COMPARATOR =
       Comparator.comparing(FilerAction::getOrder).thenComparing(FilerAction::getName);
 
+  @Nullable
   private FilerRegistry filerRegistry;
+  @Nullable
   private FilerService filerService;
+  @Nullable
   private String name;
 
   @Override
@@ -64,7 +69,7 @@ public abstract class AbstractFilerAction implements FilerAction, InitializingBe
     }
     if (object instanceof AbstractFilerAction) {
       AbstractFilerAction other = (AbstractFilerAction) object;
-      return Objects.equals(getOrder(), other.getOrder())
+      return getOrder() == other.getOrder()
           && Objects.equals(getName(), other.getName());
     }
     return false;

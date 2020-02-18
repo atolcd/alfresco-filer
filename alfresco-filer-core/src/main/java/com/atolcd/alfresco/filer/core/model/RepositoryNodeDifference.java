@@ -12,19 +12,27 @@ import java.util.Set;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 public class RepositoryNodeDifference {
 
+  @CheckForNull
+  private NodeRef parentToMove;
+  @CheckForNull
   private QName typeToSet;
   private final Set<QName> aspectsToRemove;
   private final Set<QName> aspectsToAdd;
   private final Set<QName> propertiesToRemove;
   private final Map<QName, Serializable> propertiesToAdd;
-  private NodeRef parentToMove;
 
   public RepositoryNodeDifference(final RepositoryNode source, final RepositoryNode target) {
+    // Parent
+    if (!source.getParent().equals(target.getParent())) {
+      parentToMove = target.getParent().get();
+    }
     // Type
-    if (source.getType() != null && !source.getType().equals(target.getType())) {
-      typeToSet = target.getType();
+    if (!source.getType().equals(target.getType())) {
+      typeToSet = target.getType().get();
     }
     // Compute aspects
     aspectsToRemove = new HashSet<>(source.getAspects());
@@ -36,10 +44,6 @@ public class RepositoryNodeDifference {
     propertiesToRemove.removeAll(target.getProperties().keySet());
     propertiesToAdd = new HashMap<>(target.getProperties());
     removeDuplicateProperties(source.getProperties(), propertiesToAdd);
-    // Parent
-    if (source.getParent() != null && !source.getParent().equals(target.getParent())) {
-      parentToMove = target.getParent();
-    }
   }
 
   private static void removeDuplicateProperties(final Map<QName, Serializable> source, final Map<QName, Serializable> target) {
@@ -54,16 +58,19 @@ public class RepositoryNodeDifference {
 
   @Override
   public String toString() {
-    return MessageFormat.format("{0} type, adding {1} {2}, removing {3} {4}, {5} parent",
-        Optional.ofNullable(typeToSet).map(String::valueOf).orElse("same"),
-        propertiesToAdd, aspectsToAdd,
-        propertiesToRemove, aspectsToRemove,
-        Optional.ofNullable(parentToMove).map(String::valueOf).orElse("same"));
+    return MessageFormat.format("{0} parent, {1} type, adding {2} {3}, removing {4} {5}",
+        getParentToMove().map(String::valueOf).orElse("same"),
+        getTypeToSet().map(String::valueOf).orElse("same"),
+        propertiesToAdd, aspectsToAdd, propertiesToRemove, aspectsToRemove);
   }
 
   public boolean isEmpty() {
-    return typeToSet == null && aspectsToRemove.isEmpty() && aspectsToAdd.isEmpty() && propertiesToRemove.isEmpty()
-         && propertiesToAdd.isEmpty() && parentToMove == null;
+    return parentToMove == null && typeToSet == null
+        && aspectsToRemove.isEmpty() && aspectsToAdd.isEmpty() && propertiesToRemove.isEmpty() && propertiesToAdd.isEmpty();
+  }
+
+  public Optional<NodeRef> getParentToMove() {
+    return Optional.ofNullable(parentToMove);
   }
 
   public Optional<QName> getTypeToSet() {
@@ -84,9 +91,5 @@ public class RepositoryNodeDifference {
 
   public Map<QName, Serializable> getPropertiesToAdd() {
     return propertiesToAdd;
-  }
-
-  public Optional<NodeRef> getParentToMove() {
-    return Optional.ofNullable(parentToMove);
   }
 }

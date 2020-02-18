@@ -12,12 +12,18 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class FilerSegmentAspect implements InitializingBean, NodeServicePolicies.OnAddAspectPolicy {
 
+  @Nullable
   private FilerModelService filerModelService;
+  @Nullable
   private PolicyComponent policyComponent;
+  @Nullable
   private OwnableService ownableService;
 
+  @Nullable
   private String username;
 
   @Override

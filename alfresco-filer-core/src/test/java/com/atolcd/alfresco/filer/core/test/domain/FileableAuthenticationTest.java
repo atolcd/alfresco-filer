@@ -63,7 +63,7 @@ public class FileableAuthenticationTest extends RepositoryOperations {
       fetchNode(node);
 
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));
-      assertThat(node.getProperty(ContentModel.PROP_MODIFIER, String.class)).isEqualTo(person);
+      assertThat(node.getProperty(ContentModel.PROP_MODIFIER, String.class)).contains(person);
       return null;
     }, person);
   }
@@ -102,7 +102,7 @@ public class FileableAuthenticationTest extends RepositoryOperations {
       fetchNode(node);
 
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));
-      assertThat(node.getProperty(ContentModel.PROP_MODIFIER, String.class)).isEqualTo(personUpdate);
+      assertThat(node.getProperty(ContentModel.PROP_MODIFIER, String.class)).contains(personUpdate);
       return null;
     }, personCreate);
   }
@@ -133,7 +133,7 @@ public class FileableAuthenticationTest extends RepositoryOperations {
     doInTransaction(() -> {
       AuthenticationUtil.runAs(() -> {
         QName assocQName = QName.createQNameWithValidLocalName(NamespaceService.CONTENT_MODEL_1_0_URI, node.getName().get());
-        nodeService.moveNode(node.getNodeRef(), getLibrary().getNodeRef(), ContentModel.ASSOC_CONTAINS, assocQName);
+        nodeService.moveNode(node.getNodeRef().get(), getLibrary().getNodeRef(), ContentModel.ASSOC_CONTAINS, assocQName);
         return null;
       }, personMove);
     });
@@ -141,7 +141,7 @@ public class FileableAuthenticationTest extends RepositoryOperations {
     AuthenticationUtil.runAs(() -> {
       fetchNode(node);
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));
-      assertThat(node.getProperty(ContentModel.PROP_MODIFIER, String.class)).isEqualTo(personMove);
+      assertThat(node.getProperty(ContentModel.PROP_MODIFIER, String.class)).contains(personMove);
       return null;
     }, personCreate);
   }

@@ -156,8 +156,8 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentNom, sourceDate));
 
       // Get ancestors before updating node as they will change
-      NodeRef oldParent = node.getParent();
-      NodeRef oldGrandParent = nodeService.getPrimaryParent(node.getParent()).getParentRef();
+      NodeRef oldParent = node.getParent().get();
+      NodeRef oldGrandParent = nodeService.getPrimaryParent(oldParent).getParentRef();
 
       // Set updated property
       Map<QName, Serializable> dateProperty = Collections.singletonMap(FilerTestConstants.ImportedAspect.PROP_DATE,
@@ -197,13 +197,13 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentNom, date));
 
       // Get ancestors before deleting node
-      NodeRef grandParent = nodeService.getPrimaryParent(node.getParent()).getParentRef();
+      NodeRef grandParent = nodeService.getPrimaryParent(node.getParent().get()).getParentRef();
       NodeRef greatGrandParent = nodeService.getPrimaryParent(grandParent).getParentRef();
 
       deleteNode(node);
 
-      assertThat(nodeService.exists(node.getNodeRef())).isFalse();
-      assertThat(nodeService.exists(node.getParent())).isFalse();
+      assertThat(nodeService.exists(node.getNodeRef().get())).isFalse();
+      assertThat(nodeService.exists(node.getParent().get())).isFalse();
       assertThat(nodeService.exists(grandParent)).isFalse();
       assertThat(nodeService.exists(greatGrandParent)).isTrue();
     }
@@ -221,7 +221,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
 
     createNode(node);
 
-    assertThat(node.getType()).isEqualTo(type);
+    assertThat(node.getType()).contains(type);
     assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));
   }
 }

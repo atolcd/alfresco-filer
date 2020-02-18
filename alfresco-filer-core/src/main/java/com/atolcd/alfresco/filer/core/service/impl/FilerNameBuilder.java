@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -17,11 +18,14 @@ import com.atolcd.alfresco.filer.core.model.FilerException;
 import com.atolcd.alfresco.filer.core.model.FilerFolderContext;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 public class FilerNameBuilder<T> {
 
   private final T builder;
   private final FilerFolderContext context;
 
+  @CheckForNull
   private String filerName;
 
   public FilerNameBuilder(final T builder, final FilerFolderContext context) {
@@ -29,19 +33,19 @@ public class FilerNameBuilder<T> {
     this.context = context;
   }
 
-  public String getName() {
-    return filerName;
+  public Optional<String> getName() {
+    return Optional.ofNullable(filerName);
   }
 
-  public T with(final String name) {
+  public T with(final @CheckForNull String name) {
     if (context.isEnabled()) {
       filerName = name;
     }
     return builder;
   }
 
-  public T with(final Date date, final String dateFormat) {
-    return with(() -> {
+  public T with(@CheckForNull final Date date, final String dateFormat) {
+    return date == null ? with((String) null) : with(() -> {
       DateFormat formatter = new SimpleDateFormat(dateFormat);
       return formatter.format(date);
     });
@@ -59,9 +63,7 @@ public class FilerNameBuilder<T> {
   }
 
   public T with(final Supplier<String> nodeNameFormatter) {
-    return with(node -> {
-      return nodeNameFormatter.get();
-    });
+    return with(node -> nodeNameFormatter.get());
   }
 
   public T with(final Function<RepositoryNode, String> nodeNameFormatter) {
@@ -90,11 +92,12 @@ public class FilerNameBuilder<T> {
     return with(date, dateFormat);
   }
 
-  private <C> C getProperty(final QName propertyName, final Class<C> clazz) {
-    C value = context.getNode().getProperty(propertyName, clazz);
-    if (value == null && context.isEnabled()) {
+  @CheckForNull
+  private <C> C getProperty(final QName propertyName, final Class<C> propertyType) {
+    Optional<C> value = context.getNode().getProperty(propertyName, propertyType);
+    if (!value.isPresent() && context.isEnabled()) {
       throw new FilerException("Could not get property '" + propertyName + "' for node: " + context.getNode());
     }
-    return value;
+    return value.orElse(null);
   }
 }

@@ -23,17 +23,25 @@ import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 import com.atolcd.alfresco.filer.core.util.FilerTransactionUtils;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class FileableAspect implements InitializingBean, NodeServicePolicies.OnCreateNodePolicy,
     NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.BeforeUpdateNodePolicy,
     NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy,
     NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnMoveNodePolicy {
 
+  @Nullable
   private FilerService filerService;
+  @Nullable
   private FilerModelService filerModelService;
+  @Nullable
   private PolicyComponent policyComponent;
+  @Nullable
   private NodeService nodeService;
+  @Nullable
   private OwnableService ownableService;
 
+  @Nullable
   private String username;
 
   @Override
@@ -129,7 +137,7 @@ public class FileableAspect implements InitializingBean, NodeServicePolicies.OnC
   }
 
   private void executeAction(final FilerEvent event) { //NOPMD UnusedPrivateMethod - False positive
-    String user = FilerTransactionUtils.getUpdateUser(event.getNode().getNodeRef());
+    String user = FilerTransactionUtils.getUpdateUser(event.getNode().getNodeRef().get());
     AuthenticationUtil.runAs(() -> {
       filerService.executeAction(event);
       return null;

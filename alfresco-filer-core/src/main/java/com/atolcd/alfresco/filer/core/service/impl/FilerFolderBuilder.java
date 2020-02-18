@@ -9,9 +9,12 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import com.atolcd.alfresco.filer.core.model.FilerException;
 import com.atolcd.alfresco.filer.core.model.FilerFolderContext;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerService;
+
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 public class FilerFolderBuilder {
 
@@ -19,11 +22,20 @@ public class FilerFolderBuilder {
 
   private final FilerFolderContext context;
 
+  @CheckForNull
   private FilerNameBuilder<FilerFolderBuilder> nodeNameBuilder;
 
-  public FilerFolderBuilder(final FilerService filerService, final FilerFolderContext context, final NodeRef parent) {
+  private FilerFolderBuilder(final FilerService filerService, final FilerFolderContext context) {
     this.filerService = filerService;
-    this.context = new FilerFolderContext(context, parent);
+    this.context = context;
+  }
+
+  public FilerFolderBuilder(final FilerService filerService, final RepositoryNode node, final NodeRef parent) {
+    this(filerService, new FilerFolderContext(node, parent));
+  }
+
+  public FilerFolderBuilder(final FilerService filerService, final FilerFolderContext context, final NodeRef parent) {
+    this(filerService, new FilerFolderContext(context, parent));
   }
 
   public FilerFolderBuilder condition(final Predicate<RepositoryNode> condition) {
@@ -63,7 +75,8 @@ public class FilerFolderBuilder {
 
   public void updateAndMove() {
     if (context.isEnabled()) {
-      String name = Optional.ofNullable(rename().getName()).orElseGet(() -> context.getNode().getName().get());
+      String name = rename().getName().orElseGet(() -> context.getNode().getName()
+          .orElseThrow(() -> new FilerException("Could not compute the name of the node: " + context.getNode())));
       filerService.operations().updateFileable(context.getNode(), context.getParent(), name);
     }
   }

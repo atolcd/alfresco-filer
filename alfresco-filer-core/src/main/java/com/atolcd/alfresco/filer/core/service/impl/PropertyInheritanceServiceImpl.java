@@ -31,14 +31,22 @@ import com.atolcd.alfresco.filer.core.model.RepositoryNodeDifference;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.PropertyInheritanceService;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class PropertyInheritanceServiceImpl implements PropertyInheritanceService, InitializingBean, DictionaryListener {
 
+  @Nullable
   private FilerModelService filerModelService;
+  @Nullable
   private NodeService nodeService;
+  @Nullable
   private DictionaryService dictionaryService;
+  @Nullable
   private DictionaryDAO dictionaryDAO;
 
+  @Nullable
   private Collection<QName> inheritedAspects;
+  @Nullable
   private Map<QName, QName> inheritedProperties;
 
   @Override

@@ -15,30 +15,39 @@ import org.alfresco.service.namespace.QName;
 
 import com.atolcd.alfresco.filer.core.model.impl.RepositoryNodeBuilder;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 public class RepositoryNode implements Serializable {
 
   private static final long serialVersionUID = 6758895936238032221L;
 
+  @CheckForNull
   private NodeRef nodeRef;
 
+  @CheckForNull
   private NodeRef parent;
+  @CheckForNull
   private QName type;
+  @CheckForNull
   private Set<QName> aspects;
+  @CheckForNull
   private Map<QName, Serializable> properties;
 
+  @CheckForNull
   private Map<String, Object> extensions;
 
   public RepositoryNode() {
     // In case nodeRef is unknown
   }
 
-  public RepositoryNode(final NodeRef nodeRef) {
+  public RepositoryNode(final @CheckForNull NodeRef nodeRef) {
     this();
     this.nodeRef = nodeRef;
   }
 
-  public RepositoryNode(final NodeRef nodeRef, final NodeRef parent, final QName type, final Set<QName> aspects,
-      final Map<QName, Serializable> properties, final Map<String, Object> extensions) {
+  public RepositoryNode(final @CheckForNull NodeRef nodeRef, final @CheckForNull NodeRef parent,
+      final @CheckForNull QName type, @CheckForNull final Set<QName> aspects,
+      final @CheckForNull Map<QName, Serializable> properties, final @CheckForNull Map<String, Object> extensions) {
     this(nodeRef);
     this.parent = parent;
     this.type = type;
@@ -55,24 +64,24 @@ public class RepositoryNode implements Serializable {
     return new RepositoryNodeBuilder();
   }
 
-  public NodeRef getNodeRef() {
-    return nodeRef;
+  public Optional<NodeRef> getNodeRef() {
+    return Optional.ofNullable(nodeRef);
   }
 
   public void setNodeRef(final NodeRef nodeRef) {
     this.nodeRef = nodeRef;
   }
 
-  public NodeRef getParent() {
-    return parent;
+  public Optional<NodeRef> getParent() {
+    return Optional.ofNullable(parent);
   }
 
   public void setParent(final NodeRef parent) {
     this.parent = parent;
   }
 
-  public QName getType() {
-    return type;
+  public Optional<QName> getType() {
+    return Optional.ofNullable(type);
   }
 
   public void setType(final QName type) {
@@ -89,13 +98,12 @@ public class RepositoryNode implements Serializable {
     return properties;
   }
 
-  @SuppressWarnings("unchecked")
-  public <T> T getProperty(final QName name, final Class<T> clazz) {
-    return (T) getProperties().get(name);
+  public <T> Optional<T> getProperty(final QName name, final Class<T> propertyType) {
+    return Optional.ofNullable(properties).map(p -> p.get(name)).map(propertyType::cast);
   }
 
   public Optional<String> getName() {
-    return Optional.ofNullable(properties).map(p -> p.get(ContentModel.PROP_NAME)).filter(Objects::nonNull).map(String::valueOf);
+    return getProperty(ContentModel.PROP_NAME, String.class);
   }
 
   public Map<String, Object> getExtensions() {
@@ -103,9 +111,8 @@ public class RepositoryNode implements Serializable {
     return extensions;
   }
 
-  @SuppressWarnings("unchecked")
-  public <T> T getExtension(final String name, final Class<T> clazz) {
-    return (T) getExtensions().get(name);
+  public <T> Optional<T> getExtension(final String name, final Class<T> extensionType) {
+    return Optional.ofNullable(extensions).map(p -> p.get(name)).map(extensionType::cast);
   }
 
   @Override
@@ -118,7 +125,7 @@ public class RepositoryNode implements Serializable {
     }
     if (object instanceof RepositoryNode) {
       RepositoryNode other = (RepositoryNode) object;
-      return Objects.equals(nodeRef, other.getNodeRef());
+      return nodeRef != null && nodeRef.equals(other.getNodeRef().orElse(null));
     }
     return false;
   }

@@ -38,7 +38,7 @@ public class DepartmentFolderFilerActionTest extends RepositoryOperations {
 
     createNode(node);
 
-    assertThat(node.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class)).isEqualTo(departmentName);
+    assertThat(node.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class)).contains(departmentName);
     assertThat(getPath(node)).isEqualTo(getLibrary().getPath());
   }
 

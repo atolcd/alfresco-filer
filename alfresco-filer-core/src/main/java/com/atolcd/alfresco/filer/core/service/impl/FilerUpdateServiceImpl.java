@@ -24,19 +24,25 @@ import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.FilerUpdateService;
 import com.atolcd.alfresco.filer.core.service.PropertyInheritanceService;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements FilerUpdateService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(FilerUpdateServiceImpl.class);
 
+  @Nullable
   private FilerModelService filerModelService;
+  @Nullable
   private FilerFolderService filerFolderService;
+  @Nullable
   private PropertyInheritanceService propertyInheritanceService;
+  @Nullable
   private NodeService nodeService;
 
   @Override
   public void updateAndMoveFileable(final RepositoryNode initialNode, final RepositoryNode originalNode,
       final RepositoryNode resultingNode) {
-    NodeRef parent = resultingNode.getParent();
+    NodeRef parent = resultingNode.getParent().get();
     // Disable behaviours on parent in case node needs to be moved
     filerModelService.runWithoutSubscriberBehaviour(parent, () -> {
       // Run as System because current user may not have the update permission on the node (he might not be the owner)
@@ -51,7 +57,7 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
       final RepositoryNode resultingNode) {
     // Ignore naming policy if node has working copy aspect
     if (resultingNode.getAspects().contains(ContentModel.ASPECT_WORKING_COPY)) {
-      String name = originalNode.getProperty(ContentModel.PROP_NAME, String.class);
+      String name = originalNode.getName().get();
       resultingNode.getProperties().put(ContentModel.PROP_NAME, name);
     }
     // Update node (ignore node name for now) if filer made changes
@@ -60,20 +66,20 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
       LOGGER.debug("Node updated: {}", originalDifference);
     }
     // Lock target segment to prevent its deletion by another transaction
-    filerFolderService.lockFolder(resultingNode.getParent());
+    filerFolderService.lockFolder(resultingNode.getParent().get());
     // Move and rename node
     moveAndRenameFileable(originalNode, resultingNode);
     // Update property inheritance on children
     RepositoryNodeDifference initialDifference = new RepositoryNodeDifference(initialNode, resultingNode);
     PropertyInheritancePayload inheritance = propertyInheritanceService.getPayload(initialDifference);
-    propertyInheritanceService.setInheritance(resultingNode.getNodeRef(), inheritance);
+    propertyInheritanceService.setInheritance(resultingNode.getNodeRef().get(), inheritance);
     if (LOGGER.isDebugEnabled() && !inheritance.isEmpty()) {
       LOGGER.debug("Node inheritance updated: {}", inheritance);
     }
   }
 
   private void moveAndRenameFileable(final RepositoryNode originalNode, final RepositoryNode resultingNode) {
-    NodeRef nodeRef = resultingNode.getNodeRef();
+    NodeRef nodeRef = resultingNode.getNodeRef().get();
     String name = resultingNode.getName().get();
     boolean nameChanged = !name.equals(originalNode.getName().get());
     // Move node if parent or name changed
@@ -83,9 +89,9 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
       // to the correct name later.
       String tempName = GUID.generate();
       nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, tempName);
-      AssociationCopyInfo targetInfo = getAssociationCopyInfo(nodeService, nodeRef, originalNode.getParent(), name, nameChanged);
-      QName typeQName = targetInfo.getSourceParentAssoc().getTypeQName();
-      nodeService.moveNode(nodeRef, resultingNode.getParent(), typeQName, targetInfo.getTargetAssocQName());
+      AssociationCopyInfo info = getAssociationCopyInfo(nodeService, nodeRef, originalNode.getParent().get(), name, nameChanged);
+      QName typeQName = info.getSourceParentAssoc().getTypeQName();
+      nodeService.moveNode(nodeRef, resultingNode.getParent().get(), typeQName, info.getTargetAssocQName());
       // During concurrent node update, name generation can produce multiple identical node names.
       // If the problem occurs, we catch the specific exception related to duplicate node name
       // and throw a ConcurrencyFailureException which will cause a retry of the whole transaction
@@ -103,7 +109,7 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
   }
 
   private RepositoryNodeDifference updateFileable(final RepositoryNode originalNode, final RepositoryNode resultingNode) {
-    NodeRef nodeRef = resultingNode.getNodeRef();
+    NodeRef nodeRef = resultingNode.getNodeRef().get();
     RepositoryNodeDifference difference = new RepositoryNodeDifference(originalNode, resultingNode);
     // Update properties
     for (QName property : difference.getPropertiesToRemove()) {

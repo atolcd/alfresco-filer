@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Optional;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -160,14 +161,14 @@ public abstract class AbstractParallelTest extends RepositoryOperations {
 
     assertThat(getPath(createdNode.get())).isEqualTo(NodePathUtils.nodePath(departmentName, date));
 
-    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef())).isFalse();
-    NodeRef nodeToDeleteParent = nodeToDelete.get().getParent();
+    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef().get())).isFalse();
+    Optional<NodeRef> nodeToDeleteParent = nodeToDelete.get().getParent();
     if (nodeToDeleteParent.equals(createdNode.get().getParent())) {
-      assertThat(nodeService.exists(nodeToDeleteParent)).isTrue();
-      NodeRef nodeToDeleteGrandParent = nodeService.getPrimaryParent(nodeToDeleteParent).getParentRef();
+      assertThat(nodeService.exists(nodeToDeleteParent.get())).isTrue();
+      NodeRef nodeToDeleteGrandParent = nodeService.getPrimaryParent(nodeToDeleteParent.get()).getParentRef();
       assertThat(nodeService.exists(nodeToDeleteGrandParent)).isTrue();
     } else {
-      assertThat(nodeService.exists(nodeToDeleteParent)).isFalse();
+      assertThat(nodeService.exists(nodeToDeleteParent.get())).isFalse();
     }
   }
 }

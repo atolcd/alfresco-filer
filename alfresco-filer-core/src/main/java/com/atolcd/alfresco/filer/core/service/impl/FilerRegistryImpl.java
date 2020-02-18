@@ -10,9 +10,13 @@ import com.atolcd.alfresco.filer.core.model.FilerAction;
 import com.atolcd.alfresco.filer.core.scope.FilerScopeLoader;
 import com.atolcd.alfresco.filer.core.service.FilerRegistry;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 public class FilerRegistryImpl implements FilerRegistry {
 
+  @CheckForNull
   private SortedSet<FilerAction> actions;
+  @CheckForNull
   private Set<FilerScopeLoader> scopeLoaders;
 
   @Override

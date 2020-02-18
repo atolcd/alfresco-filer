@@ -35,7 +35,7 @@ public class DeniedFilerActionTest extends RepositoryOperations {
         .named(name)
         .build();
 
-    NodeRef parentNodeRef = node.getParent();
+    NodeRef parentNodeRef = node.getParent().get();
 
     Throwable thrown = Assertions.catchThrowable(() -> createNode(node));
 
@@ -59,7 +59,7 @@ public class DeniedFilerActionTest extends RepositoryOperations {
         .named(name)
         .build();
 
-    NodeRef parentNodeRef = node.getParent();
+    NodeRef parentNodeRef = node.getParent().get();
 
     Throwable thrown = Assertions.catchThrowable(() -> createNode(node));
 

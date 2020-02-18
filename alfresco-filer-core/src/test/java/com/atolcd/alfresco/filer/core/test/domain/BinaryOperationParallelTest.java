@@ -11,6 +11,7 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -150,8 +151,8 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
 
     assertThat(getPath(nodeToUpdate.get())).isEqualTo(nodePath(departmentName, targetDate));
 
-    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef())).isFalse();
-    assertThat(nodeService.exists(nodeToDelete.get().getParent())).isFalse();
+    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef().get())).isFalse();
+    assertThat(nodeService.exists(nodeToDelete.get().getParent().get())).isFalse();
   }
 
   /**
@@ -241,16 +242,16 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
 
     assertThat(getPath(nodeToUpdate.get())).isEqualTo(nodePath(departmentName, targetDate));
 
-    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef())).isFalse();
-    NodeRef nodeToDeleteParent = nodeToDelete.get().getParent();
+    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef().get())).isFalse();
+    Optional<NodeRef> nodeToDeleteParent = nodeToDelete.get().getParent();
     if (nodeToDeleteParent.equals(nodeToUpdate.get().getParent())) {
       // Move occurred before deletion and target segment have not been removed
-      assertThat(nodeService.exists(nodeToDeleteParent)).isTrue();
-      NodeRef nodeToDeleteGrandParent = nodeService.getPrimaryParent(nodeToDeleteParent).getParentRef();
+      assertThat(nodeService.exists(nodeToDeleteParent.get())).isTrue();
+      NodeRef nodeToDeleteGrandParent = nodeService.getPrimaryParent(nodeToDeleteParent.get()).getParentRef();
       assertThat(nodeService.exists(nodeToDeleteGrandParent)).isTrue();
     } else {
       // Deletion performed before node updating, filer have recreated new segment for target
-      assertThat(nodeService.exists(nodeToDeleteParent)).isFalse();
+      assertThat(nodeService.exists(nodeToDeleteParent.get())).isFalse();
     }
   }
 }

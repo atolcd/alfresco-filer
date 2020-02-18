@@ -8,9 +8,12 @@ import com.atolcd.alfresco.filer.core.model.FilerAction;
 import com.atolcd.alfresco.filer.core.model.FilerEvent;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 public abstract class AbstractFilerEvent implements FilerEvent {
 
   private RepositoryNode node;
+  @CheckForNull
   private FilerAction action;
   private boolean executed;
 

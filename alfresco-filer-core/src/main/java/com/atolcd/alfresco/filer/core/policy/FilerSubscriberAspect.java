@@ -16,11 +16,16 @@ import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 import com.atolcd.alfresco.filer.core.util.FilerTransactionUtils;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class FilerSubscriberAspect implements InitializingBean, NodeServicePolicies.BeforeDeleteChildAssociationPolicy,
     NodeServicePolicies.OnCreateChildAssociationPolicy {
 
+  @Nullable
   private FilerService filerService;
+  @Nullable
   private FilerModelService filerModelService;
+  @Nullable
   private PolicyComponent policyComponent;
 
   @Override

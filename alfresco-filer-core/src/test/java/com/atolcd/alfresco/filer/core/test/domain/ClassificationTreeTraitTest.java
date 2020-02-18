@@ -39,7 +39,7 @@ public class ClassificationTreeTraitTest extends RepositoryOperations {
 
     assertThat(node.getAspects()).contains(filerModelService.getFileableAspect());
 
-    NodeRef parent = node.getParent();
+    NodeRef parent = node.getParent().get();
     assertThat(nodeService.getAspects(parent)).contains(filerModelService.getSegmentAspect());
 
     NodeRef grandParent = nodeService.getPrimaryParent(parent).getParentRef();
@@ -60,9 +60,9 @@ public class ClassificationTreeTraitTest extends RepositoryOperations {
 
     createNode(node);
 
-    assertThat(node.getType()).isEqualTo(type);
+    assertThat(node.getType()).contains(type);
 
-    NodeRef parent = node.getParent();
+    NodeRef parent = node.getParent().get();
     assertThat(nodeService.getType(parent)).isEqualTo(ContentModel.TYPE_FOLDER);
 
     NodeRef grandParent = nodeService.getPrimaryParent(parent).getParentRef();
@@ -82,10 +82,10 @@ public class ClassificationTreeTraitTest extends RepositoryOperations {
     createNode(node);
 
     // Fileable
-    assertThat(node.getProperty(ContentModel.PROP_OWNER, String.class)).isEqualTo(username);
+    assertThat(node.getProperty(ContentModel.PROP_OWNER, String.class)).contains(username);
 
     // Segments
-    NodeRef parent = node.getParent();
+    NodeRef parent = node.getParent().get();
     assertThat(nodeService.getProperty(parent, ContentModel.PROP_OWNER)).isEqualTo(username);
 
     NodeRef grandParent = nodeService.getPrimaryParent(parent).getParentRef();

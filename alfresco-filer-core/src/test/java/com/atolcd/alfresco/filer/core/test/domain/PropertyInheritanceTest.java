@@ -71,7 +71,7 @@ public class PropertyInheritanceTest extends RepositoryOperations {
 //        randomUUID().toString());
 //    updateNode(testNode, property);
 //
-//    assertThat(testNode.getProperty(FilerTestConstants.Department.Aspect.PROP_ID, String.class))
+//    assertThat(testNode.getProperty(FilerTestConstants.Department.Aspect.PROP_ID, String.class).get())
 //        .isNotEqualTo(property.get(FilerTestConstants.Department.Aspect.PROP_ID));
 //    assertThat(testNode.getProperty(FilerTestConstants.Department.Aspect.PROP_ID, String.class))
 //        .isEqualTo(folderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_ID, String.class));
@@ -90,12 +90,12 @@ public class PropertyInheritanceTest extends RepositoryOperations {
     // Change property of department folder
     RepositoryNode folderNode = new RepositoryNode(getDepartmentFolder(testNode));
 
-    Map<QName, Serializable> property = Collections.singletonMap(FilerTestConstants.Department.Aspect.PROP_ID,
+    Map<QName, Serializable> properties = Collections.singletonMap(FilerTestConstants.Department.Aspect.PROP_ID,
         randomUUID().toString());
-    updateNode(folderNode, property);
+    updateNode(folderNode, properties);
 
     assertThat(folderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_ID, String.class))
-        .isEqualTo(property.get(FilerTestConstants.Department.Aspect.PROP_ID));
+        .contains((String) properties.get(FilerTestConstants.Department.Aspect.PROP_ID));
 
     // Get document node and check if property change have been inherited
     fetchNode(testNode);
@@ -202,7 +202,7 @@ public class PropertyInheritanceTest extends RepositoryOperations {
   }
 
   private NodeRef getDepartmentFolder(final RepositoryNode node) {
-    String departmentName = node.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class);
+    String departmentName = node.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class).get();
     return nodeService.getChildByName(getLibrary().getNodeRef(), ContentModel.ASSOC_CONTAINS, departmentName);
   }
 }

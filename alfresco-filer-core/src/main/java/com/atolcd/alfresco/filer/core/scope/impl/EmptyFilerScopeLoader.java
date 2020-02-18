@@ -7,8 +7,11 @@ import org.springframework.beans.factory.InitializingBean;
 import com.atolcd.alfresco.filer.core.scope.FilerScopeLoader;
 import com.atolcd.alfresco.filer.core.service.FilerRegistry;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class EmptyFilerScopeLoader implements FilerScopeLoader, InitializingBean {
 
+  @Nullable
   private FilerRegistry filerRegistry;
 
   @Override

@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import com.atolcd.alfresco.filer.core.model.FilerFolderContext;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 
@@ -20,7 +19,7 @@ public class FilerBuilder {
   }
 
   public FilerFolderBuilder root(final NodeRef nodeRef) {
-    return new FilerFolderBuilder(filerService, new FilerFolderContext(node), nodeRef);
+    return new FilerFolderBuilder(filerService, node, nodeRef);
   }
 
   public FilerFolderBuilder root(final Function<RepositoryNode, NodeRef> nodeRefExtractor) {

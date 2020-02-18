@@ -96,9 +96,9 @@ public class FilerBuilderMultipleConditionTest extends AbstractFilerBuilderTest 
   private FilerFolderBuilder buildMultipleConditionTree(final FilerFolderBuilder filerFolderBuilder) {
     return filerFolderBuilder
         .tree(AbstractFilerBuilderTest::buildDocumentLibrary)
-        .condition(x -> x.getProperty(ContentModel.PROP_TITLE, String.class).equals(TEST_PROP_TITLE_A))
+        .condition(x -> x.getProperty(ContentModel.PROP_TITLE, String.class).get().equals(TEST_PROP_TITLE_A))
             .folder().asSegment().named().with(firstFolderName).getOrCreate()
-        .condition(x -> x.getProperty(ContentModel.PROP_DESCRIPTION, String.class).equals(TEST_PROP_DESCRIPTION_A))
+        .condition(x -> x.getProperty(ContentModel.PROP_DESCRIPTION, String.class).get().equals(TEST_PROP_DESCRIPTION_A))
             .folder().asSegment().named().with(secondFolderName).getOrCreate();
   }
 }

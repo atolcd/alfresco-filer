@@ -7,15 +7,18 @@ import com.atolcd.alfresco.filer.core.model.FilerEvent;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class SiteFilerScopeLoader extends EmptyFilerScopeLoader {
 
+  @Nullable
   private SiteService siteService;
 
   @Override
   public void init(final FilerEvent event) {
     RepositoryNode node = event.getNode();
     // Init site information
-    SiteInfo siteInfo = siteService.getSite(node.getNodeRef());
+    SiteInfo siteInfo = siteService.getSite(node.getNodeRef().get());
     FilerNodeUtils.setSiteInfo(node, siteInfo);
   }
 

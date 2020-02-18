@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
@@ -96,8 +97,8 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
         // Wait for assertion on created nodes taking place in main thread
         preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-        segmentAncestors.add(node.getParent());
-        NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent()).getParentRef();
+        segmentAncestors.add(node.getParent().get());
+        NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent().get()).getParentRef();
         segmentAncestors.add(grandParentRef);
         NodeRef greatGrandParentRef = nodeService.getPrimaryParent(grandParentRef).getParentRef();
         closestNonSegmentAncestor.add(greatGrandParentRef);
@@ -160,8 +161,8 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
         // Wait for assertion on created nodes taking place in main thread
         preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-        segmentAncestors.add(node.getParent());
-        NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent()).getParentRef();
+        segmentAncestors.add(node.getParent().get());
+        NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent().get()).getParentRef();
         segmentAncestors.add(grandParentRef);
         NodeRef greatGrandParentRef = nodeService.getPrimaryParent(grandParentRef).getParentRef();
         closestNonSegmentAncestor.add(greatGrandParentRef);
@@ -188,7 +189,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
     // Assert all threads were ready for parallel deleteNode
     assertThat(startingBarrier.isBroken()).isFalse();
 
-    assertThat(results.stream().map(RepositoryNode::getNodeRef).map(nodeService::exists))
+    assertThat(results.stream().map(RepositoryNode::getNodeRef).map(Optional::get).map(nodeService::exists))
         .hasSize(NUM_THREAD_TO_LAUNCH)
         .containsOnly(false);
 

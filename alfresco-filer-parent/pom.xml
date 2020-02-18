@@ -20,6 +20,7 @@
     <alfresco-filer-parent.maven-pmd-plugin.version>3.13.0</alfresco-filer-parent.maven-pmd-plugin.version>
     <alfresco-filer-parent.pmd.version>6.21.0</alfresco-filer-parent.pmd.version>
     <alfresco-filer-parent.spotbugs-maven-plugin.version>3.1.12.2</alfresco-filer-parent.spotbugs-maven-plugin.version>
+    <alfresco-filer-parent.spotbugs.version>4.0.0</alfresco-filer-parent.spotbugs.version>
     <alfresco-filer-parent.maven-surefire-plugin.version>2.22.2</alfresco-filer-parent.maven-surefire-plugin.version>
     <alfresco-filer-parent.jacoco-maven-plugin.version>0.8.5</alfresco-filer-parent.jacoco-maven-plugin.version>
 
@@ -34,6 +35,17 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-annotations</artifactId>
+        <version>${alfresco-filer-parent.spotbugs.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
       <!-- test -->
       <dependency>
         <groupId>org.junit.jupiter</groupId>
@@ -213,6 +225,11 @@
             <groupId>com.atolcd.alfresco.filer</groupId>
             <artifactId>alfresco-filer-quality</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+          </dependency>
+          <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs</artifactId>
+            <version>${alfresco-filer-parent.spotbugs.version}</version>
           </dependency>
         </dependencies>
       </plugin>

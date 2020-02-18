@@ -40,7 +40,7 @@ public class RepositoryOperations {
   protected void createNodeImpl(final RepositoryNode node) {
     QName assocQName = QName.createQNameWithValidLocalName(NamespaceService.CONTENT_MODEL_1_0_URI, node.getName().get());
     NodeRef nodeRef = nodeService
-        .createNode(node.getParent(), ContentModel.ASSOC_CONTAINS, assocQName, node.getType(), node.getProperties())
+        .createNode(node.getParent().get(), ContentModel.ASSOC_CONTAINS, assocQName, node.getType().get(), node.getProperties())
         .getChildRef();
     node.getAspects().forEach(aspect -> nodeService.addAspect(nodeRef, aspect, null));
 
@@ -50,19 +50,19 @@ public class RepositoryOperations {
 
   protected final void fetchNode(final RepositoryNode node) {
     doInTransaction(() -> {
-      node.setParent(nodeService.getPrimaryParent(node.getNodeRef()).getParentRef());
-      node.setType(nodeService.getType(node.getNodeRef()));
+      node.setParent(nodeService.getPrimaryParent(node.getNodeRef().get()).getParentRef());
+      node.setType(nodeService.getType(node.getNodeRef().get()));
       node.getAspects().clear();
-      node.getAspects().addAll(nodeService.getAspects(node.getNodeRef()));
+      node.getAspects().addAll(nodeService.getAspects(node.getNodeRef().get()));
       node.getProperties().clear();
-      node.getProperties().putAll(nodeService.getProperties(node.getNodeRef()));
-      FilerNodeUtils.setPath(node, nodeService.getPath(node.getNodeRef()).toDisplayPath(nodeService, permissionService));
+      node.getProperties().putAll(nodeService.getProperties(node.getNodeRef().get()));
+      FilerNodeUtils.setPath(node, nodeService.getPath(node.getNodeRef().get()).toDisplayPath(nodeService, permissionService));
     }, true);
   }
 
   protected final void updateNode(final RepositoryNode node, final Map<QName, Serializable> properties) {
     doInTransaction(() -> {
-      nodeService.addProperties(node.getNodeRef(), properties);
+      nodeService.addProperties(node.getNodeRef().get(), properties);
 
       bindTransactionListener(node);
     });
@@ -70,7 +70,7 @@ public class RepositoryOperations {
 
   protected final void deleteNode(final RepositoryNode node) {
     doInTransaction(() -> {
-      nodeService.deleteNode(node.getNodeRef());
+      nodeService.deleteNode(node.getNodeRef().get());
     });
   }
 

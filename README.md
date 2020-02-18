@@ -66,12 +66,12 @@ public class DepartmentFilerAction extends AbstractFilerAction {
   @Override
   public boolean supportsActionResolution(final FilerEvent event) {
     return event.getNode().getAspects().contains(ContentModel.ASPECT_TITLED)
-        && event.getNode().getType().equals(ContentModel.TYPE_CONTENT);
+        && event.getNode().getType().get().equals(ContentModel.TYPE_CONTENT);
   }
 
   @Override
   public boolean supportsActionExecution(final RepositoryNode node) {
-    return node.getProperty(ContentModel.PROP_DESCRIPTION, String.class).matches("department:.+;");
+    return node.getProperty(ContentModel.PROP_DESCRIPTION, String.class).orElse("").matches("department:.+;");
   }
 
   @Override
@@ -82,7 +82,7 @@ public class DepartmentFilerAction extends AbstractFilerAction {
         .folder().asSegment()
             .named().with(node -> {
               Pattern regex = Pattern.compile("department:\\s*(.+);");
-              Matcher matcher = regex.matcher(node.getProperty(ContentModel.PROP_DESCRIPTION, String.class));
+              Matcher matcher = regex.matcher(node.getProperty(ContentModel.PROP_DESCRIPTION, String.class).get());
               matcher.find();
               return matcher.group(1);
             }).getOrCreate()
