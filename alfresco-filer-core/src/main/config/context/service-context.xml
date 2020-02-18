@@ -3,6 +3,10 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+  <bean id="filer" parent="abstractPropertyBackedBean"
+      class="org.alfresco.repo.management.subsystems.ChildApplicationContextFactory">
+  </bean>
+
   <bean id="filerService"
       class="com.atolcd.alfresco.filer.core.service.impl.FilerServiceImpl">
     <property name="filerRegistry" ref="filerRegistry"/>
@@ -16,16 +20,14 @@
   <bean id="filerRegistry"
       class="com.atolcd.alfresco.filer.core.service.impl.FilerRegistryImpl"/>
 
-  <bean id="filerModelService"
-      class="com.atolcd.alfresco.filer.core.service.impl.FilerModelServiceImpl">
-    <constructor-arg ref="ownableService"/>
-    <constructor-arg ref="policyBehaviourFilter"/>
-    <property name="fileableAspectQName" value="${filer.aspect.fileable}"/>
-    <property name="segmentAspectQName" value="${filer.aspect.segment}"/>
-    <property name="subscriberAspectQName" value="${filer.aspect.subscriber}"/>
-    <property name="propertyInheritanceAspectQName" value="${filer.aspect.propertyInheritance}"/>
-    <property name="ownerUsername" value="${filer.owner.username}"/>
-  </bean>
+   <bean id="filerModelService" class="org.alfresco.repo.management.subsystems.SubsystemProxyFactory">
+      <property name="sourceApplicationContextFactory" ref="filer"/>
+      <property name="interfaces">
+         <list>
+            <value>com.atolcd.alfresco.filer.core.service.FilerModelService</value>
+         </list>
+      </property>
+   </bean>
 
   <bean id="filerOperationService"
       class="org.springframework.aop.framework.ProxyFactoryBean">
