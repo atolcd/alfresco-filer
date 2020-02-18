@@ -2,6 +2,7 @@ package com.atolcd.alfresco.filer.core.service.impl;
 
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
 
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
@@ -10,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class FilerModelServiceImpl implements FilerModelService {
 
+  private final OwnableService ownableService;
   private final BehaviourFilter behaviourFilter;
 
   @Nullable
@@ -20,8 +22,11 @@ public class FilerModelServiceImpl implements FilerModelService {
   private QName subscriberAspect;
   @Nullable
   private QName propertyInheritanceAspect;
+  @Nullable
+  private String ownerUsername;
 
-  public FilerModelServiceImpl(final BehaviourFilter behaviourFilter) {
+  public FilerModelServiceImpl(final OwnableService ownableService, final BehaviourFilter behaviourFilter) {
+    this.ownableService = ownableService;
     this.behaviourFilter = behaviourFilter;
   }
 
@@ -43,6 +48,16 @@ public class FilerModelServiceImpl implements FilerModelService {
   @Override
   public QName getPropertyInheritanceAspect() {
     return propertyInheritanceAspect;
+  }
+
+  @Override
+  public String getOwnerUsername() {
+    return ownerUsername;
+  }
+
+  @Override
+  public void setOwner(final NodeRef nodeRef) {
+    ownableService.setOwner(nodeRef, ownerUsername);
   }
 
   @Override
@@ -95,5 +110,9 @@ public class FilerModelServiceImpl implements FilerModelService {
 
   public void setPropertyInheritanceAspectQName(final String propertyInheritanceAspectQName) {
     this.propertyInheritanceAspect = QName.createQName(propertyInheritanceAspectQName);
+  }
+
+  public void setOwnerUsername(final String ownerUsername) {
+    this.ownerUsername = ownerUsername;
   }
 }

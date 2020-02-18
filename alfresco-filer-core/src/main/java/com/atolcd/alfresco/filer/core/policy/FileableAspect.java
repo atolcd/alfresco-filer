@@ -11,7 +11,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -31,19 +30,13 @@ public class FileableAspect implements InitializingBean, NodeServicePolicies.OnC
   private final FilerModelService filerModelService;
   private final PolicyComponent policyComponent;
   private final NodeService nodeService;
-  private final OwnableService ownableService;
-
-  private final String username;
 
   public FileableAspect(final FilerService filerService, final FilerModelService filerModelService,
-      final PolicyComponent policyComponent, final NodeService nodeService, final OwnableService ownableService,
-      final String username) {
+      final PolicyComponent policyComponent, final NodeService nodeService) {
     this.filerService = filerService;
     this.filerModelService = filerModelService;
     this.policyComponent = policyComponent;
     this.nodeService = nodeService;
-    this.ownableService = ownableService;
-    this.username = username;
   }
 
   @Override
@@ -81,8 +74,9 @@ public class FileableAspect implements InitializingBean, NodeServicePolicies.OnC
   public void onAddAspect(final NodeRef nodeRef, final QName aspectTypeQName) {
     String user = FilerTransactionUtils.getUpdateUser(nodeRef);
     AuthenticationUtil.runAs(() -> {
+      // Check node still exists, it might be gone at transaction commit time
       if (nodeService.exists(nodeRef)) {
-        ownableService.setOwner(nodeRef, username);
+        filerModelService.setOwner(nodeRef);
       }
       return null;
     }, user);

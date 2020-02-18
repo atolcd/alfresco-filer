@@ -4,7 +4,6 @@ import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -14,16 +13,10 @@ public class FilerSegmentAspect implements InitializingBean, NodeServicePolicies
 
   private final FilerModelService filerModelService;
   private final PolicyComponent policyComponent;
-  private final OwnableService ownableService;
 
-  private final String username;
-
-  public FilerSegmentAspect(final FilerModelService filerModelService, final PolicyComponent policyComponent,
-      final OwnableService ownableService, final String username) {
+  public FilerSegmentAspect(final FilerModelService filerModelService, final PolicyComponent policyComponent) {
     this.filerModelService = filerModelService;
     this.policyComponent = policyComponent;
-    this.ownableService = ownableService;
-    this.username = username;
   }
 
   @Override
@@ -34,6 +27,6 @@ public class FilerSegmentAspect implements InitializingBean, NodeServicePolicies
 
   @Override
   public void onAddAspect(final NodeRef nodeRef, final QName aspectTypeQName) {
-    ownableService.setOwner(nodeRef, username);
+    filerModelService.setOwner(nodeRef);
   }
 }

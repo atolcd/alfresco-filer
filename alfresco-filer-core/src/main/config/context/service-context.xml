@@ -18,11 +18,13 @@
 
   <bean id="filerModelService"
       class="com.atolcd.alfresco.filer.core.service.impl.FilerModelServiceImpl">
+    <constructor-arg ref="ownableService"/>
     <constructor-arg ref="policyBehaviourFilter"/>
     <property name="fileableAspectQName" value="${filer.aspect.fileable}"/>
     <property name="segmentAspectQName" value="${filer.aspect.segment}"/>
     <property name="subscriberAspectQName" value="${filer.aspect.subscriber}"/>
     <property name="propertyInheritanceAspectQName" value="${filer.aspect.propertyInheritance}"/>
+    <property name="ownerUsername" value="${filer.owner.username}"/>
   </bean>
 
   <bean id="filerOperationService"

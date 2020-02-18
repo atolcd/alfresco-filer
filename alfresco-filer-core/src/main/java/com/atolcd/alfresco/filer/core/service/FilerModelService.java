@@ -13,6 +13,10 @@ public interface FilerModelService {
 
   QName getPropertyInheritanceAspect();
 
+  String getOwnerUsername();
+
+  void setOwner(NodeRef nodeRef);
+
   void runWithoutFileableBehaviour(Runnable callback);
 
   void runWithoutFileableBehaviour(NodeRef nodeRef, Runnable callback);

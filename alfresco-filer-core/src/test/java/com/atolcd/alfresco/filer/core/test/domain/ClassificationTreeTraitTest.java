@@ -10,7 +10,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
@@ -24,9 +23,6 @@ public class ClassificationTreeTraitTest extends RepositoryOperations {
 
   @Autowired
   private NodeService nodeService;
-
-  @Value("${filer.owner.username}")
-  private String username;
 
   @Test
   public void filerAspect() {
@@ -82,13 +78,13 @@ public class ClassificationTreeTraitTest extends RepositoryOperations {
     createNode(node);
 
     // Fileable
-    assertThat(node.getProperty(ContentModel.PROP_OWNER, String.class)).contains(username);
+    assertThat(node.getProperty(ContentModel.PROP_OWNER, String.class)).contains(filerModelService.getOwnerUsername());
 
     // Segments
     NodeRef parent = node.getParent().get();
-    assertThat(nodeService.getProperty(parent, ContentModel.PROP_OWNER)).isEqualTo(username);
+    assertThat(nodeService.getProperty(parent, ContentModel.PROP_OWNER)).isEqualTo(filerModelService.getOwnerUsername());
 
     NodeRef grandParent = nodeService.getPrimaryParent(parent).getParentRef();
-    assertThat(nodeService.getProperty(grandParent, ContentModel.PROP_OWNER)).isEqualTo(username);
+    assertThat(nodeService.getProperty(grandParent, ContentModel.PROP_OWNER)).isEqualTo(filerModelService.getOwnerUsername());
   }
 }

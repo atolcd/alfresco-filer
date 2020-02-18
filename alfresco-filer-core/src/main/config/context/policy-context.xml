@@ -8,8 +8,6 @@
     <constructor-arg ref="filerModelService"/>
     <constructor-arg ref="policyComponent"/>
     <constructor-arg ref="NodeService"/>
-    <constructor-arg ref="ownableService"/>
-    <constructor-arg value="${filer.owner.username}"/>
   </bean>
 
   <bean id="filer.policy.subscriberAspect" class="com.atolcd.alfresco.filer.core.policy.FilerSubscriberAspect">
@@ -21,8 +19,6 @@
   <bean id="filer.policy.segmentAspect" class="com.atolcd.alfresco.filer.core.policy.FilerSegmentAspect">
     <constructor-arg ref="filerModelService"/>
     <constructor-arg ref="policyComponent"/>
-    <constructor-arg ref="ownableService"/>
-    <constructor-arg value="${filer.owner.username}"/>
   </bean>
 
 </beans>
