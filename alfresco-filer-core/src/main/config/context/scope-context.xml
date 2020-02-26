@@ -24,7 +24,7 @@
 
   <bean id="filer.scope.siteLoader" parent="filer.scope.base"
       class="com.atolcd.alfresco.filer.core.scope.impl.SiteFilerScopeLoader">
-    <constructor-arg ref="siteService"/>
+    <constructor-arg ref="SiteService"/>
   </bean>
 
   <import resource="classpath:alfresco/module/*/filer/scope-context.xml"/>

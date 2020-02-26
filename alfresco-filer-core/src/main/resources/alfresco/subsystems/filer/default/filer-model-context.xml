@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <bean id="filerModelService" class="com.atolcd.alfresco.filer.core.service.impl.FilerModelServiceImpl">
-    <constructor-arg ref="ownableService"/>
+    <constructor-arg ref="OwnableService"/>
     <constructor-arg ref="policyBehaviourFilter"/>
     <property name="fileableAspectQName" value="${filer.aspect.fileable}"/>
     <property name="segmentAspectQName" value="${filer.aspect.segment}"/>

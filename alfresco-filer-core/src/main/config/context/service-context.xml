@@ -14,7 +14,7 @@
     <property name="propertyInheritanceService" ref="filer.propertyInheritanceService"/>
     <property name="nodeService" ref="NodeService"/>
     <property name="permissionService" ref="PermissionService"/>
-    <property name="lockService" ref="lockService"/>
+    <property name="lockService" ref="LockService"/>
   </bean>
 
   <bean id="filerRegistry"
