@@ -5,6 +5,7 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -14,15 +15,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
-import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
+import com.atolcd.alfresco.filer.core.test.framework.TestApplicationContext;
+import com.atolcd.alfresco.filer.core.test.framework.TestAuthentication;
+import com.atolcd.alfresco.filer.core.test.framework.TestLibrary;
+import com.atolcd.alfresco.filer.core.test.framework.TestLibraryRole;
 
-public class ClassificationTreeTraitTest extends RepositoryOperations {
+@TestApplicationContext
+@TestLibrary
+@TestAuthentication
+@TestLibraryRole(SiteModel.SITE_CONTRIBUTOR)
+public class ClassificationTreeTraitTest {
 
   @Autowired
   private FilerModelService filerModelService;
 
   @Autowired
   private NodeService nodeService;
+
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   @Test
   public void filerAspect() {
@@ -31,7 +43,7 @@ public class ClassificationTreeTraitTest extends RepositoryOperations {
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
         .build();
 
-    createNode(node);
+    repositoryNodeHelper.createNode(node);
 
     assertThat(node.getAspects()).contains(filerModelService.getFileableAspect());
 
@@ -54,7 +66,7 @@ public class ClassificationTreeTraitTest extends RepositoryOperations {
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
         .build();
 
-    createNode(node);
+    repositoryNodeHelper.createNode(node);
 
     assertThat(node.getType()).contains(type);
 
@@ -75,7 +87,7 @@ public class ClassificationTreeTraitTest extends RepositoryOperations {
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
         .build();
 
-    createNode(node);
+    repositoryNodeHelper.createNode(node);
 
     // Fileable
     assertThat(node.getProperty(ContentModel.PROP_OWNER, String.class)).contains(filerModelService.getOwnerUsername());

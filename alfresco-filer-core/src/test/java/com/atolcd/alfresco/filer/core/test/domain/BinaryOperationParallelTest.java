@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
 
 /**
  * Test parallel execution of two different operations
@@ -46,6 +47,8 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
 
   @Autowired
   private NodeService nodeService;
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   /**
    * Test parallel creation and deletion of filed nodes within the same segment folder.
@@ -92,7 +95,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       RepositoryNode node = buildNode(departmentName, sourceDate).build();
 
       LOGGER.debug("Update task: creating node that will be updated");
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       nodeToUpdate.set(node);
 
       preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -106,7 +109,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       startingBarrier.await(10, TimeUnit.SECONDS);
 
       LOGGER.debug("Update task: node creation start");
-      updateNode(node, dateProperty);
+      repositoryNodeHelper.updateNode(node, dateProperty);
       LOGGER.debug("Update task: node creation end");
       return null;
     });
@@ -119,7 +122,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
           .build();
 
       LOGGER.debug("Delete task: creating node that will be deleted");
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       nodeToDelete.set(node);
 
       preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -130,7 +133,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       startingBarrier.await(10, TimeUnit.SECONDS);
 
       LOGGER.debug("Delete task: node deletion start");
-      deleteNode(node);
+      repositoryNodeHelper.deleteNode(node);
       LOGGER.debug("Delete task: node deletion end");
       return null;
     });
@@ -183,7 +186,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       RepositoryNode node = buildNode(departmentName, sourceDate).build();
 
       LOGGER.debug("Update task: creating node that will be updated");
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       nodeToUpdate.set(node);
 
       preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -197,7 +200,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       startingBarrier.await(10, TimeUnit.SECONDS);
 
       LOGGER.debug("Update task: node creation start");
-      updateNode(node, dateProperty);
+      repositoryNodeHelper.updateNode(node, dateProperty);
       LOGGER.debug("Update task: node creation end");
       return null;
     });
@@ -210,7 +213,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
           .build();
 
       LOGGER.debug("Delete task: creating node that will be deleted");
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       nodeToDelete.set(node);
 
       preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -221,7 +224,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       startingBarrier.await(10, TimeUnit.SECONDS);
 
       LOGGER.debug("Delete task: node deletion start");
-      deleteNode(node);
+      repositoryNodeHelper.deleteNode(node);
       LOGGER.debug("Delete task: node deletion end");
       return null;
     });

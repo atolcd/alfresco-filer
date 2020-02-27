@@ -25,9 +25,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
 import com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils;
-import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
+import com.atolcd.alfresco.filer.core.test.framework.TestApplicationContext;
+import com.atolcd.alfresco.filer.core.test.framework.TestAuthentication;
+import com.atolcd.alfresco.filer.core.test.framework.TestLibrary;
+import com.atolcd.alfresco.filer.core.test.framework.TestLibraryRole;
+import com.atolcd.alfresco.filer.core.test.framework.TransactionHelper;
 
-public class FileableAuthenticationTest extends RepositoryOperations {
+@TestApplicationContext
+@TestLibrary
+@TestAuthentication
+@TestLibraryRole(SiteModel.SITE_CONTRIBUTOR)
+public class FileableAuthenticationTest {
 
   @Autowired
   private PersonService personService;
@@ -35,6 +44,10 @@ public class FileableAuthenticationTest extends RepositoryOperations {
   private SiteService siteService;
   @Autowired
   private NodeService nodeService;
+  @Autowired
+  private TransactionHelper transactionHelper;
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   @Test
   public void onAddAspect() {
@@ -50,9 +63,9 @@ public class FileableAuthenticationTest extends RepositoryOperations {
         .build();
 
     // Trigger FileableAspect#onAddAspect behaviour
-    doInTransaction(() -> {
+    transactionHelper.run(() -> {
       AuthenticationUtil.runAs(() -> {
-        createNode(node);
+        repositoryNodeHelper.createNode(node);
         return null;
       }, person);
     });
@@ -60,7 +73,7 @@ public class FileableAuthenticationTest extends RepositoryOperations {
     AuthenticationUtil.runAs(() -> {
       // Fetch node as the fetch done after createNode transaction commit (by binding a transaction listener) failed due
       // to missing authentication (it fail silently, only logging exception)
-      fetchNode(node);
+      repositoryNodeHelper.fetchNode(node);
 
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));
       assertThat(node.getProperty(ContentModel.PROP_MODIFIER, String.class)).contains(person);
@@ -82,16 +95,17 @@ public class FileableAuthenticationTest extends RepositoryOperations {
         .build();
 
     AuthenticationUtil.runAs(() -> {
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       return null;
     }, personCreate);
 
     String departmentName = randomUUID().toString();
 
     // Trigger FileableAspect#onUpdateProperties behaviour
-    doInTransaction(() -> {
+    transactionHelper.run(() -> {
       AuthenticationUtil.runAs(() -> {
-        updateNode(node, Collections.singletonMap(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName));
+        repositoryNodeHelper.updateNode(node,
+            Collections.singletonMap(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName));
         return null;
       }, personUpdate);
     });
@@ -99,7 +113,7 @@ public class FileableAuthenticationTest extends RepositoryOperations {
     AuthenticationUtil.runAs(() -> {
       // Fetch node as the fetch done after updateNode transaction commit (by binding a transaction listener) failed due
       // to missing authentication (it fail silently, only logging exception)
-      fetchNode(node);
+      repositoryNodeHelper.fetchNode(node);
 
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));
       assertThat(node.getProperty(ContentModel.PROP_MODIFIER, String.class)).contains(personUpdate);
@@ -123,14 +137,14 @@ public class FileableAuthenticationTest extends RepositoryOperations {
         .build();
 
     AuthenticationUtil.runAs(() -> {
-      doInTransaction(() -> {
-        createNode(node);
+      transactionHelper.run(() -> {
+        repositoryNodeHelper.createNode(node);
       });
       return null;
     }, personCreate);
 
     // Trigger FileableAspect#onMoveNode behaviour
-    doInTransaction(() -> {
+    transactionHelper.run(() -> {
       AuthenticationUtil.runAs(() -> {
         QName assocQName = QName.createQNameWithValidLocalName(NamespaceService.CONTENT_MODEL_1_0_URI, node.getName().get());
         nodeService.moveNode(node.getNodeRef().get(), getLibrary().getNodeRef(), ContentModel.ASSOC_CONTAINS, assocQName);
@@ -139,7 +153,7 @@ public class FileableAuthenticationTest extends RepositoryOperations {
     });
 
     AuthenticationUtil.runAs(() -> {
-      fetchNode(node);
+      repositoryNodeHelper.fetchNode(node);
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));
       assertThat(node.getProperty(ContentModel.PROP_MODIFIER, String.class)).contains(personMove);
       return null;
@@ -148,7 +162,7 @@ public class FileableAuthenticationTest extends RepositoryOperations {
 
   private void createPerson(final String userName, final String role) {
     AuthenticationUtil.runAsSystem(() -> {
-      doInTransaction(() -> {
+      transactionHelper.run(() -> {
         if (personService.getPersonOrNull(userName) == null) {
           Map<QName, Serializable> properties = new HashMap<>();
           properties.put(ContentModel.PROP_USERNAME, userName);

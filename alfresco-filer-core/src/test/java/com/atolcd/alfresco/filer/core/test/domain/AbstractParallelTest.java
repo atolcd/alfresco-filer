@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.junit.jupiter.api.AfterAll;
@@ -35,7 +36,11 @@ import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstan
 import com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils;
 import com.atolcd.alfresco.filer.core.test.framework.Library;
 import com.atolcd.alfresco.filer.core.test.framework.LibraryExtension;
-import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
+import com.atolcd.alfresco.filer.core.test.framework.TestApplicationContext;
+import com.atolcd.alfresco.filer.core.test.framework.TestAuthentication;
+import com.atolcd.alfresco.filer.core.test.framework.TestLibrary;
+import com.atolcd.alfresco.filer.core.test.framework.TestLibraryRole;
 
 /**
  * Provide base class for parallel tests of {@linkplain com.atolcd.alfresco.filer.core.model.FilerAction Filer actions}. Assert
@@ -47,7 +52,11 @@ import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
  * </p>
  */
 @Execution(ExecutionMode.SAME_THREAD)
-public abstract class AbstractParallelTest extends RepositoryOperations {
+@TestApplicationContext
+@TestLibrary
+@TestAuthentication
+@TestLibraryRole(SiteModel.SITE_CONTRIBUTOR)
+public class AbstractParallelTest {
 
   protected static final int NUM_THREAD_TO_LAUNCH = Runtime.getRuntime().availableProcessors() * 2;
 
@@ -60,6 +69,8 @@ public abstract class AbstractParallelTest extends RepositoryOperations {
 
   @Autowired
   private NodeService nodeService;
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   private static ExecutorService executor;
 
@@ -116,7 +127,7 @@ public abstract class AbstractParallelTest extends RepositoryOperations {
       startingBarrier.await(10, TimeUnit.SECONDS);
 
       logger.debug("Create task: node creation start");
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       logger.debug("Create task: node creation end");
       createdNode.set(node);
       return null;
@@ -130,7 +141,7 @@ public abstract class AbstractParallelTest extends RepositoryOperations {
           .build();
 
       logger.debug("Delete task: creating node that will be deleted");
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       nodeToDelete.set(node);
 
       preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -141,7 +152,7 @@ public abstract class AbstractParallelTest extends RepositoryOperations {
       startingBarrier.await(10, TimeUnit.SECONDS);
 
       logger.debug("Delete task: node deletion start");
-      deleteNode(node);
+      repositoryNodeHelper.deleteNode(node);
       logger.debug("Delete task: node deletion end");
       return null;
     });
@@ -170,5 +181,9 @@ public abstract class AbstractParallelTest extends RepositoryOperations {
     } else {
       assertThat(nodeService.exists(nodeToDeleteParent.get())).isFalse();
     }
+  }
+
+  protected AbstractParallelTest() {
+    // Prevent class instantiation
   }
 }

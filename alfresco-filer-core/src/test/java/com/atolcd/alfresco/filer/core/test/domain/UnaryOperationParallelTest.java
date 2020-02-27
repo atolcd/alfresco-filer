@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
 import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 
 /**
@@ -39,6 +40,9 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
 
   @Autowired
   private NodeService nodeService;
+
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   @Test
   public void createMultipleNodes() throws InterruptedException {
@@ -56,7 +60,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
         // Wait for every thread to be ready to launch parallel createNode
         startingBarrier.await(10, TimeUnit.SECONDS);
 
-        createNode(node);
+        repositoryNodeHelper.createNode(node);
         results.add(node);
         return null;
       });
@@ -90,7 +94,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
       execute(endingLatch, () -> {
         RepositoryNode node = buildNode(departmentName, sourceDate).build();
 
-        createNode(node);
+        repositoryNodeHelper.createNode(node);
         results.add(node);
 
         preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -109,7 +113,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
         // Wait for every thread to be ready to launch parallel updateNode
         startingBarrier.await(10, TimeUnit.SECONDS);
 
-        updateNode(node, dateProperty);
+        repositoryNodeHelper.updateNode(node, dateProperty);
         return null;
       });
     }
@@ -154,7 +158,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
           .aspect(ContentModel.ASPECT_TEMPORARY) // Do not archive node, this could generate contention on creating user trashcan
           .build();
 
-        createNode(node);
+        repositoryNodeHelper.createNode(node);
         results.add(node);
 
         preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -170,7 +174,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
         // Wait for every thread to be ready to launch parallel deleteNode
         startingBarrier.await(10, TimeUnit.SECONDS);
 
-        deleteNode(node);
+        repositoryNodeHelper.deleteNode(node);
         return null;
       });
     }

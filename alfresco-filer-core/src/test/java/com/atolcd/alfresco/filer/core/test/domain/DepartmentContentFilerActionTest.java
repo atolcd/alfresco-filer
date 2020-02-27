@@ -24,16 +24,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
 import com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils;
-import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
 import com.atolcd.alfresco.filer.core.test.framework.TestApplicationContext;
 import com.atolcd.alfresco.filer.core.test.framework.TestAuthentication;
 import com.atolcd.alfresco.filer.core.test.framework.TestLibrary;
 import com.atolcd.alfresco.filer.core.test.framework.TestLibraryRole;
 
-public class DepartmentContentFilerActionTest extends RepositoryOperations {
+@TestApplicationContext
+@TestLibrary
+@TestAuthentication
+@TestLibraryRole(SiteModel.SITE_CONTRIBUTOR)
+public class DepartmentContentFilerActionTest {
 
   @Autowired
   private NodeService nodeService;
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   @Nested
   // The annotations below are necessary as Spring does not find the configuration of nested class from the enclosing class
@@ -55,7 +61,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
           .build();
 
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
 
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, date));
     }
@@ -69,7 +75,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
           .build();
 
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
 
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));
     }
@@ -87,7 +93,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, wrongDate.atZone(ZoneId.systemDefault()))
           .build();
 
-      createNode(wrongSegmentNode);
+      repositoryNodeHelper.createNode(wrongSegmentNode);
 
       // Create node with the target date in the wrong folder
       RepositoryNode node = getLibrary().childNode()
@@ -97,7 +103,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, targetDate.atZone(ZoneId.systemDefault()))
           .build();
 
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
 
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentNom, targetDate));
     }
@@ -119,8 +125,8 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
           .build();
 
-      createNode(firstNode);
-      createNode(secondNode);
+      repositoryNodeHelper.createNode(firstNode);
+      repositoryNodeHelper.createNode(secondNode);
 
       Path nodePath = NodePathUtils.nodePath(departmentName, date);
 
@@ -151,7 +157,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, sourceDate.atZone(ZoneId.systemDefault()))
           .build();
 
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
 
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentNom, sourceDate));
 
@@ -163,7 +169,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       Map<QName, Serializable> dateProperty = Collections.singletonMap(FilerTestConstants.ImportedAspect.PROP_DATE,
           Date.from(targetDate.atZone(ZoneId.systemDefault()).toInstant()));
 
-      updateNode(node, dateProperty);
+      repositoryNodeHelper.updateNode(node, dateProperty);
 
       assertThat(nodeService.exists(oldParent)).isFalse();
       assertThat(nodeService.exists(oldGrandParent)).isFalse();
@@ -192,7 +198,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
           .build();
 
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
 
       assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentNom, date));
 
@@ -200,7 +206,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
       NodeRef grandParent = nodeService.getPrimaryParent(node.getParent().get()).getParentRef();
       NodeRef greatGrandParent = nodeService.getPrimaryParent(grandParent).getParentRef();
 
-      deleteNode(node);
+      repositoryNodeHelper.deleteNode(node);
 
       assertThat(nodeService.exists(node.getNodeRef().get())).isFalse();
       assertThat(nodeService.exists(node.getParent().get())).isFalse();
@@ -219,7 +225,7 @@ public class DepartmentContentFilerActionTest extends RepositoryOperations {
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
         .build();
 
-    createNode(node);
+    repositoryNodeHelper.createNode(node);
 
     assertThat(node.getType()).contains(type);
     assertThat(getPath(node)).isEqualTo(NodePathUtils.nodePath(departmentName, LocalDateTime.now()));

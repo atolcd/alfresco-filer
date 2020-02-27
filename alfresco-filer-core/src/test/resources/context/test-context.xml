@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- Framework -->
+
+  <bean id="note.test.transactionHelper"
+      class="com.atolcd.alfresco.filer.core.test.framework.TransactionHelper"/>
+
+  <bean id="note.test.repositoryNodeHelper"
+      class="com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper"/>
+
+</beans>

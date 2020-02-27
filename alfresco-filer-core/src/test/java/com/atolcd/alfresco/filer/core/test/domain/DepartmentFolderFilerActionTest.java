@@ -15,17 +15,25 @@ import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.namespace.QName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
 import com.atolcd.alfresco.filer.core.test.domain.util.NodePathUtils;
-import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
 import com.atolcd.alfresco.filer.core.test.framework.TestApplicationContext;
 import com.atolcd.alfresco.filer.core.test.framework.TestAuthentication;
 import com.atolcd.alfresco.filer.core.test.framework.TestLibrary;
 import com.atolcd.alfresco.filer.core.test.framework.TestLibraryRole;
 
-public class DepartmentFolderFilerActionTest extends RepositoryOperations {
+@TestApplicationContext
+@TestLibrary
+@TestAuthentication
+@TestLibraryRole(SiteModel.SITE_CONTRIBUTOR)
+public class DepartmentFolderFilerActionTest {
+
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   @Test
   public void withDepartmentName() {
@@ -36,7 +44,7 @@ public class DepartmentFolderFilerActionTest extends RepositoryOperations {
         .property(FilerTestConstants.Department.Aspect.PROP_NAME, departmentName)
         .build();
 
-    createNode(node);
+    repositoryNodeHelper.createNode(node);
 
     assertThat(node.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class)).contains(departmentName);
     assertThat(getPath(node)).isEqualTo(getLibrary().getPath());
@@ -59,7 +67,7 @@ public class DepartmentFolderFilerActionTest extends RepositoryOperations {
           .property(FilerTestConstants.Department.Aspect.PROP_NAME, randomUUID())
           .build();
 
-      createNode(departmentFolderNode);
+      repositoryNodeHelper.createNode(departmentFolderNode);
 
       // Create document node in folder
       LocalDateTime date = LocalDateTime.of(2004, 8, 12, 0, 0, 0);
@@ -70,7 +78,7 @@ public class DepartmentFolderFilerActionTest extends RepositoryOperations {
           .property(FilerTestConstants.ImportedAspect.PROP_DATE, date.atZone(ZoneId.systemDefault()))
           .build();
 
-      createNode(documentNode);
+      repositoryNodeHelper.createNode(documentNode);
 
       assertThat(getPath(documentNode)).isEqualTo(NodePathUtils
           .nodePath(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class), date));
@@ -79,10 +87,10 @@ public class DepartmentFolderFilerActionTest extends RepositoryOperations {
       Map<QName, Serializable> departmentNameProperty = Collections.singletonMap(FilerTestConstants.Department.Aspect.PROP_NAME,
           randomUUID().toString());
 
-      updateNode(departmentFolderNode, departmentNameProperty);
+      repositoryNodeHelper.updateNode(departmentFolderNode, departmentNameProperty);
 
       // Get document node and check if it has been updated automatically
-      fetchNode(documentNode);
+      repositoryNodeHelper.fetchNode(documentNode);
 
       assertThat(getPath(documentNode)).isEqualTo(NodePathUtils
           .nodePath(departmentFolderNode.getProperty(FilerTestConstants.Department.Aspect.PROP_NAME, String.class), date));
