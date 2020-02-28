@@ -17,10 +17,10 @@ import org.junit.platform.testkit.engine.EngineTestKit;
 import org.junit.platform.testkit.engine.Events;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.atolcd.alfresco.filer.core.model.FilerException;
 import com.atolcd.alfresco.filer.core.test.framework.PostgreSQLExtension;
 
 public class DisableDefaultModelStartupTest {
@@ -47,9 +47,11 @@ public class DisableDefaultModelStartupTest {
         .map(TestExecutionResult::getThrowable)
         .map(Optional::get) // Throwable is always present on failed test
         .get();
-    assertThat(error.getCause()).isInstanceOf(BeanCreationException.class);
-    assertThat(error.getCause()).hasMessageContaining("Class {http://www.atolcd.com/model/filer/1.0}fileable "
-        + "has not been defined in the data dictionary");
+    assertThat(error)
+        .isInstanceOf(IllegalStateException.class)
+        .hasCauseInstanceOf(FilerException.class);
+    assertThat(error.getCause())
+        .hasMessage("Could not find aspect: {http://www.atolcd.com/model/filer/1.0}fileable");
   }
 
   @ExtendWith(PostgreSQLExtension.class)

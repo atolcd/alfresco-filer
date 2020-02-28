@@ -3,6 +3,7 @@ package com.atolcd.alfresco.filer.core.policy;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.JavaBehaviour;
@@ -12,51 +13,56 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.springframework.beans.factory.InitializingBean;
 
 import com.atolcd.alfresco.filer.core.model.FilerEvent;
 import com.atolcd.alfresco.filer.core.model.InboundFilerEvent;
 import com.atolcd.alfresco.filer.core.model.UpdateFilerEvent;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.FilerService;
+import com.atolcd.alfresco.filer.core.service.impl.DictionaryListenerAspect;
 import com.atolcd.alfresco.filer.core.util.FilerTransactionUtils;
 
-public class FileableAspect implements InitializingBean, NodeServicePolicies.OnCreateNodePolicy,
+public class FileableAspect extends DictionaryListenerAspect implements NodeServicePolicies.OnCreateNodePolicy,
     NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.BeforeUpdateNodePolicy,
     NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy,
     NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnMoveNodePolicy {
 
-  private final FilerService filerService;
-  private final FilerModelService filerModelService;
   private final PolicyComponent policyComponent;
+  private final FilerModelService filerModelService;
+  private final FilerService filerService;
   private final NodeService nodeService;
 
-  public FileableAspect(final FilerService filerService, final FilerModelService filerModelService,
-      final PolicyComponent policyComponent, final NodeService nodeService) {
-    this.filerService = filerService;
-    this.filerModelService = filerModelService;
+  public FileableAspect(final DictionaryDAO dictionaryDAO, final PolicyComponent policyComponent,
+      final FilerModelService filerModelService, final FilerService filerService, final NodeService nodeService) {
+    super(dictionaryDAO);
     this.policyComponent = policyComponent;
+    this.filerModelService = filerModelService;
+    this.filerService = filerService;
     this.nodeService = nodeService;
   }
 
   @Override
-  public void afterPropertiesSet() {
-    QName fileableAspect = filerModelService.getFileableAspect();
+  protected QName getAspect() {
+    return filerModelService.getFileableAspect();
+  }
+
+  @Override
+  public void init() {
     policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME,
-        fileableAspect, new JavaBehaviour(this, "onCreateNode"));
+        getAspect(), new JavaBehaviour(this, "onCreateNode"));
     // Using TRANSACTION_COMMIT ensures all properties are added/updated before applying filer
     policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME,
-        fileableAspect, new JavaBehaviour(this, "onAddAspect", NotificationFrequency.TRANSACTION_COMMIT));
+        getAspect(), new JavaBehaviour(this, "onAddAspect", NotificationFrequency.TRANSACTION_COMMIT));
     policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeUpdateNodePolicy.QNAME,
-        fileableAspect, new JavaBehaviour(this, "beforeUpdateNode", NotificationFrequency.FIRST_EVENT));
+        getAspect(), new JavaBehaviour(this, "beforeUpdateNode", NotificationFrequency.FIRST_EVENT));
     policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME,
-        fileableAspect, new JavaBehaviour(this, "onUpdateNode"));
+        getAspect(), new JavaBehaviour(this, "onUpdateNode"));
     policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
-        fileableAspect, new JavaBehaviour(this, "onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
+        getAspect(), new JavaBehaviour(this, "onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
     policyComponent.bindClassBehaviour(NodeServicePolicies.OnMoveNodePolicy.QNAME,
-        fileableAspect, new JavaBehaviour(this, "onMoveNode", NotificationFrequency.TRANSACTION_COMMIT));
+        getAspect(), new JavaBehaviour(this, "onMoveNode", NotificationFrequency.TRANSACTION_COMMIT));
     policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME,
-        fileableAspect, new JavaBehaviour(this, "onDeleteNode"));
+        getAspect(), new JavaBehaviour(this, "onDeleteNode"));
   }
 
   /**

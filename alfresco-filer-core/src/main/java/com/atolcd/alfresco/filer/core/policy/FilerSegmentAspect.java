@@ -1,28 +1,36 @@
 package com.atolcd.alfresco.filer.core.policy;
 
+import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.springframework.beans.factory.InitializingBean;
 
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
+import com.atolcd.alfresco.filer.core.service.impl.DictionaryListenerAspect;
 
-public class FilerSegmentAspect implements InitializingBean, NodeServicePolicies.OnAddAspectPolicy {
+public class FilerSegmentAspect extends DictionaryListenerAspect implements NodeServicePolicies.OnAddAspectPolicy {
 
-  private final FilerModelService filerModelService;
   private final PolicyComponent policyComponent;
+  private final FilerModelService filerModelService;
 
-  public FilerSegmentAspect(final FilerModelService filerModelService, final PolicyComponent policyComponent) {
-    this.filerModelService = filerModelService;
+  public FilerSegmentAspect(final DictionaryDAO dictionaryDAO, final PolicyComponent policyComponent,
+      final FilerModelService filerModelService) {
+    super(dictionaryDAO);
     this.policyComponent = policyComponent;
+    this.filerModelService = filerModelService;
   }
 
   @Override
-  public void afterPropertiesSet() {
+  protected QName getAspect() {
+    return filerModelService.getSegmentAspect();
+  }
+
+  @Override
+  public void init() {
     policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME,
-        filerModelService.getSegmentAspect(), new JavaBehaviour(this, "onAddAspect"));
+        getAspect(), new JavaBehaviour(this, "onAddAspect"));
   }
 
   @Override

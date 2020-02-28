@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
-import org.alfresco.repo.dictionary.DictionaryListener;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -20,7 +19,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
-import org.springframework.beans.factory.InitializingBean;
 
 import com.atolcd.alfresco.filer.core.model.FilerException;
 import com.atolcd.alfresco.filer.core.model.PropertyInheritance;
@@ -32,34 +30,33 @@ import com.atolcd.alfresco.filer.core.service.PropertyInheritanceService;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class PropertyInheritanceServiceImpl implements PropertyInheritanceService, InitializingBean, DictionaryListener {
+public class PropertyInheritanceServiceImpl extends DictionaryListenerAspect implements PropertyInheritanceService {
 
   private final FilerModelService filerModelService;
   private final NodeService nodeService;
   private final DictionaryService dictionaryService;
-  private final DictionaryDAO dictionaryDAO;
 
   @Nullable
   private Collection<QName> inheritedAspects;
   @Nullable
   private Map<QName, QName> inheritedProperties;
 
-  public PropertyInheritanceServiceImpl(final FilerModelService filerModelService, final NodeService nodeService,
-      final DictionaryService dictionaryService, final DictionaryDAO dictionaryDAO) {
+  public PropertyInheritanceServiceImpl(final DictionaryDAO dictionaryDAO, final FilerModelService filerModelService,
+      final NodeService nodeService, final DictionaryService dictionaryService) {
+    super(dictionaryDAO);
     this.filerModelService = filerModelService;
     this.nodeService = nodeService;
     this.dictionaryService = dictionaryService;
-    this.dictionaryDAO = dictionaryDAO;
   }
 
   @Override
-  public void afterPropertiesSet() {
-    dictionaryDAO.registerListener(this);
+  protected QName getAspect() {
+    return filerModelService.getPropertyInheritanceAspect();
   }
 
   @Override
-  public void afterDictionaryInit() {
-    inheritedAspects = dictionaryService.getSubAspects(filerModelService.getPropertyInheritanceAspect(), true);
+  public void init() {
+    inheritedAspects = dictionaryService.getSubAspects(getAspect(), true);
     inheritedProperties = getProperties(inheritedAspects);
   }
 
@@ -208,15 +205,5 @@ public class PropertyInheritanceServiceImpl implements PropertyInheritanceServic
         aspect.getValue().stream().forEach(property -> nodeService.removeProperty(nodeRef, property));
       }
     }
-  }
-
-  @Override
-  public void onDictionaryInit() { // NOPMD - default empty method, nothing to do on dictionary initialization
-    // no op
-  }
-
-  @Override
-  public void afterDictionaryDestroy() { // NOPMD - default empty method, nothing to do after dictionary deletion
-    // no op
   }
 }
