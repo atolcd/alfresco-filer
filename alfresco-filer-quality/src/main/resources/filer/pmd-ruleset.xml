@@ -63,11 +63,18 @@
                 value="ancestor::ClassOrInterfaceBodyDeclaration[MethodDeclaration[@Name='equals']]"/>
     </properties>
   </rule>
-  <!-- Allow Builders to have many methods -->
+  <!-- Allow Tests and Builders to have many methods -->
   <rule ref="category/java/design.xml/TooManyMethods">
     <properties>
       <property name="violationSuppressXPath"
-                value="ancestor::ClassOrInterfaceDeclaration[ends-with(@SimpleName, 'Builder')]"/>
+                value="ancestor::ClassOrInterfaceDeclaration[ends-with(@SimpleName, 'Test') or ends-with(@SimpleName, 'Builder')]"/>
+    </properties>
+  </rule>
+  <!-- Allow duplicate literals in tests -->
+  <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
+    <properties>
+      <property name="violationSuppressXPath"
+                value="ancestor::TypeDeclaration/ClassOrInterfaceDeclaration[ends-with(@SimpleName, 'Test')]"/>
     </properties>
   </rule>
   <!-- Adding @RepeatedTest annotated method as test case -->
