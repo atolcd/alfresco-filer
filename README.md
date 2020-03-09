@@ -26,7 +26,7 @@ The artifacts can be added to the dependency of your project in its pom.xml:
 <dependency>
   <groupId>com.atolcd.alfresco.filer</groupId>
   <artifactId>alfresco-filer-core</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ~~~
 
