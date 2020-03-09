@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.atolcd.alfresco.filer</groupId>
     <artifactId>alfresco-filer</artifactId>
-    <version>0.1.0</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>alfresco-filer-parent</artifactId>
@@ -15,25 +15,37 @@
 
   <properties>
     <alfresco-filer-parent.maven-checkstyle-plugin.version>3.1.0</alfresco-filer-parent.maven-checkstyle-plugin.version>
-    <alfresco-filer-parent.checkstyle.version>8.22</alfresco-filer-parent.checkstyle.version>
+    <alfresco-filer-parent.checkstyle.version>8.30</alfresco-filer-parent.checkstyle.version>
     <alfresco-filer-parent.checkstyle.includes />
-    <alfresco-filer-parent.maven-pmd-plugin.version>3.12.0</alfresco-filer-parent.maven-pmd-plugin.version>
-    <alfresco-filer-parent.pmd.version>6.16.0</alfresco-filer-parent.pmd.version>
+    <alfresco-filer-parent.maven-pmd-plugin.version>3.13.0</alfresco-filer-parent.maven-pmd-plugin.version>
+    <alfresco-filer-parent.pmd.version>6.21.0</alfresco-filer-parent.pmd.version>
     <alfresco-filer-parent.spotbugs-maven-plugin.version>3.1.12.2</alfresco-filer-parent.spotbugs-maven-plugin.version>
+    <alfresco-filer-parent.spotbugs.version>4.0.0</alfresco-filer-parent.spotbugs.version>
     <alfresco-filer-parent.maven-surefire-plugin.version>2.22.2</alfresco-filer-parent.maven-surefire-plugin.version>
     <alfresco-filer-parent.jacoco-maven-plugin.version>0.8.5</alfresco-filer-parent.jacoco-maven-plugin.version>
 
-    <alfresco-filer-parent.junit.version>5.5.2</alfresco-filer-parent.junit.version>
-    <alfresco-filer-parent.junit.platform.version>1.5.2</alfresco-filer-parent.junit.platform.version>
+    <alfresco-filer-parent.junit.version>5.6.0</alfresco-filer-parent.junit.version>
+    <alfresco-filer-parent.junit.platform.version>1.6.0</alfresco-filer-parent.junit.platform.version>
     <alfresco-filer-parent.spring.version>5.1.8.RELEASE</alfresco-filer-parent.spring.version>
-    <alfresco-filer-parent.mockito.version>3.2.0</alfresco-filer-parent.mockito.version>
-    <alfresco-filer-parent.assertj.version>3.14.0</alfresco-filer-parent.assertj.version>
+    <alfresco-filer-parent.mockito.version>3.2.4</alfresco-filer-parent.mockito.version>
+    <alfresco-filer-parent.assertj.version>3.15.0</alfresco-filer-parent.assertj.version>
     <alfresco-filer-parent.otj-pg-embedded.version>0.13.3</alfresco-filer-parent.otj-pg-embedded.version>
     <alfresco-filer-parent.servlet-api.version>3.0.1</alfresco-filer-parent.servlet-api.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-annotations</artifactId>
+        <version>${alfresco-filer-parent.spotbugs.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
       <!-- test -->
       <dependency>
         <groupId>org.junit.jupiter</groupId>
@@ -142,7 +154,7 @@
           <dependency>
             <groupId>com.atolcd.alfresco.filer</groupId>
             <artifactId>alfresco-filer-quality</artifactId>
-            <version>0.1.0</version>
+            <version>1.0.0</version>
           </dependency>
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
@@ -176,7 +188,7 @@
           <dependency>
             <groupId>com.atolcd.alfresco.filer</groupId>
             <artifactId>alfresco-filer-quality</artifactId>
-            <version>0.1.0</version>
+            <version>1.0.0</version>
           </dependency>
           <dependency>
             <groupId>net.sourceforge.pmd</groupId>
@@ -212,7 +224,12 @@
           <dependency>
             <groupId>com.atolcd.alfresco.filer</groupId>
             <artifactId>alfresco-filer-quality</artifactId>
-            <version>0.1.0</version>
+            <version>1.0.0</version>
+          </dependency>
+          <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs</artifactId>
+            <version>${alfresco-filer-parent.spotbugs.version}</version>
           </dependency>
         </dependencies>
       </plugin>

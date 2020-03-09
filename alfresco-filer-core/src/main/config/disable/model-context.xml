@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- In order to disable the bootstrap of the default filer model :
+       1. create a file named "model-context.xml" in /alfresco/module/*/filer/model-context.xml
+       2. include this beans file : <import resource="classpath:alfresco/module/filer/disable/model-context.xml"/>
+  -->
+
+  <!-- Bean without any model, so this effectively performs NOOP -->
+  <bean id="filer.modelBootstrap" parent="dictionaryModelBootstrap" depends-on="dictionaryBootstrap" />
+
+</beans>

@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.alfresco.model.ContentModel;
@@ -29,6 +30,8 @@ import com.atolcd.alfresco.filer.core.service.PropertyInheritanceService;
 import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 import com.atolcd.alfresco.filer.core.util.FilerTransactionUtils;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class FilerServiceImpl implements FilerService {
 
   private static final Collection<QName> IGNORED_PROPERTIES = Arrays.asList(
@@ -43,11 +46,17 @@ public class FilerServiceImpl implements FilerService {
   );
   private static final Logger LOGGER = LoggerFactory.getLogger(FilerServiceImpl.class);
 
+  @Nullable
   private FilerRegistry filerRegistry;
+  @Nullable
   private FilerOperationService filerOperationService;
+  @Nullable
   private PropertyInheritanceService propertyInheritanceService;
+  @Nullable
   private NodeService nodeService;
+  @Nullable
   private PermissionService permissionService;
+  @Nullable
   private LockService lockService;
 
   @Override
@@ -76,7 +85,7 @@ public class FilerServiceImpl implements FilerService {
       boolean result = false;
       // Upon creation, node details may not be all set, so only perform resolution checks
       if (resolveAction(event, true)) {
-        filerOperationService.setFileable(event.getNode().getNodeRef());
+        filerOperationService.setFileable(event.getNode().getNodeRef().get());
         result = true;
       }
       return result;
@@ -92,16 +101,16 @@ public class FilerServiceImpl implements FilerService {
       // Put display path for logging purposes
       if (LOGGER.isDebugEnabled()) {
         // Compute display path now, because it may not exist afterwards if a filer has been removed
-        FilerNodeUtils.setPath(node, nodeService.getPath(node.getNodeRef()).toDisplayPath(nodeService, permissionService));
+        FilerNodeUtils.setPath(node, nodeService.getPath(node.getNodeRef().get()).toDisplayPath(nodeService, permissionService));
       }
       // Execute filer action
       event.setExecuted();
       filerOperationService.execute(event.getAction().get(), node);
       if (LOGGER.isDebugEnabled()) {
         Path beforePath = FilerNodeUtils.getPath(node);
-        Path afterPath = Paths.get(nodeService.getPath(node.getNodeRef()).toDisplayPath(nodeService, permissionService));
+        Path afterPath = Paths.get(nodeService.getPath(node.getNodeRef().get()).toDisplayPath(nodeService, permissionService));
         String afterLocation = afterPath.equals(beforePath) ? "Same location" : "It is now at " + afterPath.toString();
-        String afterName = (String) nodeService.getProperty(node.getNodeRef(), ContentModel.PROP_NAME);
+        String afterName = (String) nodeService.getProperty(node.getNodeRef().get(), ContentModel.PROP_NAME);
         afterName = node.getName().get().equals(afterName) ? "" : " and renamed " + afterName;
         LOGGER.debug("Executed filer on {} at {}: {}{}", event, beforePath, afterLocation, afterName);
       }
@@ -110,7 +119,7 @@ public class FilerServiceImpl implements FilerService {
 
   private boolean resolveAction(final FilerEvent event, final boolean checkOnly) {
     boolean result = false;
-    NodeRef nodeRef = event.getNode().getNodeRef();
+    NodeRef nodeRef = event.getNode().getNodeRef().get();
     // Ensure node exists, it could have been deleted before commit (e.g. check-out/check-in working copy)
     if (nodeService.exists(nodeRef) && !isLocked(nodeRef)) {
       Optional<FilerEvent> previous = FilerTransactionUtils.getEventNode(nodeRef);
@@ -138,7 +147,7 @@ public class FilerServiceImpl implements FilerService {
       // Initialize inherited aspects and associated properties from parent
       if (!(event instanceof UpdateFilerEvent)) {
         // Do not do this on update event, this would override updated inheritance properties/aspects
-        propertyInheritanceService.computeAspectsAndProperties(node.getParent(), node);
+        propertyInheritanceService.computeAspectsAndProperties(node.getParent().get(), node);
       }
     }
     return putEventAction(event, checkOnly);
@@ -163,14 +172,14 @@ public class FilerServiceImpl implements FilerService {
   private static boolean isUpdateEvent(final FilerEvent event) {
     boolean result = true;
     if (event instanceof UpdateFilerEvent) {
-      RepositoryNode initialNode = FilerTransactionUtils.getInitialNode(event.getNode().getNodeRef());
+      RepositoryNode initialNode = FilerTransactionUtils.getInitialNode(event.getNode().getNodeRef().get());
       RepositoryNodeDifference difference = new RepositoryNodeDifference(initialNode, event.getNode());
       long updatedPropertiesCount = Stream.of(difference.getPropertiesToAdd().keySet(), difference.getPropertiesToRemove())
-          .flatMap(set -> set.stream())
+          .flatMap(Set::stream)
           .filter(property -> !IGNORED_PROPERTIES.contains(property))
           .count();
       long updatedAspectCount = Stream.of(difference.getAspectsToAdd(), difference.getAspectsToRemove())
-          .flatMap(set -> set.stream())
+          .flatMap(Set::stream)
           .filter(property -> !IGNORED_ASPECTS.contains(property))
           .count();
       if (updatedPropertiesCount + updatedAspectCount == 0) {

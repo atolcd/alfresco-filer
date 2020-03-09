@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -29,9 +30,17 @@ public class RepositoryNodeBuilder {
     return this;
   }
 
+  public RepositoryNodeBuilder parent(final Optional<NodeRef> parent) {
+    return parent.isPresent() ? parent(parent.get()) : this;
+  }
+
   public RepositoryNodeBuilder type(final QName type) {
     node.setType(type);
     return this;
+  }
+
+  public RepositoryNodeBuilder type(final Optional<QName> type) {
+    return type.isPresent() ? type(type.get()) : this;
   }
 
   public RepositoryNodeBuilder named(final String name) {
@@ -50,6 +59,10 @@ public class RepositoryNodeBuilder {
   public RepositoryNodeBuilder aspects(final Set<QName> aspects) {
     node.getAspects().addAll(aspects);
     return this;
+  }
+
+  public RepositoryNodeBuilder property(final QName name, final Optional<? extends Serializable> value) {
+    return value.isPresent() ? property(name, value.get()) : this;
   }
 
   public RepositoryNodeBuilder property(final QName name, final Serializable value) {

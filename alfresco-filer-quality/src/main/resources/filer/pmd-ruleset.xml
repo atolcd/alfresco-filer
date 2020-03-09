@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<ruleset name="CCSP Rules"
+<ruleset name="Filer Rules"
     xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
   <description>
-    Code Quality Rules
+    Filer Code Quality Rules
   </description>
 
   <rule ref="category/java/bestpractices.xml">
@@ -60,14 +60,21 @@
   <rule ref="category/java/codestyle.xml/OnlyOneReturn">
     <properties>
       <property name="violationSuppressXPath"
-                value="ancestor::ClassOrInterfaceBodyDeclaration[MethodDeclaration/MethodDeclarator[@Image='equals']]"/>
+                value="ancestor::ClassOrInterfaceBodyDeclaration[MethodDeclaration[@Name='equals']]"/>
     </properties>
   </rule>
-  <!-- Allow Builders to have many methods -->
+  <!-- Allow Tests and Builders to have many methods -->
   <rule ref="category/java/design.xml/TooManyMethods">
     <properties>
       <property name="violationSuppressXPath"
-                value="ancestor::ClassOrInterfaceDeclaration[ends-with(@Image, 'Builder')]"/>
+                value="ancestor::ClassOrInterfaceDeclaration[ends-with(@SimpleName, 'Test') or ends-with(@SimpleName, 'Builder')]"/>
+    </properties>
+  </rule>
+  <!-- Allow duplicate literals in tests -->
+  <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
+    <properties>
+      <property name="violationSuppressXPath"
+                value="ancestor::TypeDeclaration/ClassOrInterfaceDeclaration[ends-with(@SimpleName, 'Test')]"/>
     </properties>
   </rule>
   <!-- Adding @RepeatedTest annotated method as test case -->
@@ -81,7 +88,7 @@
   <rule ref="category/java/design.xml/ExcessiveImports">
     <properties>
       <property name="violationSuppressXPath"
-                value="TypeDeclaration/ClassOrInterfaceDeclaration[matches(@Image, 'Test$')]"/>
+                value="TypeDeclaration/ClassOrInterfaceDeclaration[ends-with(@SimpleName, 'Test')]"/>
     </properties>
   </rule>
   <!-- Do not limit Mockito static import  -->
@@ -89,7 +96,7 @@
     <properties>
       <property name="xpath">
         <value><![CDATA[
-          .[count(ImportDeclaration[@Static = 'true' and not(matches(@PackageName, '^org\.mockito\.'))]) > $maximumStaticImports]
+          .[count(ImportDeclaration[@Static = 'true' and not(starts-with(@PackageName, 'org.mockito.'))]) > $maximumStaticImports]
         ]]></value>
       </property>
     </properties>

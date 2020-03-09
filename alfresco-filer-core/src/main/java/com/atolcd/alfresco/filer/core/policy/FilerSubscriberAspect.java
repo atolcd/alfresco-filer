@@ -1,38 +1,47 @@
 package com.atolcd.alfresco.filer.core.policy;
 
-import java.util.Objects;
 import java.util.Optional;
 
+import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.springframework.beans.factory.InitializingBean;
 
 import com.atolcd.alfresco.filer.core.model.InboundFilerEvent;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.FilerService;
+import com.atolcd.alfresco.filer.core.service.impl.DictionaryListenerAspect;
 import com.atolcd.alfresco.filer.core.util.FilerTransactionUtils;
 
-public class FilerSubscriberAspect implements InitializingBean, NodeServicePolicies.BeforeDeleteChildAssociationPolicy,
-    NodeServicePolicies.OnCreateChildAssociationPolicy {
+public class FilerSubscriberAspect extends DictionaryListenerAspect
+    implements NodeServicePolicies.BeforeDeleteChildAssociationPolicy, NodeServicePolicies.OnCreateChildAssociationPolicy {
 
-  private FilerService filerService;
-  private FilerModelService filerModelService;
-  private PolicyComponent policyComponent;
+  private final PolicyComponent policyComponent;
+  private final FilerModelService filerModelService;
+  private final FilerService filerService;
+
+  public FilerSubscriberAspect(final DictionaryDAO dictionaryDAO, final PolicyComponent policyComponent,
+      final FilerModelService filerModelService, final FilerService filerService) {
+    super(dictionaryDAO);
+    this.policyComponent = policyComponent;
+    this.filerModelService = filerModelService;
+    this.filerService = filerService;
+  }
 
   @Override
-  public void afterPropertiesSet() {
-    Objects.requireNonNull(filerService);
-    Objects.requireNonNull(filerModelService);
-    Objects.requireNonNull(policyComponent);
-    QName subscriberAspect = filerModelService.getSubscriberAspect();
+  protected QName getAspect() {
+    return filerModelService.getSubscriberAspect();
+  }
+
+  @Override
+  public void init() {
     policyComponent.bindAssociationBehaviour(NodeServicePolicies.BeforeDeleteChildAssociationPolicy.QNAME,
-        subscriberAspect, new JavaBehaviour(this, "beforeDeleteChildAssociation"));
+        getAspect(), new JavaBehaviour(this, "beforeDeleteChildAssociation"));
     policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateChildAssociationPolicy.QNAME,
-        subscriberAspect, new JavaBehaviour(this, "onCreateChildAssociation"));
+        getAspect(), new JavaBehaviour(this, "onCreateChildAssociation"));
   }
 
   @Override
@@ -56,17 +65,5 @@ public class FilerSubscriberAspect implements InitializingBean, NodeServicePolic
     Optional<NodeRef> oldParent = FilerTransactionUtils.getDeletedAssoc(childAssocRef.getChildRef());
     // It is in fact a rename if a previous deletion of the child happened on the same parent
     return oldParent.isPresent() && oldParent.get().equals(childAssocRef.getParentRef());
-  }
-
-  public void setFilerService(final FilerService filerService) {
-    this.filerService = filerService;
-  }
-
-  public void setFilerModelService(final FilerModelService filerModelService) {
-    this.filerModelService = filerModelService;
-  }
-
-  public void setPolicyComponent(final PolicyComponent policyComponent) {
-    this.policyComponent = policyComponent;
   }
 }

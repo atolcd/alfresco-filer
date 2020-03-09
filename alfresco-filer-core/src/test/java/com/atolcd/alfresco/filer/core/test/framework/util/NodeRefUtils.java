@@ -5,7 +5,13 @@ import java.util.UUID;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
 
+import com.atolcd.alfresco.filer.core.model.RepositoryNode;
+
 public final class NodeRefUtils {
+
+  public static RepositoryNode randomNode() {
+    return new RepositoryNode(randomNodeRef());
+  }
 
   public static NodeRef randomNodeRef() {
     return randomWorkspaceSpacesStoreNodeRef();

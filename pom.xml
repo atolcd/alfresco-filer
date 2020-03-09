@@ -4,7 +4,7 @@
 
   <groupId>com.atolcd.alfresco.filer</groupId>
   <artifactId>alfresco-filer</artifactId>
-  <version>0.1.0</version>
+  <version>1.0.0</version>
   <packaging>pom</packaging>
 
   <name>AtolCD Alfresco Filer</name>
@@ -41,12 +41,13 @@
     <alfresco-filer.maven-resources-plugin.version>3.1.0</alfresco-filer.maven-resources-plugin.version>
     <alfresco-filer.maven-compiler-plugin.version>3.8.1</alfresco-filer.maven-compiler-plugin.version>
     <alfresco-filer.maven-jar-plugin.version>3.2.0</alfresco-filer.maven-jar-plugin.version>
+    <alfresco-filer.maven-dependency-plugin.version>3.1.1</alfresco-filer.maven-dependency-plugin.version>
     <alfresco-filer.maven-source-plugin.version>3.1.0</alfresco-filer.maven-source-plugin.version>
     <alfresco-filer.maven-javadoc-plugin.version>3.1.1</alfresco-filer.maven-javadoc-plugin.version>
     <alfresco-filer.maven-assembly-plugin.version>2.6</alfresco-filer.maven-assembly-plugin.version> <!-- only versions < 3.0.0 are compatible with alfresco-maven-plugin -->
     <alfresco-filer.maven-install-plugin.version>2.5.2</alfresco-filer.maven-install-plugin.version>
     <alfresco-filer.maven-deploy-plugin.version>2.8.2</alfresco-filer.maven-deploy-plugin.version>
-    <alfresco-filer.alfresco-maven-plugin.version>4.0.0</alfresco-filer.alfresco-maven-plugin.version>
+    <alfresco-filer.alfresco-maven-plugin.version>4.1.0</alfresco-filer.alfresco-maven-plugin.version>
     <alfresco-filer.replacer-plugin.version>1.5.3</alfresco-filer.replacer-plugin.version>
     <alfresco-filer.jgitflow-maven-plugin.version>1.0-m5.1</alfresco-filer.jgitflow-maven-plugin.version>
     <alfresco-filer.tidy-maven-plugin.version>1.1.0</alfresco-filer.tidy-maven-plugin.version>
@@ -101,6 +102,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>${alfresco-filer.maven-jar-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${alfresco-filer.maven-dependency-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

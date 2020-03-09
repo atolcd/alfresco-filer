@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.assertj.core.api.Assertions;
@@ -15,15 +16,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atolcd.alfresco.filer.core.model.FilerException;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
-import com.atolcd.alfresco.filer.core.test.framework.RepositoryOperations;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
+import com.atolcd.alfresco.filer.core.test.framework.TestApplicationContext;
+import com.atolcd.alfresco.filer.core.test.framework.TestAuthentication;
+import com.atolcd.alfresco.filer.core.test.framework.TestLibrary;
+import com.atolcd.alfresco.filer.core.test.framework.TestLibraryRole;
 
-public class DeniedFilerActionTest extends RepositoryOperations {
+@TestApplicationContext
+@TestLibrary
+@TestAuthentication
+@TestLibraryRole(SiteModel.SITE_CONTRIBUTOR)
+public class DeniedFilerActionTest {
 
   @Autowired
   private FilerModelService filerModelService;
 
   @Autowired
   private NodeService nodeService;
+
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   @Test
   public void withTypeContent() {
@@ -35,9 +47,9 @@ public class DeniedFilerActionTest extends RepositoryOperations {
         .named(name)
         .build();
 
-    NodeRef parentNodeRef = node.getParent();
+    NodeRef parentNodeRef = node.getParent().get();
 
-    Throwable thrown = Assertions.catchThrowable(() -> createNode(node));
+    Throwable thrown = Assertions.catchThrowable(() -> repositoryNodeHelper.createNode(node));
 
     assertThat(thrown)
         .isInstanceOf(AlfrescoRuntimeException.class)
@@ -59,9 +71,9 @@ public class DeniedFilerActionTest extends RepositoryOperations {
         .named(name)
         .build();
 
-    NodeRef parentNodeRef = node.getParent();
+    NodeRef parentNodeRef = node.getParent().get();
 
-    Throwable thrown = Assertions.catchThrowable(() -> createNode(node));
+    Throwable thrown = Assertions.catchThrowable(() -> repositoryNodeHelper.createNode(node));
 
     assertThat(thrown)
         .isInstanceOf(AlfrescoRuntimeException.class)

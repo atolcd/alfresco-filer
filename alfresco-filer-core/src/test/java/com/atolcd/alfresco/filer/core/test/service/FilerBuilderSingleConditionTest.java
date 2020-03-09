@@ -53,7 +53,7 @@ public class FilerBuilderSingleConditionTest extends AbstractFilerBuilderTest {
   private FilerFolderBuilder buildConditionTree(final FilerFolderBuilder filerFolderBuilder) {
     return filerFolderBuilder
         .tree(AbstractFilerBuilderTest::buildDocumentLibrary)
-        .condition(x -> x.getProperty(ContentModel.PROP_TITLE, String.class).equals(TEST_PROP_TITLE_A))
+        .condition(x -> x.getProperty(ContentModel.PROP_TITLE, String.class).get().equals(TEST_PROP_TITLE_A))
             .folder().asSegment().named().with(folderName).getOrCreate();
   }
 }

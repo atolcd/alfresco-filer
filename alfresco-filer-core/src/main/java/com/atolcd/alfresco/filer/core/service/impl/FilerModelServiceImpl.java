@@ -2,18 +2,33 @@ package com.atolcd.alfresco.filer.core.service.impl;
 
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
 
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class FilerModelServiceImpl implements FilerModelService {
 
-  private BehaviourFilter behaviourFilter;
+  private final OwnableService ownableService;
+  private final BehaviourFilter behaviourFilter;
 
+  @Nullable
   private QName fileableAspect;
+  @Nullable
   private QName segmentAspect;
+  @Nullable
   private QName subscriberAspect;
+  @Nullable
   private QName propertyInheritanceAspect;
+  @Nullable
+  private String ownerUsername;
+
+  public FilerModelServiceImpl(final OwnableService ownableService, final BehaviourFilter behaviourFilter) {
+    this.ownableService = ownableService;
+    this.behaviourFilter = behaviourFilter;
+  }
 
   @Override
   public QName getFileableAspect() {
@@ -33,6 +48,16 @@ public class FilerModelServiceImpl implements FilerModelService {
   @Override
   public QName getPropertyInheritanceAspect() {
     return propertyInheritanceAspect;
+  }
+
+  @Override
+  public String getOwnerUsername() {
+    return ownerUsername;
+  }
+
+  @Override
+  public void setOwner(final NodeRef nodeRef) {
+    ownableService.setOwner(nodeRef, ownerUsername);
   }
 
   @Override
@@ -71,10 +96,6 @@ public class FilerModelServiceImpl implements FilerModelService {
     }
   }
 
-  public void setBehaviourFilter(final BehaviourFilter behaviourFilter) {
-    this.behaviourFilter = behaviourFilter;
-  }
-
   public void setFileableAspectQName(final String fileableAspectQName) {
     this.fileableAspect = QName.createQName(fileableAspectQName);
   }
@@ -89,5 +110,9 @@ public class FilerModelServiceImpl implements FilerModelService {
 
   public void setPropertyInheritanceAspectQName(final String propertyInheritanceAspectQName) {
     this.propertyInheritanceAspect = QName.createQName(propertyInheritanceAspectQName);
+  }
+
+  public void setOwnerUsername(final String ownerUsername) {
+    this.ownerUsername = ownerUsername;
   }
 }

@@ -11,6 +11,7 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
 
 /**
  * Test parallel execution of two different operations
@@ -45,6 +47,8 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
 
   @Autowired
   private NodeService nodeService;
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   /**
    * Test parallel creation and deletion of filed nodes within the same segment folder.
@@ -91,7 +95,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       RepositoryNode node = buildNode(departmentName, sourceDate).build();
 
       LOGGER.debug("Update task: creating node that will be updated");
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       nodeToUpdate.set(node);
 
       preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -105,7 +109,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       startingBarrier.await(10, TimeUnit.SECONDS);
 
       LOGGER.debug("Update task: node creation start");
-      updateNode(node, dateProperty);
+      repositoryNodeHelper.updateNode(node, dateProperty);
       LOGGER.debug("Update task: node creation end");
       return null;
     });
@@ -118,7 +122,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
           .build();
 
       LOGGER.debug("Delete task: creating node that will be deleted");
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       nodeToDelete.set(node);
 
       preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -129,7 +133,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       startingBarrier.await(10, TimeUnit.SECONDS);
 
       LOGGER.debug("Delete task: node deletion start");
-      deleteNode(node);
+      repositoryNodeHelper.deleteNode(node);
       LOGGER.debug("Delete task: node deletion end");
       return null;
     });
@@ -150,8 +154,8 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
 
     assertThat(getPath(nodeToUpdate.get())).isEqualTo(nodePath(departmentName, targetDate));
 
-    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef())).isFalse();
-    assertThat(nodeService.exists(nodeToDelete.get().getParent())).isFalse();
+    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef().get())).isFalse();
+    assertThat(nodeService.exists(nodeToDelete.get().getParent().get())).isFalse();
   }
 
   /**
@@ -182,7 +186,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       RepositoryNode node = buildNode(departmentName, sourceDate).build();
 
       LOGGER.debug("Update task: creating node that will be updated");
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       nodeToUpdate.set(node);
 
       preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -196,7 +200,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       startingBarrier.await(10, TimeUnit.SECONDS);
 
       LOGGER.debug("Update task: node creation start");
-      updateNode(node, dateProperty);
+      repositoryNodeHelper.updateNode(node, dateProperty);
       LOGGER.debug("Update task: node creation end");
       return null;
     });
@@ -209,7 +213,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
           .build();
 
       LOGGER.debug("Delete task: creating node that will be deleted");
-      createNode(node);
+      repositoryNodeHelper.createNode(node);
       nodeToDelete.set(node);
 
       preparationAssertBarrier.await(10, TimeUnit.SECONDS);
@@ -220,7 +224,7 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
       startingBarrier.await(10, TimeUnit.SECONDS);
 
       LOGGER.debug("Delete task: node deletion start");
-      deleteNode(node);
+      repositoryNodeHelper.deleteNode(node);
       LOGGER.debug("Delete task: node deletion end");
       return null;
     });
@@ -241,16 +245,16 @@ public class BinaryOperationParallelTest extends AbstractParallelTest {
 
     assertThat(getPath(nodeToUpdate.get())).isEqualTo(nodePath(departmentName, targetDate));
 
-    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef())).isFalse();
-    NodeRef nodeToDeleteParent = nodeToDelete.get().getParent();
+    assertThat(nodeService.exists(nodeToDelete.get().getNodeRef().get())).isFalse();
+    Optional<NodeRef> nodeToDeleteParent = nodeToDelete.get().getParent();
     if (nodeToDeleteParent.equals(nodeToUpdate.get().getParent())) {
       // Move occurred before deletion and target segment have not been removed
-      assertThat(nodeService.exists(nodeToDeleteParent)).isTrue();
-      NodeRef nodeToDeleteGrandParent = nodeService.getPrimaryParent(nodeToDeleteParent).getParentRef();
+      assertThat(nodeService.exists(nodeToDeleteParent.get())).isTrue();
+      NodeRef nodeToDeleteGrandParent = nodeService.getPrimaryParent(nodeToDeleteParent.get()).getParentRef();
       assertThat(nodeService.exists(nodeToDeleteGrandParent)).isTrue();
     } else {
       // Deletion performed before node updating, filer have recreated new segment for target
-      assertThat(nodeService.exists(nodeToDeleteParent)).isFalse();
+      assertThat(nodeService.exists(nodeToDeleteParent.get())).isFalse();
     }
   }
 }

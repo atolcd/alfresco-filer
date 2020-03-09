@@ -1,7 +1,6 @@
 package com.atolcd.alfresco.filer.core.service.impl;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -13,19 +12,24 @@ import com.atolcd.alfresco.filer.core.model.FilerFolderContext;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 public class FilerFolderTypeBuilder {
 
   private final FilerService filerService;
   private final FilerFolderContext context;
   private final QName filerType;
 
+  @CheckForNull
   private FilerNameBuilder<FilerFolderTypeBuilder> nameBuilder;
+  @CheckForNull
   private Consumer<NodeRef> onFilerGet;
+  @CheckForNull
   private Consumer<NodeRef> onFilerCreate;
 
   public FilerFolderTypeBuilder(final FilerService filerService, final FilerFolderContext context, final QName filerType) {
     this.filerService = filerService;
-    this.context = new FilerFolderContext(context);
+    this.context = new FilerFolderContext(context, context.getParent());
     this.filerType = filerType;
   }
 
@@ -96,7 +100,7 @@ public class FilerFolderTypeBuilder {
   public FilerFolderBuilder getOrCreate() {
     NodeRef child = context.getParent();
     if (context.isEnabled()) {
-      String name = Objects.requireNonNull(named().getName());
+      String name = named().getName().get();
       if (context.hasPropertyInheritance()) {
         // Apply property inheritance on the folder
         onCreate(nodeRef -> filerService.propertyInheritance()
@@ -110,7 +114,7 @@ public class FilerFolderTypeBuilder {
   public FilerFolderBuilder get() {
     NodeRef child = context.getParent();
     if (context.isEnabled()) {
-      String name = Objects.requireNonNull(named().getName());
+      String name = named().getName().get();
       child = filerService.operations().getFolder(child, name, onGet());
     }
     return new FilerFolderBuilder(filerService, context, child);
@@ -125,7 +129,7 @@ public class FilerFolderTypeBuilder {
       RepositoryNode node = context.getNode();
       // Update type
       node.setType(filerType);
-      String name = Objects.requireNonNull(named().getName());
+      String name = named().getName().get();
       // Update node, which will apply property inheritance
       filerService.operations().updateFileable(node, context.getParent(), name);
       // Apply node get/create functions if this is required, property inheritance is already applied

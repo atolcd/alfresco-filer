@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.test.domain.content.model.FilerTestConstants;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
 import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 
 /**
@@ -38,6 +40,9 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
 
   @Autowired
   private NodeService nodeService;
+
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   @Test
   public void createMultipleNodes() throws InterruptedException {
@@ -55,7 +60,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
         // Wait for every thread to be ready to launch parallel createNode
         startingBarrier.await(10, TimeUnit.SECONDS);
 
-        createNode(node);
+        repositoryNodeHelper.createNode(node);
         results.add(node);
         return null;
       });
@@ -89,15 +94,15 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
       execute(endingLatch, () -> {
         RepositoryNode node = buildNode(departmentName, sourceDate).build();
 
-        createNode(node);
+        repositoryNodeHelper.createNode(node);
         results.add(node);
 
         preparationAssertBarrier.await(10, TimeUnit.SECONDS);
         // Wait for assertion on created nodes taking place in main thread
         preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-        segmentAncestors.add(node.getParent());
-        NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent()).getParentRef();
+        segmentAncestors.add(node.getParent().get());
+        NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent().get()).getParentRef();
         segmentAncestors.add(grandParentRef);
         NodeRef greatGrandParentRef = nodeService.getPrimaryParent(grandParentRef).getParentRef();
         closestNonSegmentAncestor.add(greatGrandParentRef);
@@ -108,7 +113,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
         // Wait for every thread to be ready to launch parallel updateNode
         startingBarrier.await(10, TimeUnit.SECONDS);
 
-        updateNode(node, dateProperty);
+        repositoryNodeHelper.updateNode(node, dateProperty);
         return null;
       });
     }
@@ -153,15 +158,15 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
           .aspect(ContentModel.ASPECT_TEMPORARY) // Do not archive node, this could generate contention on creating user trashcan
           .build();
 
-        createNode(node);
+        repositoryNodeHelper.createNode(node);
         results.add(node);
 
         preparationAssertBarrier.await(10, TimeUnit.SECONDS);
         // Wait for assertion on created nodes taking place in main thread
         preparationAssertBarrier.await(10, TimeUnit.SECONDS);
 
-        segmentAncestors.add(node.getParent());
-        NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent()).getParentRef();
+        segmentAncestors.add(node.getParent().get());
+        NodeRef grandParentRef = nodeService.getPrimaryParent(node.getParent().get()).getParentRef();
         segmentAncestors.add(grandParentRef);
         NodeRef greatGrandParentRef = nodeService.getPrimaryParent(grandParentRef).getParentRef();
         closestNonSegmentAncestor.add(greatGrandParentRef);
@@ -169,7 +174,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
         // Wait for every thread to be ready to launch parallel deleteNode
         startingBarrier.await(10, TimeUnit.SECONDS);
 
-        deleteNode(node);
+        repositoryNodeHelper.deleteNode(node);
         return null;
       });
     }
@@ -188,7 +193,7 @@ public class UnaryOperationParallelTest extends AbstractParallelTest {
     // Assert all threads were ready for parallel deleteNode
     assertThat(startingBarrier.isBroken()).isFalse();
 
-    assertThat(results.stream().map(RepositoryNode::getNodeRef).map(nodeService::exists))
+    assertThat(results.stream().map(RepositoryNode::getNodeRef).map(Optional::get).map(nodeService::exists))
         .hasSize(NUM_THREAD_TO_LAUNCH)
         .containsOnly(false);
 

@@ -6,15 +6,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
-import org.alfresco.repo.dictionary.DictionaryListener;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -22,7 +19,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
-import org.springframework.beans.factory.InitializingBean;
 
 import com.atolcd.alfresco.filer.core.model.FilerException;
 import com.atolcd.alfresco.filer.core.model.PropertyInheritance;
@@ -32,28 +28,35 @@ import com.atolcd.alfresco.filer.core.model.RepositoryNodeDifference;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.PropertyInheritanceService;
 
-public class PropertyInheritanceServiceImpl implements PropertyInheritanceService, InitializingBean, DictionaryListener {
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-  private FilerModelService filerModelService;
-  private NodeService nodeService;
-  private DictionaryService dictionaryService;
-  private DictionaryDAO dictionaryDAO;
+public class PropertyInheritanceServiceImpl extends DictionaryListenerAspect implements PropertyInheritanceService {
 
+  private final FilerModelService filerModelService;
+  private final NodeService nodeService;
+  private final DictionaryService dictionaryService;
+
+  @Nullable
   private Collection<QName> inheritedAspects;
+  @Nullable
   private Map<QName, QName> inheritedProperties;
 
-  @Override
-  public void afterPropertiesSet() {
-    Objects.requireNonNull(filerModelService);
-    Objects.requireNonNull(nodeService);
-    Objects.requireNonNull(dictionaryService);
-    Objects.requireNonNull(dictionaryDAO);
-    dictionaryDAO.registerListener(this);
+  public PropertyInheritanceServiceImpl(final DictionaryDAO dictionaryDAO, final FilerModelService filerModelService,
+      final NodeService nodeService, final DictionaryService dictionaryService) {
+    super(dictionaryDAO);
+    this.filerModelService = filerModelService;
+    this.nodeService = nodeService;
+    this.dictionaryService = dictionaryService;
   }
 
   @Override
-  public void afterDictionaryInit() {
-    inheritedAspects = dictionaryService.getSubAspects(filerModelService.getPropertyInheritanceAspect(), true);
+  protected QName getAspect() {
+    return filerModelService.getPropertyInheritanceAspect();
+  }
+
+  @Override
+  public void init() {
+    inheritedAspects = dictionaryService.getSubAspects(getAspect(), true);
     inheritedProperties = getProperties(inheritedAspects);
   }
 
@@ -162,11 +165,7 @@ public class PropertyInheritanceServiceImpl implements PropertyInheritanceServic
   @Override
   public void setInheritance(final NodeRef root, final PropertyInheritancePayload payload) {
     if (!payload.isEmpty()) {
-      // Run as System because current user may not have the permission to see all nodes nor to edit nodes properties
-      AuthenticationUtil.runAsSystem(() -> {
-        setInheritanceImpl(root, payload);
-        return null;
-      });
+      setInheritanceImpl(root, payload);
     }
   }
 
@@ -206,31 +205,5 @@ public class PropertyInheritanceServiceImpl implements PropertyInheritanceServic
         aspect.getValue().stream().forEach(property -> nodeService.removeProperty(nodeRef, property));
       }
     }
-  }
-
-  @Override
-  public void onDictionaryInit() { // NOPMD - default empty method, nothing to do on dictionary initialization
-    // no op
-  }
-
-  @Override
-  public void afterDictionaryDestroy() { // NOPMD - default empty method, nothing to do after dictionary deletion
-    // no op
-  }
-
-  public void setFilerModelService(final FilerModelService filerModelService) {
-    this.filerModelService = filerModelService;
-  }
-
-  public void setNodeService(final NodeService nodeService) {
-    this.nodeService = nodeService;
-  }
-
-  public void setDictionaryService(final DictionaryService dictionaryService) {
-    this.dictionaryService = dictionaryService;
-  }
-
-  public void setDictionaryDAO(final DictionaryDAO dictionaryDAO) {
-    this.dictionaryDAO = dictionaryDAO;
   }
 }

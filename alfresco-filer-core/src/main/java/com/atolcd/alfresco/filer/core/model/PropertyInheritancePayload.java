@@ -3,7 +3,6 @@ package com.atolcd.alfresco.filer.core.model;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.service.namespace.QName;
@@ -14,8 +13,8 @@ public class PropertyInheritancePayload {
   private final Map<QName, Set<QName>> removed;
 
   public PropertyInheritancePayload(final Map<QName, Map<QName, Serializable>> added, final Map<QName, Set<QName>> removed) {
-    this.added = Objects.requireNonNull(added);
-    this.removed = Objects.requireNonNull(removed);
+    this.added = added;
+    this.removed = removed;
   }
 
   @Override

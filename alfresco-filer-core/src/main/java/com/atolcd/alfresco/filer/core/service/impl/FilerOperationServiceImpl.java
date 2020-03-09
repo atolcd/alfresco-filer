@@ -22,19 +22,26 @@ import com.atolcd.alfresco.filer.core.service.FilerUpdateService;
 import com.atolcd.alfresco.filer.core.util.FilerNodeUtils;
 import com.atolcd.alfresco.filer.core.util.FilerTransactionUtils;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class FilerOperationServiceImpl implements FilerOperationService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(FilerOperationServiceImpl.class);
 
+  @Nullable
   private FilerModelService filerModelService;
+  @Nullable
   private FilerFolderService filerFolderService;
+  @Nullable
   private FilerUpdateService filerUpdateService;
+  @Nullable
   private NodeService nodeService;
+  @Nullable
   private PermissionService permissionService;
 
   @Override
   public void execute(final FilerAction action, final RepositoryNode node) {
-    filerModelService.runWithoutFileableBehaviour(node.getNodeRef(), () -> {
+    filerModelService.runWithoutFileableBehaviour(node.getNodeRef().get(), () -> {
       action.execute(node);
     });
   }
@@ -63,7 +70,7 @@ public class FilerOperationServiceImpl implements FilerOperationService {
       LOGGER.error("Could not get filer folder: {}", node, e);
       throw e;
     }
-    return node.getNodeRef();
+    return node.getNodeRef().get();
   }
 
   @Override
@@ -76,14 +83,14 @@ public class FilerOperationServiceImpl implements FilerOperationService {
       LOGGER.error("Could not get or create filer folder: {}", node, e);
       throw e;
     }
-    return node.getNodeRef();
+    return node.getNodeRef().get();
   }
 
   @Override
   public void updateFileable(final RepositoryNode node, final NodeRef destination, final String newName) {
     node.setParent(destination);
     node.getProperties().put(ContentModel.PROP_NAME, newName);
-    RepositoryNode initialNode = FilerTransactionUtils.getInitialNode(node.getNodeRef());
+    RepositoryNode initialNode = FilerTransactionUtils.getInitialNode(node.getNodeRef().get());
     RepositoryNode originalNode = FilerNodeUtils.getOriginalNode(node);
     try {
       filerUpdateService.updateAndMoveFileable(initialNode, originalNode, node);
@@ -92,7 +99,7 @@ public class FilerOperationServiceImpl implements FilerOperationService {
       throw e;
     }
     // Delete previous parent if it became an empty segment
-    deleteSegment(originalNode.getParent());
+    deleteSegment(originalNode.getParent().get());
   }
 
   @Override

@@ -1,5 +1,7 @@
 package com.atolcd.alfresco.filer.core.test.service.impl;
 
+import static com.atolcd.alfresco.filer.core.test.framework.util.NodeRefUtils.randomNode;
+import static com.atolcd.alfresco.filer.core.test.framework.util.NodeRefUtils.randomNodeRef;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,7 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.atolcd.alfresco.filer.core.model.FilerFolderContext;
-import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.service.FilerService;
 import com.atolcd.alfresco.filer.core.service.impl.FilerFolderTypeBuilder;
 
@@ -30,9 +31,9 @@ public class FilerFolderTypeBuilderTest {
   private FilerService filerService;
 
   @Test
-  public void getOrCreateWithContextEnabled() { //NOPMD - name: not a getter
-    FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService,
-        new FilerFolderContext(new RepositoryNode()), ContentModel.TYPE_FOLDER);
+  public void checkGetOrCreateWithContextEnabled() {
+    FilerFolderContext context = new FilerFolderContext(randomNode(), randomNodeRef());
+    FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService, context, ContentModel.TYPE_FOLDER);
 
     filerFolderTypeBuilder.named().with(randomUUID().toString());
 
@@ -43,10 +44,9 @@ public class FilerFolderTypeBuilderTest {
   }
 
   @Test
-  public void getOrCreateWithContextDisabled() { //NOPMD - name: not a getter
-    FilerFolderContext context = new FilerFolderContext(new RepositoryNode());
+  public void checkGetOrCreateWithContextDisabled() {
+    FilerFolderContext context = new FilerFolderContext(randomNode(), randomNodeRef());
     context.enable(false);
-
     FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService, context, ContentModel.TYPE_FOLDER);
 
     filerFolderTypeBuilder.getOrCreate();
@@ -55,9 +55,9 @@ public class FilerFolderTypeBuilderTest {
   }
 
   @Test
-  public void getWithContextEnabled() { //NOPMD - name: not a getter
-    FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService,
-        new FilerFolderContext(new RepositoryNode()), ContentModel.TYPE_FOLDER);
+  public void checkGetWithContextEnabled() {
+    FilerFolderContext context = new FilerFolderContext(randomNode(), randomNodeRef());
+    FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService, context, ContentModel.TYPE_FOLDER);
 
     filerFolderTypeBuilder.named().with(randomUUID().toString());
 
@@ -68,10 +68,9 @@ public class FilerFolderTypeBuilderTest {
   }
 
   @Test
-  public void getWithContextDisabled() { //NOPMD - name: not a getter
-    FilerFolderContext context = new FilerFolderContext(new RepositoryNode());
+  public void checkGetWithContextDisabled() {
+    FilerFolderContext context = new FilerFolderContext(randomNode(), randomNodeRef());
     context.enable(false);
-
     FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService, context, ContentModel.TYPE_FOLDER);
 
     filerFolderTypeBuilder.get();
@@ -81,8 +80,8 @@ public class FilerFolderTypeBuilderTest {
 
   @Test
   public void updateAndMoveWithContextEnabled() {
-    FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService,
-        new FilerFolderContext(new RepositoryNode()), ContentModel.TYPE_FOLDER);
+    FilerFolderContext context = new FilerFolderContext(randomNode(), randomNodeRef());
+    FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService, context, ContentModel.TYPE_FOLDER);
 
     filerFolderTypeBuilder.named().with(randomUUID().toString());
 
@@ -95,9 +94,8 @@ public class FilerFolderTypeBuilderTest {
 
   @Test
   public void updateAndMoveWithContextDisabled() {
-    FilerFolderContext context = new FilerFolderContext(new RepositoryNode());
+    FilerFolderContext context = new FilerFolderContext(randomNode(), randomNodeRef());
     context.enable(false);
-
     FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService, context, ContentModel.TYPE_FOLDER);
 
     filerFolderTypeBuilder.updateAndMove();
@@ -107,8 +105,8 @@ public class FilerFolderTypeBuilderTest {
 
   @Test
   public void addingPropertyInheritanceWithContextEnabled() {
-    FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService,
-        new FilerFolderContext(new RepositoryNode()), ContentModel.TYPE_FOLDER);
+    FilerFolderContext context = new FilerFolderContext(randomNode(), randomNodeRef());
+    FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService, context, ContentModel.TYPE_FOLDER);
 
     QName aspect = ContentModel.ASPECT_WORKING_COPY;
 
@@ -118,7 +116,7 @@ public class FilerFolderTypeBuilderTest {
     // FilerFolderTypeBuilder does not provide a method to directly get context.
     // We use get() method to get a filerFolderBuilder and get context from it.
     filerFolderTypeBuilder.named().with(randomUUID().toString());
-    FilerFolderContext context = filerFolderTypeBuilder.get().getContext();
+    context = filerFolderTypeBuilder.get().getContext();
 
     assertThat(context.getPropertyInheritance().getMandatoryAspects()).contains(aspect);
     assertThat(context.getPropertyInheritance().getOptionalAspects()).contains(aspect);
@@ -126,11 +124,9 @@ public class FilerFolderTypeBuilderTest {
 
   @Test
   public void addingPropertyInheritanceWithContextDisabled() {
-    FilerFolderContext contextDisabled = new FilerFolderContext(new RepositoryNode());
-    contextDisabled.enable(false);
-
-    FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService, contextDisabled,
-        ContentModel.TYPE_FOLDER);
+    FilerFolderContext context = new FilerFolderContext(randomNode(), randomNodeRef());
+    context.enable(false);
+    FilerFolderTypeBuilder filerFolderTypeBuilder = new FilerFolderTypeBuilder(filerService, context, ContentModel.TYPE_FOLDER);
 
     QName aspect = ContentModel.ASPECT_WORKING_COPY;
 
@@ -139,7 +135,7 @@ public class FilerFolderTypeBuilderTest {
 
     // FilerFolderTypeBuilder does not provide a method to directly get context.
     // We use get() method to get a filerFolderBuilder and get context from it.
-    FilerFolderContext context = filerFolderTypeBuilder.get().getContext();
+    context = filerFolderTypeBuilder.get().getContext();
 
     assertThat(context.getPropertyInheritance().getMandatoryAspects()).doesNotContain(aspect);
     assertThat(context.getPropertyInheritance().getOptionalAspects()).doesNotContain(aspect);
@@ -149,7 +145,7 @@ public class FilerFolderTypeBuilderTest {
   public void clearingPropertyInheritanceWithContextEnabled() {
     QName aspect = ContentModel.ASPECT_WORKING_COPY;
 
-    FilerFolderContext initialContext = new FilerFolderContext(new RepositoryNode());
+    FilerFolderContext initialContext = new FilerFolderContext(randomNode(), randomNodeRef());
     initialContext.getPropertyInheritance().getMandatoryAspects().add(aspect);
     initialContext.getPropertyInheritance().getOptionalAspects().add(aspect);
 
@@ -171,7 +167,7 @@ public class FilerFolderTypeBuilderTest {
   public void clearingPropertyInheritanceWithContextDisabled() {
     QName aspect = ContentModel.ASPECT_WORKING_COPY;
 
-    FilerFolderContext initialContext = new FilerFolderContext(new RepositoryNode());
+    FilerFolderContext initialContext = new FilerFolderContext(randomNode(), randomNodeRef());
     initialContext.getPropertyInheritance().getMandatoryAspects().add(aspect);
     initialContext.getPropertyInheritance().getOptionalAspects().add(aspect);
     initialContext.enable(false);

@@ -7,9 +7,13 @@ import java.util.Set;
 
 import org.alfresco.service.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 public class PropertyInheritance {
 
+  @CheckForNull
   private Set<QName> mandatoryAspects; // Always apply
+  @CheckForNull
   private Set<QName> optionalAspects; // Ignore if absent in the payload but always apply if present
 
   public PropertyInheritance() {

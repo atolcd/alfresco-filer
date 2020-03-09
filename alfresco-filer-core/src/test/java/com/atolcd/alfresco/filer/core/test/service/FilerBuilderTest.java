@@ -71,7 +71,7 @@ public class FilerBuilderTest extends AbstractFilerBuilderTest {
         .folder().asSegment()
             // A..Z
             .named().with(x -> {
-              String name = x.getProperty(ContentModel.PROP_TITLE, String.class);
+              String name = x.getProperty(ContentModel.PROP_TITLE, String.class).get();
               return name.substring(0, 1).toUpperCase(Locale.getDefault());
             }).getOrCreate();
 

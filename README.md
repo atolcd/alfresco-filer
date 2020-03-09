@@ -26,7 +26,7 @@ The artifacts can be added to the dependency of your project in its pom.xml:
 <dependency>
   <groupId>com.atolcd.alfresco.filer</groupId>
   <artifactId>alfresco-filer-core</artifactId>
-  <version>0.1.0</version>
+  <version>1.0.0</version>
 </dependency>
 ~~~
 
@@ -41,10 +41,10 @@ The filer defines 3 concepts:
 * a **filer subscriber**: a container in which nodes are automatically filed,
 * a **filer segment**: a folder that is part of a hierarchy in which a node is filed, it can be deleted automatically if empty
 
-The filer engine uses policies to detect changes in the repository and trigger its own rule mechanism to adapt the node's classification:
+The filer engine uses policies to detect changes in the repository and trigger its own rule mechanism to adapt the classification of the nodes:
 * *onCreateChildAssociation* on a filer subscriber, to label the incoming node as fileable,
 * *onAddAspect* on a fileable node, to trigger the initial classification,
-* *onUpdatePreoperties* and *onMoveNode* on a fileable node, to check for updates that could change the node's classification,
+* *onUpdateProperties* and *onMoveNode* on a fileable node, to check for updates that could change its classification,
 * *onDeleteNode* on a fileable node, to remove a classification left empty.
 
 ## Filer action
@@ -52,13 +52,13 @@ The filer engine uses policies to detect changes in the repository and trigger i
 A filer action is evaluated by the filer engine to determine whether it applies to the node to be filed and then it performs the selected action.
 
 First, it is required to provide the conditions upon which a filer action will be executed.
-The matching is actually performed in two passes to allow to quickly bypass classification if the node does not supports a filer action based on some general requirements such as the containing site, its aspects or type.
-The second check allows for a more thorough inspection, including for example the properties of the node.
+The matching is actually performed in two passes to allow to quickly bypass classification if the node does not support a filer action based on some general requirements such as the containing site, its aspects or type.
+The second check allows for a more thorough inspection, including for example the metadata of the node.
 Finally, it is possible to define the action itself. This is indeed the actual classification, which would trigger the navigation or the creation of the folder structure.
 
 Creating a filer action is done by implementing [`FilerAction`] or directly inheriting [`AbstractFilerAction`].
 
-Let's take a simple example where a document that would contain a particular description with a department data (e.g. department: treasury;) created in 2019 would be filed into the "treasury/2019" path inside the site's document library.
+Let's take a simple example where a document that contains a particular description with a department data (e.g. department: treasury;) created in 2019 should be filed into the "treasury/2019" path inside the document library of the site.
 Here is the corresponding implementation:
 ```java
 public class DepartmentFilerAction extends AbstractFilerAction {
@@ -66,12 +66,12 @@ public class DepartmentFilerAction extends AbstractFilerAction {
   @Override
   public boolean supportsActionResolution(final FilerEvent event) {
     return event.getNode().getAspects().contains(ContentModel.ASPECT_TITLED)
-        && event.getNode().getType().equals(ContentModel.TYPE_CONTENT);
+        && event.getNode().getType().get().equals(ContentModel.TYPE_CONTENT);
   }
 
   @Override
   public boolean supportsActionExecution(final RepositoryNode node) {
-    return node.getProperty(ContentModel.PROP_DESCRIPTION, String.class).matches("department:.+;");
+    return node.getProperty(ContentModel.PROP_DESCRIPTION, String.class).orElse("").matches("department:.+;");
   }
 
   @Override
@@ -82,7 +82,7 @@ public class DepartmentFilerAction extends AbstractFilerAction {
         .folder().asSegment()
             .named().with(node -> {
               Pattern regex = Pattern.compile("department:\\s*(.+);");
-              Matcher matcher = regex.matcher(node.getProperty(ContentModel.PROP_DESCRIPTION, String.class));
+              Matcher matcher = regex.matcher(node.getProperty(ContentModel.PROP_DESCRIPTION, String.class).get());
               matcher.find();
               return matcher.group(1);
             }).getOrCreate()
@@ -94,7 +94,7 @@ public class DepartmentFilerAction extends AbstractFilerAction {
 ```
 You can also look at [example actions] used in the tests and their corresponding [folder structure creation] put together in a dedicated service.
 
-It is possible to create as many actions as needed. They are automatically registered by the [`FilerRegistry`] if they inherits from [`AbstractFilerAction`].
+It is possible to create as many actions as needed. They are automatically registered by the [`FilerRegistry`] if they inherit from [`AbstractFilerAction`].
 You just need to define the corresponding Spring bean:
 ```xml
   <bean id="you.name.it" parent="filer.action.base" class="your.implementation.XXXFilerAction"/>
@@ -104,12 +104,12 @@ You can also look at [example beans] used in the tests.
 Actions are evaluated by the [`FilerService`] in order. They are first sorted by the explicit order defined in the action ([`FilerAction`] implements `Ordered`) and then alphabetically by bean name.
 The first action that matches the conditions is selected and its classification is applied.
 
-## Properties inheritance
+## Metadata inheritance
 
-Another characteristic of this module is the ability to define which properties should be inherited on the fileable node and also on the folder structure.
-It uses a specific marker aspect to label which aspects should have their properties duplicated.
-First, the properties of the inherited aspects are retrieved from the parent folder to supplement the node being filed.
-Then, each level of the classification can define the number of properties they inherit.
+Another characteristic of this module is the ability to define which metadata should be inherited on the fileable node and also on the folder structure.
+It uses a specific marker aspect to label which aspects should have their metadata duplicated.
+First, the metadata of the inherited aspects are retrieved from the parent folder to supplement the node being filed.
+Then, each level of the classification can define the number of metadata they inherit.
 
 For example, instead of using the description property, a custom aspect with a specific department label property can be set directly on the department folder.
 In this case any document created in it could also have the property directly added on them to make a search on the department of documents easier.

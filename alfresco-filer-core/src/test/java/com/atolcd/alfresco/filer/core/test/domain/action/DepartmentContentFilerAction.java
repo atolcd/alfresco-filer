@@ -13,7 +13,7 @@ public class DepartmentContentFilerAction extends AbstractFilerTestAction {
   public boolean supportsActionResolution(final FilerEvent event) {
     return event.getNode().getAspects().contains(FilerTestConstants.Department.Aspect.NAME)
         && Arrays.asList(FilerTestConstants.Department.DocumentType.NAME, FilerTestConstants.SpecialDocumentType.NAME)
-            .contains(event.getNode().getType());
+            .contains(event.getNode().getType().get());
   }
 
   @Override

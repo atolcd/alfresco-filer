@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
+import com.atolcd.alfresco.filer.core.test.framework.RepositoryNodeHelper;
+import com.atolcd.alfresco.filer.core.test.framework.TransactionHelper;
 
 public class DuplicateNameParallelTest extends AbstractParallelTest {
 
@@ -29,6 +31,10 @@ public class DuplicateNameParallelTest extends AbstractParallelTest {
 
   @Autowired
   private NodeService nodeService;
+  @Autowired
+  private TransactionHelper transactionHelper;
+  @Autowired
+  private RepositoryNodeHelper repositoryNodeHelper;
 
   @Test
   public void createAndDeleteNodes() throws InterruptedException, BrokenBarrierException {
@@ -52,10 +58,10 @@ public class DuplicateNameParallelTest extends AbstractParallelTest {
         LOGGER.debug("Task {}: node creation start", taskNumber);
         // Name generation and node creation must be in the same transaction as the whole transaction execution will be retried
         // when there is an attempt to create nodes with duplicate name.
-        doInTransaction(() -> {
+        transactionHelper.run(() -> {
           // Generate name based on a variable shared between all test threads
           node.getProperties().put(ContentModel.PROP_NAME, "x" + Integer.toString(nodeNameSuffix.get()));
-          createNodeImpl(node);
+          repositoryNodeHelper.createNode(node);
         });
         LOGGER.debug("Task {}: node creation end", taskNumber);
 
@@ -78,7 +84,7 @@ public class DuplicateNameParallelTest extends AbstractParallelTest {
 
     assertThat(results.stream().map(RepositoryNode::getName).map(Optional::get))
         .doesNotHaveDuplicates();
-    assertThat(results.stream().map(RepositoryNode::getNodeRef).map(nodeService::exists))
+    assertThat(results.stream().map(RepositoryNode::getNodeRef).map(Optional::get).map(nodeService::exists))
         .hasSize(NUM_THREAD_TO_LAUNCH)
         .containsOnly(true);
   }
