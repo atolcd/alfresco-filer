@@ -1,6 +1,9 @@
 package com.atolcd.alfresco.filer.core.service;
 
+import java.util.function.Consumer;
+
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
+import com.atolcd.alfresco.filer.core.model.UpdateAndMoveFileableParameters;
 
 public interface FilerUpdateService {
 
@@ -13,4 +16,9 @@ public interface FilerUpdateService {
    * @param resultingNode node after applying filer
    */
   void updateAndMoveFileable(RepositoryNode initialNode, RepositoryNode originalNode, RepositoryNode resultingNode);
+
+  /**
+   * @param consumer Procédure à exécuter lors de la méthode {@code updateAndMoveFileable}.
+   */
+  void addOnUpdateAndMoveFileable(Consumer<UpdateAndMoveFileableParameters> consumer);
 }

@@ -1,8 +1,11 @@
 package com.atolcd.alfresco.filer.core.service.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.AbstractBaseCopyService;
@@ -19,6 +22,7 @@ import org.springframework.dao.ConcurrencyFailureException;
 import com.atolcd.alfresco.filer.core.model.PropertyInheritancePayload;
 import com.atolcd.alfresco.filer.core.model.RepositoryNode;
 import com.atolcd.alfresco.filer.core.model.RepositoryNodeDifference;
+import com.atolcd.alfresco.filer.core.model.UpdateAndMoveFileableParameters;
 import com.atolcd.alfresco.filer.core.service.FilerFolderService;
 import com.atolcd.alfresco.filer.core.service.FilerModelService;
 import com.atolcd.alfresco.filer.core.service.FilerUpdateService;
@@ -38,6 +42,8 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
   private PropertyInheritanceService propertyInheritanceService;
   @Nullable
   private NodeService nodeService;
+
+  private final List<Consumer<UpdateAndMoveFileableParameters>> lstUpdateAndMoveConsumers = new ArrayList<>();
 
   @Override
   public void updateAndMoveFileable(final RepositoryNode initialNode, final RepositoryNode originalNode,
@@ -60,6 +66,10 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
       String name = originalNode.getName().get();
       resultingNode.getProperties().put(ContentModel.PROP_NAME, name);
     }
+
+    // Point d'extension pour les projets métiers
+    onUpdateAndMoveFileableImpl(initialNode, originalNode, resultingNode);
+
     // Update node (ignore node name for now) if filer made changes
     RepositoryNodeDifference originalDifference = updateFileable(originalNode, resultingNode);
     if (LOGGER.isDebugEnabled() && !originalDifference.isEmpty()) {
@@ -76,6 +86,28 @@ public class FilerUpdateServiceImpl extends AbstractBaseCopyService implements F
     if (LOGGER.isDebugEnabled() && !inheritance.isEmpty()) {
       LOGGER.debug("Node inheritance updated: {}", inheritance);
     }
+  }
+
+  /**
+   * Déclenchée par la méthode {@link FilerUpdateServiceImpl#updateAndMoveFileableImpl(RepositoryNode, RepositoryNode,
+   * RepositoryNode)}. Permet aux modules qui utilisent le Filer d'exécuter du code pendant cet événement.
+   * @param initialNode
+   * @param originalNode
+   * @param resultingNode
+   */
+  private void onUpdateAndMoveFileableImpl(final RepositoryNode initialNode, final RepositoryNode originalNode,
+      final RepositoryNode resultingNode) {
+    UpdateAndMoveFileableParameters param = new UpdateAndMoveFileableParameters();
+    param.setInitialNode(initialNode);
+    param.setOriginalNode(originalNode);
+    param.setResultingNode(resultingNode);
+
+    this.lstUpdateAndMoveConsumers.forEach(c -> c.accept(param));
+  }
+
+  @Override
+  public void addOnUpdateAndMoveFileable(final Consumer<UpdateAndMoveFileableParameters> consumer) {
+    this.lstUpdateAndMoveConsumers.add(consumer);
   }
 
   private void moveAndRenameFileable(final RepositoryNode originalNode, final RepositoryNode resultingNode) {
