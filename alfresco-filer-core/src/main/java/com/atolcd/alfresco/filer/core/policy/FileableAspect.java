@@ -1,5 +1,7 @@
 package com.atolcd.alfresco.filer.core.policy;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -81,9 +83,10 @@ public class FileableAspect extends DictionaryListenerAspect implements NodeServ
     String user = FilerTransactionUtils.getUpdateUser(nodeRef);
     AuthenticationUtil.runAs(() -> {
       // Check node still exists, it might be gone at transaction commit time
-      if (nodeService.exists(nodeRef)) {
+      if (isNotBlank(filerModelService.getOwnerUsername()) && nodeService.exists(nodeRef)) {
         filerModelService.setOwner(nodeRef);
       }
+
       return null;
     }, user);
 
