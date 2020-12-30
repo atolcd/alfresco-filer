@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.atolcd.alfresco.filer</groupId>
     <artifactId>alfresco-filer-parent</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.0</version>
     <relativePath>../alfresco-filer-parent/pom.xml</relativePath>
   </parent>
 
