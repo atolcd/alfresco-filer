@@ -18,7 +18,7 @@
     <alfresco-filer-parent.checkstyle.version>8.30</alfresco-filer-parent.checkstyle.version>
     <alfresco-filer-parent.checkstyle.includes />
     <alfresco-filer-parent.maven-pmd-plugin.version>3.13.0</alfresco-filer-parent.maven-pmd-plugin.version>
-    <alfresco-filer-parent.pmd.version>6.21.0</alfresco-filer-parent.pmd.version>
+    <alfresco-filer-parent.pmd.version>7.22.0</alfresco-filer-parent.pmd.version>
     <alfresco-filer-parent.spotbugs-maven-plugin.version>3.1.12.2</alfresco-filer-parent.spotbugs-maven-plugin.version>
     <alfresco-filer-parent.spotbugs.version>4.0.0</alfresco-filer-parent.spotbugs.version>
     <alfresco-filer-parent.maven-surefire-plugin.version>2.22.2</alfresco-filer-parent.maven-surefire-plugin.version>
